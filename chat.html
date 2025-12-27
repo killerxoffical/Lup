@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>LEVEL UP - Global Chat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        html, body {
+            height: 100%; overflow: hidden; -webkit-user-select: none; user-select: none;
+        }
+        /* UPDATED: Removed flexbox from body to fix keyboard issue */
+        body { 
+            background-color: #111214; color: #dcddde; font-family: 'Montserrat', sans-serif;
+            margin: 0;
+        }
+        /* UPDATED: Height is now controlled by JS to be fixed */
+        #chat-ui { height: 100%; position: relative; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* --- Loading Screen Styling --- */
+        #loading-chat { background-color: #ffffff; transition: opacity 0.5s ease-out; }
+        #loading-chat.fade-out { opacity: 0; }
+        #loading-icon { animation: loading-animation 3s ease-in-out forwards; }
+        @keyframes loading-animation {
+            0% { transform: scale(0.8) rotate(0deg); opacity: 0; } 15% { transform: scale(1.1) rotate(15deg); opacity: 1; }
+            30% { transform: scale(1.1) rotate(-15deg); } 55% { transform: scale(1.1) rotate(360deg); } 100% { transform: scale(1.1) rotate(0deg); }
+        }
+
+        /* --- Chat UI fade-in --- */
+        #chat-ui.fade-in { animation: fade-in-animation 0.5s ease-in forwards; }
+        @keyframes fade-in-animation { from { opacity: 0; } to { opacity: 1; } }
+
+        /* NEW: Header Icon Animation */
+        @keyframes header-icon-dance {
+            0%, 100% { transform: rotate(0deg); }
+            20% { transform: rotate(15deg); } /* Right */
+            40% { transform: rotate(-15deg); } /* Left */
+            80% { transform: rotate(360deg); } /* Full spin */
+        }
+        
+        #chat-header { background-color: #111214; border-bottom: 1px solid #2d2f34; flex-shrink: 0; }
+        #chat-messages { flex: 1 1 auto; overflow-y: auto; padding: 0 1rem; padding-bottom: 70px; scroll-padding-bottom: 70px; }
+        
+        .message-group { position: relative; margin-top: 1.25rem; overflow: hidden; }
+        .reply-icon-container { position: absolute; top: 0; right: 0; bottom: 0; width: 70px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: #fff; opacity: 0; z-index: 1; transition: opacity 0.1s ease-in-out; }
+        .message-container { display: flex; position: relative; background-color: #111214; z-index: 2; transition: transform 0.2s ease-out, background-color 0.3s ease; border-radius: 8px; }
+        .message-container.highlight { background-color: rgba(88, 81, 127, 0.4); }
+        
+        .avatar-container { width: 42px; height: 42px; flex-shrink: 0; margin-right: 1rem; position: relative; }
+        .avatar { width: 100%; height: 100%; border-radius: 9999px; object-fit: cover; }
+        .message-content-wrapper { padding-top: 0.1rem; min-width: 0; }
+        .message-header { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+        .username { font-weight: 600; color: #ffffff; font-size: 1rem; }
+        .timestamp { font-size: 0.7rem; color: #72767d; }
+        .message-text { font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; padding-top: 0.1rem; }
+
+        .replied-message-block { display: flex; align-items: center; padding: 4px 8px; margin-bottom: 8px; margin-left: 58px; position: relative; cursor: pointer; width: fit-content; max-width: 80%; border-radius: 8px; }
+        .replied-message-block.premium { background: linear-gradient(to right, var(--reply-bg-color-start, rgba(88, 101, 242, 0.4)) 0%, var(--reply-bg-color-mid, rgba(116, 79, 195, 0.25)) 60%, var(--reply-bg-color-end, rgba(116, 79, 195, 0)) 100%); }
+        .replied-message-block.default { background: rgba(40, 43, 48, 0.7); }
+        .replied-avatar { width: 16px; height: 16px; border-radius: 50%; margin-right: 0.5rem; }
+        .replied-username { font-size: 0.8rem; font-weight: 600; color: #fff; margin-right: 0.5rem; white-space: nowrap; flex-shrink: 0; }
+        .replied-text { font-size: 0.8rem; color: #b9bbbe; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+        .reply-prefix-icon { color: #8e9297; font-size: 0.7rem; margin-right: 0.4rem; }
+
+        .date-separator { display: flex; align-items: center; color: #72767d; margin: 1.5rem 0 0.5rem; font-size: 0.75rem; font-weight: 600; }
+        .date-separator hr { flex-grow: 1; border: none; border-top: 1px solid #36393f; }
+        .date-separator span { padding: 0 1rem; }
+
+        #chat-footer { flex-shrink: 0; background-color: #111214; padding: 0.75rem 1rem; border-top: 1px solid #2d2f34; }
+        .input-wrapper { background-color: #202225; border-radius: 22px; padding: 0 0.5rem; border: 1px solid #383a40; }
+        #message-input:focus { outline: none !important; box-shadow: none !important; ring: 0 !important; }
+        #message-input { background-color: transparent; resize: none; max-height: 120px; padding: 0.4rem 0.5rem; }
+        #char-counter { right: 0.75rem; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+        #char-counter.green { color: #3ba55d; } #char-counter.yellow { color: #faa61a; } #char-counter.red { color: #f04747; }
+        #reply-indicator { background-color: #2b2d31; }
+
+        #send-btn { background-color: #37393f; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; }
+        #send-btn i { transition: transform 0.3s ease; transform: rotate(95deg); }
+        #send-btn.ready-to-send { background-color: #22c55e; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(34, 197, 94, 0.4); }
+        #send-btn.ready-to-send i { transform: rotate(-25deg) translate(-1px, 1px); }
+
+        #scroll-to-bottom-btn { position: absolute; bottom: 110px; right: 20px; z-index: 10; transition: opacity 0.3s, transform 0.3s; }
+        #scroll-to-bottom-btn.hidden { opacity: 0; transform: translateY(20px); pointer-events: none; }
+
+        #premium-settings-modal { z-index: 50; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
+        .color-swatch { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; transition: transform 0.2s; border: 2px solid transparent; }
+        .color-swatch:hover { transform: scale(1.1); }
+        .color-swatch.selected { border-color: #ffffff; box-shadow: 0 0 10px #fff; }
+
+        #typing-indicator { transition: opacity 0.3s; }
+        .typing-dot-container { display: flex; align-items: center; gap: 3px; }
+        .typing-dot { width: 6px; height: 6px; background-color: #8e9297; border-radius: 50%; animation: typing-bounce 1.3s infinite ease-in-out; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; } .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing-bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
+    </style>
+</head>
+<body>
+
+    <div id="loading-chat" class="flex items-center justify-center h-full">
+        <!-- Loading icon is unchanged -->
+        <div id="loading-icon" class="w-24 h-24"><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 60 60" viewBox="0 0 60 60" id="discord"><g><path fill="#FFF" d="M50,60H10C4.477,60,0,55.523,0,50V10C0,4.477,4.477,0,10,0h40c5.523,0,10,4.477,10,10v40 C60,55.523,55.523,60,50,60z"></path></g><g><path fill="#D2BBFF" d="M44.82,50.27l-3.49-4.36c-5.55,1.45-11.11,1.45-16.66,0l-3.49,4.36C7.68,48.29,9,43,9,43c0-16,6-24,6-24 s3.62-2.4,10.84-3.48l1.29,3.86C28.86,19.15,30.82,19,33,19s4.14,0.15,5.87,0.38l1.29-3.86C47.38,16.6,51,19,51,19s6,8,6,24 C57,43,58.32,48.29,44.82,50.27z"></path><path fill="#7D40F4" d="M18.18 48.77c-.072 0-.145-.005-.218-.016C11.44 47.798 7.21 45.933 5.387 43.212c-.993-1.483-.959-2.793-.887-3.332.029-16.233 6.043-24.438 6.3-24.781.103-.137.229-.256.371-.35.159-.106 3.983-2.597 11.447-3.713.716-.113 1.413.318 1.645 1.008l1.29 3.86c.263.786-.162 1.636-.947 1.898-.789.264-1.636-.162-1.898-.947l-.885-2.647c-5.017.911-7.966 2.447-8.771 2.909C12.151 18.477 7.5 26.176 7.5 40c0 .123-.015.245-.045.363 0 0 .001-.001.001-.001.005 0-.077.791.951 1.811 1.104 1.096 3.584 2.563 9.145 3.481l2.947-3.682c.518-.648 1.463-.751 2.108-.233.646.518.751 1.461.233 2.108l-3.49 4.36C19.063 48.566 18.631 48.77 18.18 48.77zM41.82 48.77c-.452 0-.884-.204-1.171-.562l-3.49-4.36c-.518-.647-.413-1.591.233-2.108.646-.517 1.592-.414 2.108.233l2.947 3.682c5.561-.917 8.04-2.385 9.145-3.481 1.047-1.039.943-1.84.938-1.874C52.501 40.181 52.5 40.123 52.5 40c0-13.898-4.643-21.526-5.548-22.881-.796-.457-3.746-1.998-8.774-2.911l-.885 2.647c-.263.785-1.111 1.209-1.898.947-.785-.263-1.21-1.113-.947-1.898l1.29-3.86c.23-.69.922-1.12 1.645-1.008 7.464 1.116 11.288 3.607 11.447 3.713.143.094.269.213.371.35.257.342 6.271 8.548 6.3 24.781.072.539.106 1.849-.887 3.332-1.823 2.721-6.054 4.585-12.575 5.542C41.965 48.765 41.893 48.77 41.82 48.77z"></path><g><circle cx="22" cy="32" r="4" fill="#FFF"></circle><path fill="#7D40F4" d="M22,36.75c-2.619,0-4.75-2.131-4.75-4.75s2.131-4.75,4.75-4.75s4.75,2.131,4.75,4.75 S24.619,36.75,22,36.75z M22,28.75c-1.792,0-3.25,1.458-3.25,3.25s1.458,3.25,3.25,3.25s3.25-1.458,3.25-3.25 S23.792,28.75,22,28.75z"></path></g><g><circle cx="38" cy="32" r="4" fill="#FFF"></circle><path fill="#7D40F4" d="M38,36.75c-2.619,0-4.75-2.131-4.75-4.75s2.131-4.75,4.75-4.75s4.75,2.131,4.75,4.75 S40.619,36.75,38,36.75z M38,28.75c-1.792,0-3.25,1.458-3.25,3.25s1.458,3.25,3.25,3.25s3.25-1.458,3.25-3.25 S39.792,28.75,38,28.75z"></path></g><ellipse cx="24.298" cy="17.231" fill="#D2BBFF" rx="1.702" ry=".705"></ellipse><ellipse cx="35.596" cy="17.231" fill="#FFF" rx="1.702" ry=".705"></ellipse><path fill="#7D40F4" d="M45.184,19.756c-0.113,0-0.229-0.026-0.338-0.081C43.107,18.795,38.18,16.75,30,16.75 c-8.177,0-13.104,2.042-14.842,2.92c-0.371,0.188-0.82,0.039-1.008-0.332c-0.187-0.37-0.038-0.821,0.332-1.007 C16.316,17.405,21.501,15.25,30,15.25c8.502,0,13.688,2.159,15.523,3.086c0.369,0.187,0.518,0.638,0.33,1.008 C45.722,19.605,45.458,19.756,45.184,19.756z"></path><g><path fill="#D2BBFF" d="M14,40c10.667,5.333,21.333,5.333,32,0"></path><path fill="#7D40F4" d="M30,44.735c-5.458,0-10.916-1.354-16.335-4.064c-0.371-0.186-0.521-0.636-0.336-1.006 c0.187-0.37,0.636-0.52,1.006-0.335c10.395,5.197,20.936,5.197,31.33,0c0.371-0.185,0.82-0.035,1.006,0.335 c0.186,0.371,0.035,0.821-0.336,1.006C40.916,43.381,35.458,44.735,30,44.735z"></path></g></g></svg></div>
+    </div>
+
+    <!-- UPDATED: Removed flex-1 class to allow JS height control -->
+    <div id="chat-ui" class="hidden flex flex-col relative" style="opacity: 0;">
+        <header id="chat-header" class="p-2 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="w-10 h-10 bg-gray-800/50 rounded-full flex items-center justify-center text-gray-300 hover:text-white shadow-md transition-colors"><i class="fas fa-arrow-left text-lg"></i></a>
+                <svg id="header-discord-icon" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 100 100" viewBox="0 0 100 100" class="w-8 h-8"><g id="Layer_2"><path fill="#D2BBFF" d="M64.193 47.63c2.334 0 4.465 1.302 5.698 3.484.256.452.726.706 1.21.706 1.029.026 1.747-1.183 1.208-2.074-1.708-3.019-4.818-4.894-8.117-4.894-12.607.418-12.524 19.726 0 20.216 5.312 0 9.473-4.44 9.473-10.108-.033-1.828-2.747-1.825-2.779 0 0 4.11-2.94 7.329-6.695 7.329C55.358 61.976 55.299 47.89 64.193 47.63zM44.737 54.982c.211-5.297-4.149-10.216-9.474-10.131-12.608.419-12.523 19.727 0 20.215C40.576 65.067 44.737 60.627 44.737 54.982zM28.569 54.959c-.157-6.239 7.012-9.771 11.312-5.363 4.305 4.223 1.52 12.82-4.618 12.693C31.573 62.288 28.569 59.001 28.569 54.959z"></path><path fill="#7D40F4" d="M86.094,24.562c-10.864-8.869-24.123-9.672-24.451-8.483c0,0-1.11,1.268-1.11,1.268c-0.669,0.722-0.299,1.989,0.647,2.245 c0.674,0.202,1.328,0.409,1.965,0.62c-9.388-1.933-19.11-1.551-28.487,0.298c1.233-0.426,2.539-0.838,3.918-1.229 c0.946-0.234,1.333-1.5,0.688-2.227c-0.411-0.44-1.054-1.537-1.83-1.45c-0.02-0.083-12.775,0.089-23.438,8.957 c-0.078,0.141-1.943,3.515-4.18,9.224c-0.626,1.723,1.884,2.697,2.587,1.014c1.821-4.647,3.413-7.747,3.883-8.63 c4.241-3.105,8.396-4.973,11.883-6.096c-7.792,3.468-11.499,6.977-11.703,7.174c-1.146,1.104,0.232,2.987,1.629,2.22 c18.938-10.094,43.589-10.543,62.559,0.004c1.369,0.775,2.794-1.151,1.615-2.231c-0.222-0.211-4.747-4.436-14.232-8.206 c4.014,0.839,9.827,2.756,15.764,7.133c1.277,2.416,10.979,21.53,11.101,44.45c-1.563,2.222-8.137,10.217-22.156,10.904 c-0.682-0.818-2.069-2.485-3.488-4.216c9.308-3.242,12.995-9.069,13.157-9.332c0.773-1.24-0.729-2.707-1.947-1.889 C62.612,77.828,38.071,77.51,20.207,66.105c-1.166-0.879-2.784,0.641-1.983,1.861c0.156,0.257,3.703,5.949,12.729,9.243 c-1.455,1.805-2.906,3.551-3.608,4.393c-8.549-0.112-18.133-4.802-22.157-10.959c0.048-9.99,1.869-20.379,5.411-30.886 c0.569-1.73-2.029-2.612-2.632-0.888c-3.59,11.159-5.989,22.27-5.37,32.881c0.288,0.493,7.253,12.084,25.33,12.656 c0.424,0.014,0.834-0.168,1.107-0.494c0.03-0.035,2.975-3.538,5.339-6.532c0.612-0.734,0.225-1.943-0.693-2.192 c4.547,1.498,20.09,4.356,32.365,0.304c-0.616,0.444-0.728,1.402-0.237,1.981c2.357,2.907,5.217,6.324,5.245,6.358 c0.275,0.327,0.651,0.51,1.11,0.497c16.405-0.52,23.844-10.359,25.241-12.444C98.707,47.531,86.21,24.87,86.094,24.562z"></path></g></svg>
+                <div><div class="flex items-center gap-2"><h1 id="header-username" class="font-bold text-white text-lg"></h1><div class="flex items-center gap-1 text-xs font-semibold text-green-400"><div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div><span>Online</span></div></div><p class="text-xs text-gray-400">Global Chat Community</p></div>
+            </div>
+            <button id="open-premium-settings-btn" class="w-12 h-12 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" viewBox="0 0 24 24" id="discord-nitro"><path fill="#FF4DA5" d="M15 4.25C10.7198 4.25 7.25 7.71979 7.25 12C7.25 16.2802 10.7198 19.75 15 19.75C19.2802 19.75 22.75 16.2802 22.75 12C22.75 7.71979 19.2802 4.25 15 4.25Z"></path><path fill="#FF4DA5" fill-rule="evenodd" d="M5.25 5C5.25 4.58579 5.58579 4.25 6 4.25H15C15.4142 4.25 15.75 4.58579 15.75 5 15.75 5.41421 15.4142 5.75 15 5.75H6C5.58579 5.75 5.25 5.41421 5.25 5zM4.75 8.5C4.75 8.08579 5.08579 7.75 5.5 7.75H8.5C8.91421 7.75 9.25 8.08579 9.25 8.5 9.25 8.91421 8.91421 9.25 8.5 9.25H5.5C5.08579 9.25 4.75 8.91421 4.75 8.5zM1.25 8.5C1.25 8.08579 1.58579 7.75 2 7.75H3.5C3.91421 7.75 4.25 8.08579 4.25 8.5 4.25 8.91421 3.91421 9.25 3.5 9.25H2C1.58579 9.25 1.25 8.91421 1.25 8.5zM3.25 12.5C3.25 12.0858 3.58579 11.75 4 11.75H8C8.41421 11.75 8.75 12.0858 8.75 12.5 8.75 12.9142 8.41421 13.25 8 13.25H4C3.58579 13.25 3.25 12.9142 3.25 12.5z" clip-rule="evenodd"></path><path fill="#ECEFF1" fill-rule="evenodd" d="M12.376 8.58397C12.5151 8.37533 12.7492 8.25 13 8.25H17C17.2508 8.25 17.4849 8.37533 17.624 8.58397L19.624 11.584C19.792 11.8359 19.792 12.1641 19.624 12.416L17.624 15.416C17.4849 15.6247 17.2508 15.75 17 15.75H13C12.7492 15.75 12.5151 15.6247 12.376 15.416L10.376 12.416C10.208 12.1641 10.208 11.8359 10.376 11.584L12.376 8.58397ZM13.4014 9.75L11.9014 12L13.4014 14.25H16.5986L18.0986 12L16.5986 9.75H13.4014Z" clip-rule="evenodd"></path></svg></button>
+        </header>
+
+        <main id="chat-messages" class="flex-1 overflow-y-auto no-scrollbar"></main>
+
+        <button id="scroll-to-bottom-btn" class="hidden w-10 h-10 bg-gray-800 text-white rounded-full shadow-lg flex items-center justify-center"><i class="fas fa-chevron-down"></i></button>
+
+        <footer id="chat-footer">
+            <div id="reply-indicator" class="hidden items-center justify-between p-2 mb-2 text-sm rounded-md"><div><p class="text-gray-400">Replying to <strong id="reply-username" class="text-white"></strong></p><p id="reply-text" class="text-gray-300 truncate max-w-xs"></p></div><button id="cancel-reply-btn" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button></div>
+            <div id="typing-indicator" class="h-6 mb-1 flex items-center gap-2 text-sm text-gray-400 opacity-0 hidden"></div>
+            
+            <div class="flex items-end gap-2">
+                <button class="w-11 h-11 flex-shrink-0 text-gray-400 hover:text-gray-200 text-xl flex items-center justify-center bg-gray-700/80 hover:bg-gray-600 rounded-full transition-colors shadow-md"><i class="fas fa-gift"></i></button>
+                <div class="input-wrapper flex-1 flex items-center">
+                    <div class="relative flex-1">
+                        <textarea id="message-input" rows="1" maxlength="30" placeholder="Message Global Chat" class="w-full text-white placeholder-gray-400 border-none no-scrollbar"></textarea>
+                        <span id="char-counter" class="absolute top-1/2 -translate-y-1/2 font-bold text-sm green">30</span>
+                    </div>
+                </div>
+                <button id="send-btn" disabled class="w-11 h-11 flex-shrink-0 text-white text-xl flex items-center justify-center rounded-full transition-all duration-300"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </footer>
+    </div>
+    
+    <div id="premium-settings-modal" class="hidden fixed inset-0 flex items-center justify-center p-4"> <div class="bg-[#18191c] rounded-lg shadow-xl w-full max-w-md p-6 text-white relative"><button id="close-premium-settings-btn" class="absolute top-3 right-3 text-gray-400 hover:text-white"><i class="fas fa-times fa-lg"></i></button><h2 class="text-2xl font-bold mb-6 text-center">Premium Settings</h2><div class="mb-6"><h3 class="font-semibold mb-3 text-gray-300">Reply Box Color</h3><div id="reply-box-color-picker" class="flex flex-wrap gap-3 justify-center"></div></div><div class="mb-8"><h3 class="font-semibold mb-3 text-gray-300">Replied Name Color</h3><div id="reply-name-color-picker" class="flex flex-wrap gap-3 justify-center"></div></div><button id="save-settings-btn" class="w-full bg-green-600 hover:bg-green-700 font-bold py-3 rounded-lg transition-colors">Save Settings</button></div></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        // --- Setup ---
+        const firebaseConfig = { apiKey: "AIzaSyBLhxlVr8mjel_rVI1xqeRJ2DSywjiI2ek", authDomain: "nxzwallet.firebaseapp.com", databaseURL: "https://nxzwallet-default-rtdb.firebaseio.com", projectId: "nxzwallet", storageBucket: "nxzwallet.appspot.com", messagingSenderId: "910859278641", appId: "1:910859278641:web:d896205c530816fb297810" };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(), database = firebase.database();
+        const chatRef = database.ref('chats/public-v2');
+        const typingRef = database.ref('typingStatus/public-v2');
+        const loadingScreen = document.getElementById('loading-chat'), chatUI = document.getElementById('chat-ui');
+        const messagesContainer = document.getElementById('chat-messages');
+        const messageInput = document.getElementById('message-input'), sendBtn = document.getElementById('send-btn');
+        const replyIndicator = document.getElementById('reply-indicator');
+        const scrollToBottomBtn = document.getElementById('scroll-to-bottom-btn');
+        let currentUser = null, allUsersData = {}, replyToMessage = null, lastRenderedDate = null;
+        
+        // NEW: Function to fix viewport height for mobile keyboards
+        function fixViewportHeight() {
+            const chatUI = document.getElementById('chat-ui');
+            if (chatUI) {
+                chatUI.style.height = `${window.innerHeight}px`;
+            }
+        }
+
+        auth.onAuthStateChanged(user => { 
+            if (user) { 
+                currentUser = user;
+                fixViewportHeight(); // Set the height before doing anything else
+                fetchAndCacheAllUsers().then(() => { 
+                    setTimeout(() => { 
+                        loadingScreen.classList.add('fade-out'); 
+                        setTimeout(() => { 
+                            loadingScreen.style.display = 'none'; 
+                            chatUI.classList.remove('hidden'); 
+                            chatUI.classList.add('flex', 'fade-in'); 
+                        }, 500); 
+                        setupChatUI(user); 
+                        listenForMessages(); 
+                    }, 3000); 
+                }); 
+            } else { 
+                window.location.href = 'index.html'; 
+            } 
+        });
+        
+        async function fetchAndCacheAllUsers() { allUsersData = (await database.ref('users').once('value')).val() || {}; }
+        
+        function setupChatUI(user) {
+            const userData = allUsersData[user.uid] || {};
+            document.getElementById('header-username').textContent = userData.name || 'User';
+            
+            const icon = document.getElementById('header-discord-icon');
+            // UPDATED: Header icon animation loop set to 15 seconds
+            setInterval(() => {
+                icon.style.animation = 'none';
+                void icon.offsetWidth; 
+                icon.style.animation = 'header-icon-dance 2.5s ease-in-out';
+            }, 15000); // Repeat every 15 seconds
+
+            setupInputListeners();
+            setupReplyListeners();
+            setupSwipeToReply();
+            setupReplyNavigation();
+            setupScrollListener();
+            setupPremiumSettings();
+            setupTypingIndicator();
+        }
+
+        function listenForMessages() {
+            let initialLoad = true;
+            let lastKey = null;
+
+            chatRef.limitToLast(50).once('value', snapshot => {
+                messagesContainer.innerHTML = '';
+                lastRenderedDate = null;
+                snapshot.forEach(childSnapshot => {
+                    lastKey = childSnapshot.key;
+                    renderMessage(childSnapshot.key, childSnapshot.val());
+                });
+                setTimeout(() => scrollToBottom(), 100);
+                initialLoad = false;
+            });
+
+            chatRef.limitToLast(1).on('child_added', snapshot => {
+                if (!initialLoad && snapshot.key !== lastKey) {
+                    renderMessage(snapshot.key, snapshot.val());
+                    lastKey = snapshot.key;
+                }
+            });
+        }
+        
+        function renderMessage(messageId, msgData) {
+            const isScrolledToBottom = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight < 150;
+            const senderData = allUsersData[msgData.senderUid] || {};
+
+            const messageDate = new Date(msgData.timestamp);
+            const messageDateString = messageDate.toDateString();
+            if (lastRenderedDate !== messageDateString) {
+                const separator = document.createElement('div');
+                separator.className = 'date-separator';
+                const separatorDate = messageDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                separator.innerHTML = `<hr><span>${separatorDate}</span><hr>`;
+                messagesContainer.appendChild(separator);
+                lastRenderedDate = messageDateString;
+            }
+
+            let replyHTML = '';
+            if (msgData.replyTo) {
+                const repliedToUserData = allUsersData[msgData.replyTo.authorUid] || {};
+                const repliedToSettings = repliedToUserData.settings || {};
+                let boxClass = 'default', boxStyle = '', nameStyle = '';
+                if (repliedToSettings.replyColor) { boxClass = 'premium'; const [r, g, b] = repliedToSettings.replyColor.match(/\d+/g); boxStyle = `style="--reply-bg-color-start: rgba(${r},${g},${b},0.4); --reply-bg-color-mid: rgba(${r},${g},${b},0.25); --reply-bg-color-end: rgba(${r},${g},${b},0);"`; }
+                if (repliedToSettings.replyNameColor) { nameStyle = `style="color: ${repliedToSettings.replyNameColor};"`; }
+                replyHTML = `<div class="replied-message-block ${boxClass}" ${boxStyle} data-reply-to-id="${msgData.replyTo.id}"><i class="fas fa-reply reply-prefix-icon"></i><img src="${msgData.replyTo.authorAvatar}" class="replied-avatar"><span class="replied-username" ${nameStyle}>${msgData.replyTo.authorName}</span><span class="replied-text">${msgData.replyTo.text}</span></div>`;
+            }
+            
+            const tsOptions = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' };
+            const ts = new Date(msgData.timestamp).toLocaleString('en-US', tsOptions).replace(',', '');
+            
+            const messageGroup = document.createElement('div');
+            messageGroup.className = 'message-group';
+            messageGroup.innerHTML = `${replyHTML}<div class="reply-icon-container"><i class="fas fa-reply"></i></div><div class="message-container" data-message-id="${messageId}" data-author-uid="${msgData.senderUid}" data-author-name="${senderData.name || 'User'}" data-author-avatar="${senderData.avatar || 'https://via.placeholder.com/42'}" data-message-text="${msgData.text}" data-timestamp="${msgData.timestamp}"><div class="avatar-container"><img src="${senderData.avatar || 'https://via.placeholder.com/42'}" alt="avatar" class="avatar"></div><div class="message-content-wrapper"><div class="message-header"><span class="username">${senderData.name || 'User'}</span><span class="timestamp">${ts}</span></div><div class="message-text">${(msgData.text || "").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div></div></div>`;
+            messagesContainer.appendChild(messageGroup);
+            
+            if (isScrolledToBottom) scrollToBottom();
+        }
+        
+        function sendMessage() { const text = messageInput.value.trim();if (text.length === 0 || text.length > 30) return;const messageData = { senderUid: currentUser.uid, text: text, timestamp: firebase.database.ServerValue.TIMESTAMP };if (replyToMessage) messageData.replyTo = replyToMessage;chatRef.push(messageData).then(() => {messageInput.value = ''; messageInput.dispatchEvent(new Event('input')); cancelReply();});typingRef.child(currentUser.uid).remove();}
+        function setReply(messageEl) { replyToMessage = { id: messageEl.dataset.messageId, authorUid: messageEl.dataset.authorUid, authorName: messageEl.dataset.authorName, authorAvatar: messageEl.dataset.authorAvatar, text: messageEl.dataset.messageText };document.getElementById('reply-username').textContent = replyToMessage.authorName;document.getElementById('reply-text').textContent = replyToMessage.text;replyIndicator.classList.remove('hidden'); replyIndicator.classList.add('flex');messageInput.focus();}
+        function setupPremiumSettings() { const modal = document.getElementById('premium-settings-modal'); const openBtn = document.getElementById('open-premium-settings-btn'); const closeBtn = document.getElementById('close-premium-settings-btn'); const saveBtn = document.getElementById('save-settings-btn'); const boxColorPicker = document.getElementById('reply-box-color-picker'); const nameColorPicker = document.getElementById('reply-name-color-picker'); const colors = ['rgb(255, 82, 82)', 'rgb(255, 128, 0)', 'rgb(255, 215, 0)', 'rgb(50, 205, 50)', 'rgb(0, 191, 255)', 'rgb(65, 105, 225)', 'rgb(138, 43, 226)', 'rgb(255, 20, 147)', 'rgb(233, 233, 233)', 'rgb(139, 69, 19)']; let tempReplyBoxColor = null, tempReplyNameColor = null; const createSwatches = (container, colorList, onSelect) => { container.innerHTML = ''; colorList.forEach(color => { const swatch = document.createElement('div'); swatch.className = 'color-swatch'; swatch.style.backgroundColor = color; swatch.dataset.color = color; swatch.addEventListener('click', () => onSelect(swatch)); container.appendChild(swatch); }); }; const selectSwatch = (container, selectedColor) => { container.querySelectorAll('.color-swatch').forEach(s => s.classList.toggle('selected', s.dataset.color === selectedColor)); }; createSwatches(boxColorPicker, colors, (s) => { tempReplyBoxColor = s.dataset.color; selectSwatch(boxColorPicker, tempReplyBoxColor); }); createSwatches(nameColorPicker, colors, (s) => { tempReplyNameColor = s.dataset.color; selectSwatch(nameColorPicker, tempReplyNameColor); }); openBtn.addEventListener('click', () => { const userSettings = (allUsersData[currentUser.uid] || {}).settings || {}; tempReplyBoxColor = userSettings.replyColor || null; tempReplyNameColor = userSettings.replyNameColor || null; selectSwatch(boxColorPicker, tempReplyBoxColor); selectSwatch(nameColorPicker, tempReplyNameColor); modal.classList.remove('hidden'); }); closeBtn.addEventListener('click', () => modal.classList.add('hidden')); saveBtn.addEventListener('click', () => { const settings = { replyColor: tempReplyBoxColor, replyNameColor: tempReplyNameColor }; database.ref('users/' + currentUser.uid + '/settings').update(settings).then(() => { if (!allUsersData[currentUser.uid]) allUsersData[currentUser.uid] = {}; allUsersData[currentUser.uid].settings = settings; alert('Settings saved successfully!'); modal.classList.add('hidden'); }).catch(err => alert('Error saving settings: ' + err.message)); });}
+        function setupTypingIndicator() { const typingIndicatorEl = document.getElementById('typing-indicator');let typingTimeout;messageInput.addEventListener('input', () => {if (messageInput.value.trim().length > 0) {typingRef.child(currentUser.uid).set(firebase.database.ServerValue.TIMESTAMP);clearTimeout(typingTimeout);typingTimeout = setTimeout(() => {typingRef.child(currentUser.uid).remove();}, 3000);} else {clearTimeout(typingTimeout);typingRef.child(currentUser.uid).remove();}});typingRef.on('value', (snapshot) => {const typingUsers = snapshot.val() || {};const now = Date.now();const activeTypingUsers = Object.keys(typingUsers).filter(uid => (now - typingUsers[uid] < 5000));if (activeTypingUsers.length > 0) {const firstUserUid = activeTypingUsers[0];const userData = allUsersData[firstUserUid] || {};let indicatorText;if (firstUserUid === currentUser.uid) {indicatorText = `<span class="font-semibold text-white">You</span><span> are typing</span>`;} else {indicatorText = `<img src="${userData.avatar || 'https://via.placeholder.com/42'}" class="w-5 h-5 rounded-full"><span class="font-semibold text-white">${userData.name || 'Someone'}</span><span> is typing</span>`;}typingIndicatorEl.innerHTML = `${indicatorText}<div class="typing-dot-container"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;typingIndicatorEl.classList.remove('hidden');typingIndicatorEl.style.opacity = '1';} else {typingIndicatorEl.style.opacity = '0';setTimeout(() => { typingIndicatorEl.classList.add('hidden'); }, 300);}});}
+        function setupInputListeners() { const charCounter = document.getElementById('char-counter');const maxChars = 30;messageInput.addEventListener('input', () => {const text = messageInput.value;const remaining = maxChars - text.length;charCounter.textContent = remaining;charCounter.className = 'absolute top-1/2 -translate-y-1/2 font-bold text-sm';if (remaining < 0) charCounter.classList.add('red');else if (remaining <= 10) charCounter.classList.add('yellow');else charCounter.classList.add('green');if (text.trim().length > 0 && remaining >= 0) {sendBtn.classList.add('ready-to-send');sendBtn.disabled = false;} else {sendBtn.classList.remove('ready-to-send');sendBtn.disabled = true;}messageInput.style.height = 'auto';messageInput.style.height = `${Math.min(messageInput.scrollHeight, 120)}px`;});sendBtn.addEventListener('click', sendMessage);messageInput.addEventListener('keydown', e => {if (e.key === 'Enter' && !e.shiftKey) {e.preventDefault();sendMessage();}});}
+        function cancelReply() { replyToMessage = null; replyIndicator.classList.add('hidden'); replyIndicator.classList.remove('flex'); }
+        function scrollToBottom(smooth = false) { messagesContainer.scrollTo({ top: messagesContainer.scrollHeight, behavior: smooth ? 'smooth' : 'auto' }); }
+        function setupReplyListeners() { document.getElementById('cancel-reply-btn').addEventListener('click', cancelReply); }
+        function setupScrollListener() { messagesContainer.addEventListener('scroll', () => { const isScrolledUp = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight > 200; if (isScrolledUp) { scrollToBottomBtn.classList.remove('hidden'); } else { scrollToBottomBtn.classList.add('hidden'); } }); scrollToBottomBtn.addEventListener('click', () => { scrollToBottom(true); }); }
+        function setupSwipeToReply() { let isDragging = false, startX = 0, deltaX = 0, draggedElement = null, iconElement = null; const swipeThreshold = -60, maxSwipe = -70; const getEventX = e => e.touches ? e.touches[0].clientX : e.clientX; const onDragStart = (e) => { const target = e.target.closest('.message-container'); if (!target) return; draggedElement = target; iconElement = target.previousElementSibling; startX = getEventX(e); isDragging = true; draggedElement.style.transition = 'none'; }; const onDragMove = (e) => { if (!isDragging || !draggedElement) return; deltaX = getEventX(e) - startX; if (deltaX > 0) deltaX = 0; if (deltaX < maxSwipe) deltaX = maxSwipe; draggedElement.style.transform = `translateX(${deltaX}px)`; iconElement.style.opacity = (Math.abs(deltaX) / Math.abs(maxSwipe)); }; const onDragEnd = () => { if (!isDragging || !draggedElement) return; isDragging = false; draggedElement.style.transition = 'transform 0.2s ease-out'; draggedElement.style.transform = 'translateX(0px)'; iconElement.style.opacity = 0; if (deltaX <= swipeThreshold) setReply(draggedElement); draggedElement = null; deltaX = 0; }; messagesContainer.addEventListener('mousedown', onDragStart); messagesContainer.addEventListener('touchstart', onDragStart, { passive: true }); document.addEventListener('mousemove', onDragMove); document.addEventListener('touchmove', onDragMove, { passive: true }); document.addEventListener('mouseup', onDragEnd); document.addEventListener('touchend', onDragEnd); }
+        function setupReplyNavigation() { messagesContainer.addEventListener('click', e => { const replyBox = e.target.closest('.replied-message-block'); if (!replyBox) return; const targetId = replyBox.dataset.replyToId; const targetMessage = document.querySelector(`.message-container[data-message-id="${targetId}"]`); if (targetMessage) { targetMessage.scrollIntoView({ behavior: 'smooth', block: 'center' }); targetMessage.classList.add('highlight'); setTimeout(() => targetMessage.classList.remove('highlight'), 2000); } }); }
+    </script>
+</body>
+</html>
