@@ -87,7 +87,7 @@
         .action-button:active:not(:disabled), .booking-btn:active, .manage-btn:active { box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); transform: translateY(1px); }
         .action-button:disabled { background: #555; cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.7; }
         
-        main { background: #121212; padding-bottom: 90px !important; }
+        main { background: #121212; padding-bottom: 130px !important; }
         .spinner { border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: #ffffff; width: 18px; height: 18px; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .password-toggle { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); cursor: pointer; color: #9ca3af; }
@@ -112,25 +112,109 @@
         #splash-screen-lottie { position: absolute; opacity: 1; transform: scale(1); }
         #splash-screen-logo { position: absolute; opacity: 0; transform: scale(0.5); }
 
-        /* NAVBAR Styles */
-        .nav-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 500px; z-index: 200; transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.5s; transform-style: preserve-3d; perspective: 1000px; }
-        .nav-bar { position: relative; display: flex; justify-content: space-around; align-items: center; background-color: #212124; padding: 8px; border-radius: 9999px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); }
-        .nav-item { display: flex; align-items: center; justify-content: center; padding: 12px 16px; cursor: pointer; color: #a1a1aa; position: relative; z-index: 10; transition: color 0.3s ease-out; border-radius: 9999px; }
-        .nav-item .nav-icon { font-size: 20px; transition: color 0.3s ease-out; }
-        .nav-item .nav-label { font-weight: 600; font-size: 14px; white-space: nowrap; margin-left: 0; max-width: 0; opacity: 0; overflow: hidden; transition: max-width 0.3s ease-out, opacity 0.2s 0.1s ease-out, margin-left 0.3s ease-out; }
-        .nav-item.active { color: #212124; }
-        .nav-item.active .nav-label { max-width: 100px; opacity: 1; margin-left: 10px; }
-        #nav-indicator { position: absolute; top: 8px; height: calc(100% - 16px); background-color: #ffffff; border-radius: 9999px; z-index: 5; transition: all 0.35s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
         
-        /* Nav Hiding */
-        .nav-hidden-left { transform: translateX(-150%) rotateY(-60deg) scale(0.8) !important; opacity: 0; pointer-events: none; }
-        .nav-hidden-right { transform: translateX(150%) rotateY(60deg) scale(0.8) !important; opacity: 0; pointer-events: none; }
-        .nav-restore-btn { position: fixed; bottom: 35px; width: 40px; height: 50px; background: rgba(33, 33, 36, 0.9); border: 1px solid rgba(255,255,255,0.2); z-index: 199; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #1DB954; font-size: 1.2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: all 0.3s ease; opacity: 0; pointer-events: none; backdrop-filter: blur(5px); }
-        .nav-restore-left { left: 0; border-radius: 0 12px 12px 0; transform: translateX(-100%); }
-        .nav-restore-right { right: 0; border-radius: 12px 0 0 12px; transform: translateX(100%); }
-        .nav-restore-btn.visible { opacity: 1; pointer-events: auto; transform: translateX(0); }
+        /* NAVBAR Styles (Patched) */
+        .nav-container { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            z-index: 200; 
+            background-color: rgba(18, 18, 18, 0.95); 
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,0.1); 
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .nav-bar { 
+            position: relative; 
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center; 
+            background-color: transparent; 
+            padding: 8px 0; 
+            box-shadow: none; 
+            border: none;
+            border-radius: 0;
+        }
+        .nav-item { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 8px; 
+            cursor: pointer; 
+            color: #71717a; 
+            position: relative; 
+            z-index: 10; 
+            transition: all 0.3s ease; 
+            flex: 1;
+        }
+        .nav-item .nav-icon { 
+            font-size: 20px; 
+            margin-bottom: 4px;
+            transition: all 0.3s ease;
+        }
+        .nav-item .nav-label { 
+            font-size: 10px; 
+            font-weight: 500; 
+            opacity: 1; 
+            max-width: none; 
+            margin-left: 0; 
+            white-space: nowrap;
+        }
+        .nav-item.active { 
+            color: #1DB954; 
+        }
+        
+        /* Special Chat Icon Style */
+        .nav-item-chat {
+            position: relative;
+            transform: translateY(-25px);
+        }
+        .nav-item-chat .chat-icon-bg {
+            width: 56px;
+            height: 56px;
+            background: #18181b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            border: 3px solid #121212; 
+        }
+        /* Glowing Gradient Border */
+        .nav-item-chat .chat-icon-bg::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            padding: 2px; 
+            background: linear-gradient(135deg, #06b6d4, #1DB954, #a855f7); 
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: spin-glow 3s linear infinite;
+        }
+        .nav-item-chat i {
+            font-size: 24px;
+            color: #fff;
+            z-index: 2;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+        .nav-item-chat .nav-label {
+            margin-top: 4px;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(29, 185, 84, 0.5);
+        }
 
-        /* General Styles */
+        /* Remove Old Floating Styles */
+        #nav-indicator, .nav-restore-btn { display: none !important; }
+        .nav-hidden-left, .nav-hidden-right { transform: none !important; opacity: 1 !important; pointer-events: auto !important; }
+        
+        @keyframes spin-glow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+        
+/* General Styles */
         /* --- IMAGE LOADING OPTIMIZATION --- */
         img {
             transition: opacity 0.3s ease-in-out;
@@ -388,6 +472,106 @@
         .profile-info-value { font-size: 0.9rem; color: #e5e7eb; font-weight: 500; text-align: right; cursor: pointer; transition: filter 0.2s ease; }
         .profile-info-value.blurred { filter: blur(4px); user-select: none; }
         /* --- END PROFILE REVAMP --- */
+        
+        /* --- NEW: PREMIUM PROFILE REDESIGN --- */
+        #profile-content {
+            background-color: #000;
+        }
+        #profile-banner {
+            border-bottom-left-radius: 2rem;
+            border-bottom-right-radius: 2rem;
+            overflow: hidden;
+        }
+        #profile-banner-media video,
+        #profile-banner-media img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        #profile-uid-pill {
+            background-color: rgba(20, 20, 20, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        #profile-edit-icon-btn {
+            background-color: rgba(20, 20, 20, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        #premium-profile-avatar {
+            border: 4px solid #121212;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+        }
+        .premium-section-header {
+            text-align: center;
+            color: #a1a1aa;
+            font-weight: 600;
+            font-size: 0.9rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .premium-section-header::before,
+        .premium-section-header::after {
+            content: '';
+            flex-grow: 1;
+            height: 1px;
+            background: #3a3a3a;
+        }
+        #profile-badges-container .badge-slot {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #profile-badges-container .badge-slot img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .title-card {
+            background: #1e1e1e;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid #3a3a3a;
+        }
+        .title-card img {
+            display: block;
+        }
+        #my-team-card-content .team-card,
+        #my-team-card-content .no-team-card {
+            background-color: #1e1e1e;
+            border: 1px solid #3a3a3a;
+            border-radius: 1rem;
+            padding: 1rem;
+        }
+        #my-team-card-content .team-logo {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #4a4a4a;
+        }
+        #my-team-card-content .rank-score {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        #my-team-card-content .rank-change-arrows {
+            display: flex;
+            flex-direction: column;
+            font-size: 1.25rem;
+            margin-left: 0.25rem;
+        }
+        /* Hide old elements */
+        #profile-header-card, #profile-info-card, #edit-profile-btn {
+            display: none !important;
+        }
+        /* --- END PREMIUM PROFILE REDESIGN --- */
 
         /* NEW News Post & Voting Styles */
         .poll-option-btn { background-color: #3a3a3a; border: 2px solid #3a3a3a; }
@@ -731,7 +915,56 @@
         .slider.round { border-radius: 34px; }
         .slider.round:before { border-radius: 50%; }
 
-    </style>
+    
+        
+        /* --- TITLE & BADGE STYLING --- */
+#profile-badges-container { /* Separated from #my-titles-grid */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-top: 0.5rem;
+    min-height: 40px; /* Prevent collapse */
+}
+#my-titles-grid { /* New rule to enforce grid layout from HTML class */
+    display: grid;
+    width: 100%;
+    max-width: 340px; /* Set a max-width for aesthetics */
+    margin: 0.5rem auto 0 auto; /* Center the grid container */
+    min-height: 40px;
+}
+.badge-slot, .title-slot {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0; margin: 0;
+}
+.badge-slot { width: 40px; height: 40px; }
+.title-slot { 
+    width: 100%; /* Fill grid cell */
+    height: 48px;  /* Increased height */
+}
+        
+        .badge-slot img, .badge-slot video, 
+        .title-slot img {
+            width: 100%; height: 100%; object-fit: contain;
+            background-color: transparent !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            filter: none !important;
+        }
+        .empty-text-bn {
+            color: #6b7280; 
+            font-size: 0.8rem; 
+            text-align: center;
+            width: 100%;
+            padding: 10px;
+        }
+            
+</style>
 </head>
 <body class="overflow-hidden">
     
@@ -1215,119 +1448,186 @@
                     <div id="my-requests-section" class="tab-content-section space-y-4"></div>
                 </div>
 
-                <div id="profile-content" class="dashboard-page hidden p-4">
-                    <!-- NEW: Profile Completion Prompt Placeholder -->
-                    <div id="profile-completion-prompt-container" class="mb-6"></div>
-                    
-                    <!-- UPDATED: Profile Header Card -->
-                    <div id="profile-header-card" class="mb-4">
-                        <div id="profile-header-background-media"></div>
-                        <div class="profile-header-card-overlay"></div>
-                        <div class="profile-header-card-content flex items-center gap-4">
-                            <div class="profile-avatar-container">
-                                <img id="profile-page-avatar" src="" class="w-full h-full rounded-full object-cover border-2 border-gray-600" loading="lazy">
-                                <img id="profile-avatar-frame" src="" class="hidden">
-                            </div>
-                            <!-- UPDATED: Name/UID block is now inside here -->
-                            <div id="profile-name-uid-block">
-                                <div id="profile-page-name-badge" class="flex items-center gap-2">
-                                    <h2 id="dashboard-user-name" class="text-2xl font-bold text-white truncate"></h2>
-                                    <!-- Profile badge will be inserted here by JS -->
+                <div id="profile-content" class="dashboard-page hidden p-0">
+                    <div id="premium-profile-container" class="w-full text-white">
+                        <!-- 1. Background Banner -->
+                        <div id="profile-banner" class="relative w-full h-40 bg-gray-800">
+                            <div id="profile-banner-media" class="w-full h-full"></div>
+                            <div id="profile-banner-overlay" class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                            
+                            <div class="absolute top-4 right-4 flex flex-col items-end gap-2 z-10">
+                                <div id="profile-uid-pill" class="flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer">
+                                    <i class="fa-solid fa-fingerprint text-gray-400"></i>
+                                    <span class="font-bold text-sm">UID:</span>
+                                    <span id="profile-page-uid" class="font-mono text-sm"></span>
+                                    <i class="fa-solid fa-copy text-gray-400"></i>
                                 </div>
-                                <div class="flex items-center gap-2 mt-1">
-                                    <p class="text-sm text-gray-400">UID: <span id="dashboard-user-uid"></span></p>
-                                    <div id="copy-uid-btn" class="text-xs text-gray-500 hover:text-white bg-gray-700 p-1 rounded cursor-pointer"><i class="fa-solid fa-copy"></i></div>
+                                <button id="profile-edit-icon-btn" class="w-10 h-10 rounded-full flex items-center justify-center">
+                                    <i class="fa-solid fa-pencil"></i>
+                                </button>
+                            </div>
+                        </div>
+                
+                        <!-- 2. Main content area below banner -->
+                        <div class="relative px-4 pb-4 -mt-14">
+                            <!-- Avatar -->
+                            <div class="flex justify-center">
+                                <div id="premium-avatar-container" class="relative w-28 h-28">
+                                    <img id="premium-profile-avatar" src="" class="w-full h-full rounded-full object-cover">
+                                    <img id="premium-profile-avatar-frame" src="" class="absolute top-1/2 left-1/2 w-[140%] h-[140%] -translate-x-1/2 -translate-y-1/2 object-contain pointer-events-none hidden">
+                                </div>
+                            </div>
+                
+                            <!-- User Name -->
+                            <h2 id="premium-user-name" class="text-3xl font-bold text-center mt-3">USER NAME</h2>
+                
+                            <!-- Follow Stats -->
+                            <div id="follow-stats-container" class="flex justify-center items-center gap-8 mt-4">
+                                <!-- JS will populate this -->
+                            </div>
+                
+                            <!-- Badges -->
+                            <div id="profile-badges-container" class="flex justify-center items-center gap-2 mt-6">
+                                <!-- JS will populate this -->
+                            </div>
+                            
+                            <!-- My Title Section -->
+                            <div id="my-titles-section" class="mt-8">
+                                <h3 class="premium-section-header">MY TITLE</h3>
+                                <div id="my-titles-grid" class="grid grid-cols-2 gap-3 mt-3">
+                                    <!-- JS will populate this -->
+                                </div>
+                            </div>
+                            
+                            <!-- My Team Section -->
+                            <div id="my-team-section" class="mt-8">
+                                <h3 class="premium-section-header">MY TEAM</h3>
+                                <div id="my-team-card-content" class="mt-3">
+                                    <!-- JS will populate this with team data or empty state -->
+                                </div>
+                            </div>
+                
+                            <!-- Existing Settings Section (Moved) -->
+                            <div id="profile-settings-section" class="mt-8">
+                                <div class="space-y-4">
+                                    <div>
+                                        <div id="profile-completion-prompt-container" class="mb-6"></div>
+                                        <h4 class="section-header">Account</h4>
+                                        <div class="space-y-3">
+                                            <button id="profile-wallet-button" class="setting-item">
+                                                <div class="flex items-center">
+                                                    <div class="setting-icon bg-icon-green"><i class="fa-solid fa-wallet"></i></div>
+                                                    <span class="setting-label">My Wallet</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-right text-gray-500"></i>
+                                            </button>
+                                            <button id="lup-wallet-button" class="setting-item">
+                                                <div class="flex items-center">
+                                                    <div class="setting-icon bg-icon-yellow"><i class="fa-solid fa-coins"></i></div>
+                                                    <span class="setting-label">L-UP Wallet</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-right text-gray-500"></i>
+                                            </button>
+                                            <button id="create-team-button" class="setting-item">
+                                                <div class="flex items-center">
+                                                    <div class="setting-icon bg-icon-orange"><i class="fa-solid fa-users"></i></div>
+                                                    <span class="setting-label">My Team</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-right text-gray-500"></i>
+                                            </button>
+                                            <button id="manage-posts-button" class="setting-item">
+                                                <div class="flex items-center">
+                                                    <div class="setting-icon bg-icon-purple"><i class="fa-solid fa-handshake-angle"></i></div>
+                                                    <span class="setting-label">Guild & Squad Post</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-right text-gray-500"></i>
+                                            </button>
+                                            <button id="change-password-button" class="setting-item">
+                                                <div class="flex items-center">
+                                                    <div class="setting-icon bg-icon-blue"><i class="fa-solid fa-key"></i></div>
+                                                    <span class="setting-label">Change Password</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-right text-gray-500"></i>
+                                            </button>
+                                            <button id="mailbox-button" class="setting-item relative">
+                                                <div class="flex items-center">
+                                                    <div class="setting-icon bg-icon-yellow"><i class="fa-solid fa-envelope"></i></div>
+                                                    <span class="setting-label">Mailbox</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-right text-gray-500"></i>
+                                            </button>
+                                            <button id="help-button-profile" class="setting-item">
+                                                <div class="flex items-center">
+                                                    <div class="setting-icon bg-icon-cyan"><i class="fa-solid fa-headset"></i></div>
+                                                    <span class="setting-label">Help & Community</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-right text-gray-500"></i>
+                                            </button>
+                                             <button id="logout-button-settings" class="setting-item">
+                                                <div class="flex items-center">
+                                                    <div class="setting-icon bg-icon-red"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
+                                                    <span class="setting-label">Logout</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-right text-gray-500"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <p class="text-center text-gray-600 mt-4 pb-4 text-sm">App ver 1.1.0</p>
+                        </div>
+                    </div>
+                   
+
+                    <!-- OLD PROFILE STRUCTURE - HIDDEN BY DEFAULT -->
+                    <div class="hidden">
+                        <!-- NEW: Profile Completion Prompt Placeholder -->
+                        <div id="profile-completion-prompt-container" class="mb-6"></div>
+                        
+                        <!-- UPDATED: Profile Header Card -->
+                        <div id="profile-header-card" class="mb-4">
+                            <div id="profile-header-background-media"></div>
+                            <div class="profile-header-card-overlay"></div>
+                            <div class="profile-header-card-content flex items-center gap-4">
+                                <div class="profile-avatar-container">
+                                    <img id="profile-page-avatar" src="" class="w-full h-full rounded-full object-cover border-2 border-gray-600" loading="lazy">
+                                    <img id="profile-avatar-frame" src="" class="hidden">
+                                </div>
+                                <!-- UPDATED: Name/UID block is now inside here -->
+                                <div id="profile-name-uid-block">
+                                    <div id="profile-page-name-badge" class="flex items-center gap-2">
+                                        <h2 id="dashboard-user-name" class="text-2xl font-bold text-white truncate"></h2>
+                                        <!-- Profile badge will be inserted here by JS -->
+                                    </div>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <p class="text-sm text-gray-400">UID: <span id="dashboard-user-uid"></span></p>
+                                        <div id="copy-uid-btn" class="text-xs text-gray-500 hover:text-white bg-gray-700 p-1 rounded cursor-pointer"><i class="fa-solid fa-copy"></i></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- UPDATED: Profile Info Card -->
-                    <div class="profile-info-card mb-6">
-                        <div class="profile-info-item">
-                            <span class="profile-info-label">Email</span>
-                            <span class="flex items-center gap-2">
-                                <span id="profile-page-email" class="profile-info-value blurred" data-full-email=""></span>
-                                <i id="toggle-email-visibility" class="fa-solid fa-eye text-gray-500 cursor-pointer"></i>
-                            </span>
-                        </div>
-                        <div class="profile-info-item" id="profile-page-team-container">
-                             <!-- Team Name and Badge will be inserted here by JS -->
-                        </div>
-                        <div class="profile-info-item">
-                            <span class="profile-info-label">Joined</span>
-                            <span id="profile-page-join-date" class="profile-info-value !cursor-default"></span>
-                        </div>
-                    </div>
-                    <button id="edit-profile-btn" class="w-full mb-6 py-2 action-button rounded-lg text-sm font-bold">Edit Profile</button>
-
-
-                    <div class="space-y-4">
-                        <div>
-                            <h4 class="section-header">Account</h4>
-                            <div class="space-y-3">
-                                <button id="profile-wallet-button" class="setting-item">
-                                    <div class="flex items-center">
-                                        <div class="setting-icon bg-icon-green"><i class="fa-solid fa-wallet"></i></div>
-                                        <span class="setting-label">My Wallet</span>
-                                    </div>
-                                    <i class="fa-solid fa-chevron-right text-gray-500"></i>
-                                </button>
-                                <button id="lup-wallet-button" class="setting-item">
-                                    <div class="flex items-center">
-                                        <div class="setting-icon bg-icon-yellow"><i class="fa-solid fa-coins"></i></div>
-                                        <span class="setting-label">L-UP Wallet</span>
-                                    </div>
-                                    <i class="fa-solid fa-chevron-right text-gray-500"></i>
-                                </button>
-                                <button id="create-team-button" class="setting-item">
-                                    <div class="flex items-center">
-                                        <div class="setting-icon bg-icon-orange"><i class="fa-solid fa-users"></i></div>
-                                        <span class="setting-label">My Team</span>
-                                    </div>
-                                    <i class="fa-solid fa-chevron-right text-gray-500"></i>
-                                </button>
-                                <button id="manage-posts-button" class="setting-item">
-                                    <div class="flex items-center">
-                                        <div class="setting-icon bg-icon-purple"><i class="fa-solid fa-handshake-angle"></i></div>
-                                        <span class="setting-label">Guild & Squad Post</span>
-                                    </div>
-                                    <i class="fa-solid fa-chevron-right text-gray-500"></i>
-                                </button>
-                                <button id="change-password-button" class="setting-item">
-                                    <div class="flex items-center">
-                                        <div class="setting-icon bg-icon-blue"><i class="fa-solid fa-key"></i></div>
-                                        <span class="setting-label">Change Password</span>
-                                    </div>
-                                    <i class="fa-solid fa-chevron-right text-gray-500"></i>
-                                </button>
-                                <button id="mailbox-button" class="setting-item relative">
-                                    <div class="flex items-center">
-                                        <div class="setting-icon bg-icon-yellow"><i class="fa-solid fa-envelope"></i></div>
-                                        <span class="setting-label">Mailbox</span>
-                                    </div>
-                                    <i class="fa-solid fa-chevron-right text-gray-500"></i>
-                                </button>
-                                <button id="help-button-profile" class="setting-item">
-                                    <div class="flex items-center">
-                                        <div class="setting-icon bg-icon-cyan"><i class="fa-solid fa-headset"></i></div>
-                                        <span class="setting-label">Help & Community</span>
-                                    </div>
-                                    <i class="fa-solid fa-chevron-right text-gray-500"></i>
-                                </button>
-                                 <button id="logout-button-settings" class="setting-item">
-                                    <div class="flex items-center">
-                                        <div class="setting-icon bg-icon-red"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
-                                        <span class="setting-label">Logout</span>
-                                    </div>
-                                    <i class="fa-solid fa-chevron-right text-gray-500"></i>
-                                </button>
+                        
+                        <!-- UPDATED: Profile Info Card -->
+                        <div class="profile-info-card mb-6">
+                            <div class="profile-info-item">
+                                <span class="profile-info-label">Email</span>
+                                <span class="flex items-center gap-2">
+                                    <span id="profile-page-email" class="profile-info-value blurred" data-full-email=""></span>
+                                    <i id="toggle-email-visibility" class="fa-solid fa-eye text-gray-500 cursor-pointer"></i>
+                                </span>
+                            </div>
+                            <div class="profile-info-item" id="profile-page-team-container">
+                                 <!-- Team Name and Badge will be inserted here by JS -->
+                            </div>
+                            <div class="profile-info-item">
+                                <span class="profile-info-label">Joined</span>
+                                <span id="profile-page-join-date" class="profile-info-value !cursor-default"></span>
                             </div>
                         </div>
+                        <button id="edit-profile-btn" class="w-full mb-6 py-2 action-button rounded-lg text-sm font-bold">Edit Profile</button>
                     </div>
-
-                    <p class="text-center text-gray-600 mt-8 text-sm">App ver 1.1.0</p>
                 </div>
+
 
                 <div id="team-form-content" class="dashboard-page hidden p-4 md:p-6">
                     <div id="team-view-mode" class="hidden relative"></div>
@@ -1433,6 +1733,31 @@
                             </div>
                             <button type="button" id="customize-profile-inventory-btn" class="w-full py-2 bg-blue-600/20 text-blue-300 border border-blue-500/50 rounded-lg font-semibold text-sm">Customize from Inventory</button>
                         </div>
+                        
+                        <!-- Badge & Title Management -->
+                        <div class="bg-[#1e1e1e] border border-gray-700 rounded-xl p-4 space-y-4">
+                            <h3 class="font-bold text-lg text-green-400">Manage Badges (Max 5)</h3>
+                            <div id="badge-equip-slots" class="grid grid-cols-7 gap-1">
+                                <!-- 5 slots will be generated here -->
+                            </div>
+                            <div class="border-t border-gray-600 my-4"></div>
+                            <h4 class="font-semibold text-gray-300">Your Available Badges</h4>
+                            <div id="available-badges-container" class="grid grid-cols-5 gap-2">
+                                <!-- Available badges from inventory will be shown here -->
+                            </div>
+                        </div>
+                        <div class="bg-[#1e1e1e] border border-gray-700 rounded-xl p-4 space-y-4">
+                            <h3 class="font-bold text-lg text-green-400">Manage Titles (Max 4)</h3>
+                            <div id="title-equip-slots" class="grid grid-cols-2 gap-3">
+                                <!-- 4 slots will be generated here -->
+                            </div>
+                            <div class="border-t border-gray-600 my-4"></div>
+                            <h4 class="font-semibold text-gray-300">Your Available Titles</h4>
+                            <div id="available-titles-container" class="grid grid-cols-2 gap-3">
+                                <!-- Available titles will be shown here -->
+                            </div>
+                        </div>
+
 
                         <button type="submit" class="w-full py-3 mt-4 rounded-xl action-button text-lg flex items-center justify-center h-[48px]">Save Changes</button>
                     </form>
@@ -1616,7 +1941,7 @@
             <a href="#" id="nav-home" class="nav-item active"><i class="fa-solid fa-house nav-icon"></i><span class="nav-label">Home</span></a>
             <a href="#" id="nav-search" class="nav-item"><i class="fa-solid fa-magnifying-glass nav-icon"></i><span class="nav-label">Search</span></a>
             <a href="#" id="nav-my-matches" class="nav-item"><i class="fa-solid fa-trophy nav-icon"></i><span class="nav-label">My Matches</span></a>
-            <a href="#" id="nav-social-chat" class="nav-item"><i class="fa-solid fa-comments nav-icon"></i><span class="nav-label">Social Chat</span></a>
+            <a href="#" id="nav-social-chat" class="nav-item"><i class="fa-solid fa-comments nav-icon"></i><span class="nav-label">community</span></a>
             <a href="#" id="nav-profile" class="nav-item"><i class="fa-solid fa-user nav-icon"></i><span class="nav-label">Profile</span></a>
         </nav>
     </div>
@@ -1965,7 +2290,8 @@
                         'topup-screen': 'topup-header', 'topup-history-content': 'topup-history-header', 'mailbox-content': 'mailbox-header', 'history-content': 'history-header',
                         'redeem-content': 'redeem-header', 'lucky-box-content': 'lucky-box-header', 'edit-profile-content': 'edit-profile-header',
                         'change-password-content': 'change-password-header', 'manage-posts-content': 'manage-posts-header',
-                        'profile-content': 'profile-header', 'help-community-content': 'help-community-header', 'video-tutorials-content': 'video-tutorials-header',
+                        'profile-content': null, // No header for new profile
+                        'help-community-content': 'help-community-header', 'video-tutorials-content': 'video-tutorials-header',
                         'buy-sell-content': 'buy-sell-header',
                         'payment-content': 'payment-header', 'booking-content': 'booking-header', 'participant-list-content': 'participant-list-header',
                         'results-submission-content': 'results-submission-header', 'sponsor-profile-content': 'sponsor-profile-header',
@@ -1976,17 +2302,23 @@
                         'complete-profile-content': 'complete-profile-header',
                         'social-chat-content': 'social-chat-header'
                     };
-
-                    const headerId = headerMap[pageId] || 'main-header';
-                    const headerElement = document.getElementById(headerId);
                     
-                    if (headerId !== 'main-header') {
-                        if (headerElement) headerElement.classList.remove('hidden');
-                    } else {
-                        const homeSearchHeader = document.getElementById('home-search-header');
-                        if (homeSearchHeader && !homeSearchHeader.classList.contains('hidden')) {
-                        } else if(headerElement) {
-                             headerElement.classList.remove('hidden');
+                    let headerId = headerMap[pageId];
+
+                    if (pageId !== 'profile-content') { // Show header for all pages except profile
+                         if (!headerId) {
+                            headerId = 'main-header';
+                        }
+                        const headerElement = document.getElementById(headerId);
+                        if (headerId !== 'main-header') {
+                            if (headerElement) headerElement.classList.remove('hidden');
+                        } else {
+                            const homeSearchHeader = document.getElementById('home-search-header');
+                            if (homeSearchHeader && !homeSearchHeader.classList.contains('hidden')) {
+                                // do nothing, search is active
+                            } else if (headerElement) {
+                                headerElement.classList.remove('hidden');
+                            }
                         }
                     }
 
@@ -2199,6 +2531,170 @@
                 // [NEW] Reads from persistent stats node
                 const stats = userData.stats || { totalKills: 0, totalMatches: 0, totalWins: 0 };
             }
+            
+            function renderPremiumProfile(user, userData) {
+                const name = user.displayName || userData.name; 
+                const avatar = userData.avatar || DEFAULT_AVATAR;
+                const customizations = userData.profileCustomization || {};
+
+                // Banner & Overlap
+                document.getElementById('profile-banner-media').innerHTML = '';
+                if (userData.equippedEffect) {
+                    const effectData = window.dbData.admin?.config?.profileEffects?.[userData.equippedEffect];
+                    if(effectData) {
+                        const mediaTag = effectData.url.includes('.mp4') ? 'video' : 'img';
+                        document.getElementById('profile-banner-media').innerHTML = `<${mediaTag} src="${effectData.url}" ${mediaTag === 'video' ? 'autoplay loop muted playsinline' : ''}></${mediaTag}>`;
+                    }
+                } else {
+                    document.getElementById('profile-banner-media').innerHTML = `<img src="https://i.imgur.com/x07tkmR.jpg" alt="Default Banner">`;
+                }
+                // Blur Fix
+                const bannerOverlay = document.getElementById('profile-banner-overlay');
+                bannerOverlay.style.backdropFilter = `blur(${customizations.bgBlur || 0}px)`;
+
+                // UID
+                document.getElementById('profile-page-uid').textContent = userData.userId;
+                const uidPill = document.getElementById('profile-uid-pill');
+                uidPill.onclick = () => {
+                    navigator.clipboard.writeText(userData.userId).then(() => {
+                        const copyIcon = uidPill.querySelector('.fa-copy');
+                        copyIcon.classList.remove('fa-copy');
+                        copyIcon.classList.add('fa-check', 'text-green-400');
+                        setTimeout(() => {
+                            copyIcon.classList.add('fa-copy');
+                            copyIcon.classList.remove('fa-check', 'text-green-400');
+                        }, 1500);
+                    });
+                };
+
+                // Avatar & Frame
+                document.getElementById('premium-profile-avatar').src = avatar;
+                const avatarFrame = document.getElementById('premium-profile-avatar-frame');
+                avatarFrame.classList.add('hidden'); 
+                if (userData.equippedFrame) {
+                    const frameData = window.dbData.admin?.config?.profileFrames?.[userData.equippedFrame];
+                    if(frameData) {
+                        avatarFrame.src = frameData.url;
+                        avatarFrame.classList.remove('hidden');
+                    }
+                }
+
+                // Username & Color fix
+                const usernameEl = document.getElementById('premium-user-name');
+                usernameEl.textContent = name;
+                usernameEl.style.color = customizations.textColor || '#FFFFFF';
+
+                // Follow Stats
+                const followStatsContainer = document.getElementById('follow-stats-container');
+                followStatsContainer.innerHTML = `
+                    <div class="text-center">
+                        <p class="text-3xl font-bold font-oswald">${userData.followersCount || '00'}</p>
+                        <p class="text-xs text-gray-400 uppercase tracking-wider">Followers</p>
+                    </div>
+                    <div class="w-px h-8 bg-gray-700"></div>
+                    <div class="text-center">
+                        <p class="text-3xl font-bold font-oswald">${userData.followingCount || '00'}</p>
+                        <p class="text-xs text-gray-400 uppercase tracking-wider">Following</p>
+                    </div>
+                `;
+
+                // Badges
+                renderPremiumProfileBadges(userData);
+
+                // Titles
+                renderPremiumProfileTitles(userData);
+
+                // My Team
+                const teamCardContainer = document.getElementById('my-team-card-content');
+                if (userData.team) {
+                    const leaderboardData = getFullLeaderboardData();
+                    const myTeamRankData = leaderboardData.find(t => t.team.id === userData.team.id);
+                    const rankScore = myTeamRankData ? myTeamRankData.points : (userData.team.rankScore || 0);
+                    const teamUID = userData.team.teamUid ? `@${userData.team.teamUid}` : `Joined: ${new Date(userData.team.id).toLocaleDateString()}`;
+
+                    teamCardContainer.innerHTML = `
+                        <div class="team-card flex items-center justify-between gap-4">
+                            <div class="flex items-center gap-4">
+                                <img src="${userData.team.logo || DEFAULT_TEAM_LOGO}" class="team-logo" loading="lazy">
+                                <div>
+                                    <p class="font-bold text-lg">${userData.team.name}</p>
+                                    <p class="text-xs text-gray-500">${teamUID}</p>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <div class="flex items-center">
+                                    <p class="rank-score">${rankScore}</p>
+                                    <div class="rank-change-arrows">
+                                        <i class="fa-solid fa-caret-up text-green-500"></i>
+                                        <i class="fa-solid fa-caret-down text-red-500"></i>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-400 uppercase tracking-wider">Rank Score</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    teamCardContainer.innerHTML = `
+                        <div class="no-team-card text-center p-6">
+                            <p class="text-gray-500">You are not part of a team.</p>
+                            <button id="create-team-from-profile-btn" class="mt-4 py-2 px-6 action-button rounded-lg text-sm font-bold">Create a Team</button>
+                        </div>
+                    `;
+                    document.getElementById('create-team-from-profile-btn').addEventListener('click', () => {
+                        renderMyTeamPage(); 
+                        handleNavigation('team-form-content'); 
+                    });
+                }
+            }
+            
+            
+            
+            function renderPremiumProfileBadges(userData) {
+                const container = document.getElementById('profile-badges-container');
+                if(!container) return;
+
+                const allDbBadges = window.dbData.admin?.config?.verifiedBadges || {};
+                const equippedBadges = (userData.equippedBadges || []).filter(id => id && allDbBadges[id]);
+                
+                if (equippedBadges.length === 0) {
+                    container.innerHTML = '<p class="empty-text-bn">আপনার কোনো ব্যাজ নেই</p>';
+                    return;
+                }
+
+                let html = '';
+                equippedBadges.forEach(badgeId => {
+                    const badgeData = allDbBadges[badgeId];
+                    const mediaTag = badgeData.type === 'video' ? 'video' : 'img';
+                    const mediaSrc = `src="${badgeData.url}"`;
+                    const mediaAttrs = badgeData.type === 'video' ? 'autoplay loop muted playsinline' : 'loading="lazy"';
+                    html += `<div class="badge-slot"><${mediaTag} ${mediaSrc} ${mediaAttrs}></${mediaTag}></div>`;
+                });
+                container.innerHTML = html;
+            }
+            
+            
+
+            
+            function renderPremiumProfileTitles(userData) {
+                const container = document.getElementById('my-titles-grid');
+                if(!container) return;
+
+                const allDbTitles = window.dbData.admin?.config?.titles || {};
+                const equippedTitles = (userData.equippedTitles || []).filter(id => id && allDbTitles[id]);
+
+                if (equippedTitles.length === 0) {
+                    container.innerHTML = '<p class="empty-text-bn">আপনার কোনো টাইটেল নেই</p>';
+                    return;
+                }
+                
+                let html = '';
+                equippedTitles.forEach(titleId => {
+                    const titleData = allDbTitles[titleId];
+                    html += `<div class="title-slot"><img src="${titleData.url}" loading="lazy"></div>`;
+                });
+                container.innerHTML = html;
+            }
+            
 
             const populateDashboard = (user, userData) => {
                 if (!user || !userData) return;
@@ -2210,6 +2706,8 @@
                     userData.userId = newNumericId;
                     currentUserData.userId = newNumericId;
                 }
+                
+                renderPremiumProfile(user, userData);
                 
                 const name = user.displayName || userData.name; 
                 const avatar = userData.avatar || DEFAULT_AVATAR;
@@ -2229,105 +2727,7 @@
                 } else {
                     promptContainer.innerHTML = '';
                 }
-
                 
-                // --- PROFILE PAGE REVAMP ---
-                const emailEl = document.getElementById('profile-page-email');
-                emailEl.textContent = maskEmail(user.email);
-                emailEl.dataset.fullEmail = user.email;
-
-                const joinDate = new Date(user.metadata.creationTime);
-                document.getElementById('profile-page-join-date').textContent = joinDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                
-                const userNameEl = document.getElementById('dashboard-user-name');
-                const userUidEl = document.getElementById('dashboard-user-uid');
-                userNameEl.textContent = name;
-                userUidEl.textContent = userData.userId;
-
-                const teamContainer = document.getElementById('profile-page-team-container');
-                if (userData.team) {
-                    let teamBadgeHTML = '';
-                    if (userData.team.equippedBadge) { // Use equipped badge for display
-                        const allBadges = window.dbData.admin?.config?.verifiedBadges || {};
-                        const badgeData = allBadges[userData.team.equippedBadge];
-                        if (badgeData && badgeData.type === 'team') {
-                            teamBadgeHTML = `<img src="${badgeData.url}" class="verification-badge" data-badge-index="${userData.team.equippedBadge}">`;
-                        }
-                    }
-                    teamContainer.innerHTML = `
-                        <span class="profile-info-label">Team</span>
-                        <span class="profile-info-value flex items-center justify-end">${userData.team.name} ${teamBadgeHTML}</span>`;
-                    teamContainer.style.display = 'flex';
-                } else {
-                    teamContainer.style.display = 'none';
-                }
-
-                const copyUidBtn = document.getElementById('copy-uid-btn');
-                if(copyUidBtn) {
-                    copyUidBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        navigator.clipboard.writeText(userData.userId).then(() => {
-                            showModal('success', 'Copied!', `UID ${userData.userId} copied to clipboard.`);
-                        });
-                    };
-                }
-
-                // Profile Customizations
-                const profileHeaderCard = document.getElementById('profile-header-card');
-                const profileHeaderBg = document.getElementById('profile-header-background-media');
-                const profileOverlay = profileHeaderCard.querySelector('.profile-header-card-overlay');
-                const profileAvatarFrame = document.getElementById('profile-avatar-frame');
-                const profileNameBadgeContainer = document.getElementById('profile-page-name-badge');
-                
-                // Clear previous customizations
-                profileHeaderBg.innerHTML = '';
-                profileAvatarFrame.classList.add('hidden');
-                profileNameBadgeContainer.querySelector('.verification-badge')?.remove();
-                
-                const customizations = userData.profileCustomization || {};
-                profileOverlay.style.backdropFilter = `blur(${customizations.bgBlur || 0}px)`;
-                userNameEl.style.color = customizations.textColor || '#FFFFFF';
-                userUidEl.parentElement.style.color = customizations.textColor || '#a1a1aa';
-                
-                // Apply Profile Badge
-                if (userData.equippedProfileBadge) {
-                    const allBadges = window.dbData.admin?.config?.verifiedBadges || {};
-                    const badgeData = allBadges[userData.equippedProfileBadge];
-                    if (badgeData && badgeData.type === 'profile') {
-                        const badgeEl = document.createElement('img');
-                        badgeEl.src = badgeData.url;
-                        badgeEl.className = 'verification-badge';
-                        badgeEl.dataset.badgeIndex = userData.equippedProfileBadge;
-                        profileNameBadgeContainer.appendChild(badgeEl);
-                    }
-                }
-
-                // Apply Profile Frame
-                if (userData.equippedFrame) {
-                    const allFrames = window.dbData.admin?.config?.profileFrames || {};
-                    const frameData = allFrames[userData.equippedFrame];
-                    if(frameData) {
-                        profileAvatarFrame.src = frameData.url;
-                        profileAvatarFrame.classList.remove('hidden');
-                    }
-                }
-
-                // Apply Profile Background
-                if (userData.equippedEffect) {
-                    const allEffects = window.dbData.admin?.config?.profileEffects || {};
-                    const effectData = allEffects[userData.equippedEffect];
-                    if(effectData) {
-                         if (effectData.type === 'video') {
-                            profileHeaderBg.innerHTML = `<video src="${effectData.url}" autoplay loop muted playsinline></video>`;
-                        } else {
-                            profileHeaderBg.innerHTML = `<img src="${effectData.url}">`;
-                        }
-                    }
-                }
-                
-                // --- END PROFILE REVAMP ---
-
-                document.getElementById('profile-page-avatar').src = avatar;
                 document.getElementById('sidebar-username').textContent = name;
                 document.getElementById('sidebar-avatar').src = avatar;
                 
@@ -2402,7 +2802,7 @@
                         'history-content': renderHistoryPage,
                         'redeem-content': renderRedeemPage,
                         'profile-content': () => {
-                            updateProfileStats(currentUserDataFromDb);
+                            // The populateDashboard function already handles re-rendering the premium profile
                         },
                         'wallet-content': renderWalletPage,
                         'lup-wallet-screen': renderLupWalletPage,
@@ -2602,7 +3002,7 @@
                     setupProfilePageListeners();
                     setupHomeTabs();
                     setupSidebar();
-                    setupNavbarSwipe();
+                    // setupNavbarSwipe(); // Disabled for fixed nav
                     setupNewNavigationListeners();
                     animateHeaderTitle();
                     initializeCountdowns();
@@ -2685,8 +3085,9 @@
                         votes: {},
                         stats: { totalKills: 0, totalMatches: 0, totalWins: 0 },
                         coupons: {},
-                        earnedBadges: {}, // NEW: For user-specific badges
-                        inventory: { frames: {}, effects: {} }, // NEW: For frames and effects
+                        earnedBadges: {},
+                        earnedTitles: {}, // NEW
+                        inventory: { frames: {}, effects: {} },
                         isProfileComplete: true // Profile is complete for email signup
                     };
                     await database.ref('users/' + user.uid).set(newUserDbData);
@@ -2746,7 +3147,7 @@
                             team: null, bookings: {}, mailbox: {}, transactions: {}, storePurchaseCounters: {},
                             referralCode: generateReferralCode(), spinStats: { adSpins: 0, lastAdSpin: 0, boxSpins: 0 },
                             missionProgress: {}, votes: {}, stats: { totalKills: 0, totalMatches: 0, totalWins: 0 },
-                            coupons: {}, earnedBadges: {}, inventory: { frames: {}, effects: {} }
+                            coupons: {}, earnedBadges: {}, earnedTitles: {}, inventory: { frames: {}, effects: {} }
                         };
                         await database.ref('users/' + user.uid).set(newUserDbData);
                     }
@@ -4741,7 +5142,7 @@
                         name = ``;
                         quantityHTML = `<span class="reward-item-quantity">x${reward.rewardValue}</span>`;
                     } else { // Inventory items
-                        const itemMap = { team_badge: 'verifiedBadges', profile_badge: 'verifiedBadges', frame: 'profileFrames', profile_effect: 'profileEffects', coupon: 'couponTypes'};
+                        const itemMap = { team_badge: 'verifiedBadges', profile_badge: 'verifiedBadges', frame: 'profileFrames', profile_effect: 'profileEffects', coupon: 'couponTypes', title: 'titles'};
                         const dbPath = reward.rewardDbPath || itemMap[reward.rewardType];
                         const itemData = window.dbData.admin?.config?.[dbPath]?.[reward.itemId];
                         rewardIcon = itemData?.url || '';
@@ -4858,6 +5259,7 @@
                             path = `users/${auth.currentUser.uid}/team/earnedBadges/${reward.itemId}`; 
                             break;
                         case 'profile_badge': path = `users/${auth.currentUser.uid}/earnedBadges/${reward.itemId}`; break;
+                        case 'title': path = `users/${auth.currentUser.uid}/earnedTitles/${reward.itemId}`; break; // NEW: Title path
                         case 'frame': path = `users/${auth.currentUser.uid}/inventory/frames/${reward.itemId}`; break;
                         case 'profile_effect': path = `users/${auth.currentUser.uid}/inventory/effects/${reward.itemId}`; break;
                         case 'coupon': path = `users/${auth.currentUser.uid}/coupons/${reward.couponId}`; break;
@@ -4911,7 +5313,142 @@
             }
         }
         
-        function setupProfilePageListeners() {
+        
+            // --- UPDATED BADGE MANAGER (7 SLOTS + AUTO EXPIRE) ---
+            
+            // --- COMBINED BADGE & TITLE MANAGER ---
+            window.tempEquippedBadges = [];
+            window.tempEquippedTitles = [];
+
+            function renderBadgeManager() {
+                // Badges (Max 7)
+                window.tempEquippedBadges = [...(currentUserData.equippedBadges || [])].filter(Boolean);
+                if(window.tempEquippedBadges.length > 7) window.tempEquippedBadges = window.tempEquippedBadges.slice(0,7);
+                
+                // Titles (Max 4)
+                window.tempEquippedTitles = [...(currentUserData.equippedTitles || [])].filter(Boolean);
+                if(window.tempEquippedTitles.length > 4) window.tempEquippedTitles = window.tempEquippedTitles.slice(0,4);
+
+                checkItemExpirations();
+                updateBadgeUI();
+                updateTitleUI(); // Call Title UI Update
+            }
+
+            function checkItemExpirations() {
+                if (!currentUserData) return;
+                const now = Date.now();
+                // Filter Badges
+                window.tempEquippedBadges = window.tempEquippedBadges.filter(id => {
+                    let expiry = currentUserData.earnedBadges?.[id];
+                    if(!expiry && currentUserData.team?.earnedBadges?.[id]) expiry = currentUserData.team.earnedBadges[id];
+                    return !(typeof expiry === 'number' && now > expiry);
+                });
+                // Filter Titles (Assume earnedTitles in user data)
+                window.tempEquippedTitles = window.tempEquippedTitles.filter(id => {
+                    let expiry = currentUserData.earnedTitles?.[id];
+                    return !(typeof expiry === 'number' && now > expiry);
+                });
+            }
+
+            // --- BADGE UI ---
+            function updateBadgeUI() {
+                const equipContainer = document.getElementById('badge-equip-slots');
+                const availableContainer = document.getElementById('available-badges-container');
+                const allBadges = window.dbData.admin?.config?.verifiedBadges || {};
+
+                equipContainer.style.gridTemplateColumns = "repeat(7, 1fr)";
+                let slotsHTML = '';
+                for(let i=0; i<7; i++) {
+                    const id = window.tempEquippedBadges[i];
+                    if(id && allBadges[id]) {
+                        slotsHTML += `<div class="relative w-full aspect-square bg-[#2a2a2a] border border-gray-600 rounded-lg flex items-center justify-center cursor-pointer hover:bg-red-900/20 group" onclick="unequipBadge('${id}')"><img src="${allBadges[id].url}" class="w-2/3 h-2/3 object-contain"><div class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 rounded-lg"><i class="fa-solid fa-minus text-red-500"></i></div></div>`;
+                    } else {
+                        slotsHTML += `<div class="w-full aspect-square bg-[#1a1a1a] border border-dashed border-gray-700 rounded-lg flex items-center justify-center"><i class="fa-solid fa-plus text-gray-800 text-xs"></i></div>`;
+                    }
+                }
+                equipContainer.innerHTML = slotsHTML;
+
+                // Available
+                const uniqueIds = [...new Set([...Object.keys(currentUserData.earnedBadges || {}), ...(currentUserData.team ? Object.keys(currentUserData.team.earnedBadges || {}) : [])])];
+                let availableHTML = '';
+                let hasAvailable = false;
+                uniqueIds.forEach(id => {
+                    if(!allBadges[id] || window.tempEquippedBadges.includes(id)) return;
+                    let expiry = currentUserData.earnedBadges?.[id] || (currentUserData.team?.earnedBadges?.[id]);
+                    if(typeof expiry === 'number' && Date.now() > expiry) return;
+                    hasAvailable = true;
+                    availableHTML += `<div class="relative w-full aspect-square bg-[#2a2a2a] border border-gray-700 rounded-lg flex items-center justify-center cursor-pointer hover:border-green-500" onclick="equipBadge('${id}')"><img src="${allBadges[id].url}" class="w-2/3 h-2/3 object-contain"></div>`;
+                });
+                availableContainer.innerHTML = hasAvailable ? availableHTML : '<p class="col-span-full text-center text-gray-500 text-xs py-4">No available badges</p>';
+                availableContainer.style.gridTemplateColumns = "repeat(5, 1fr)";
+            }
+
+            // --- TITLE UI ---
+            function updateTitleUI() {
+                const equipContainer = document.getElementById('title-equip-slots');
+                const availableContainer = document.getElementById('available-titles-container');
+                const allTitles = window.dbData.admin?.config?.titles || {};
+
+                equipContainer.style.gridTemplateColumns = "repeat(2, 1fr)"; // 2x2 grid for 4 slots
+                let slotsHTML = '';
+                for(let i=0; i<4; i++) {
+                    const id = window.tempEquippedTitles[i];
+                    if(id && allTitles[id]) {
+                        slotsHTML += `<div class="relative w-full h-16 bg-[#2a2a2a] border border-gray-600 rounded-lg flex items-center justify-center cursor-pointer hover:bg-red-900/20 group" onclick="unequipTitle('${id}')"><img src="${allTitles[id].url}" class="h-10 w-auto object-contain"><div class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 rounded-lg"><i class="fa-solid fa-minus text-red-500"></i></div></div>`;
+                    } else {
+                        slotsHTML += `<div class="w-full h-16 bg-[#1a1a1a] border border-dashed border-gray-700 rounded-lg flex items-center justify-center"><i class="fa-solid fa-plus text-gray-800"></i></div>`;
+                    }
+                }
+                equipContainer.innerHTML = slotsHTML;
+
+                // Available Titles
+                const ownedTitles = Object.keys(currentUserData.earnedTitles || {}); // Assuming earnedTitles structure
+                let availableHTML = '';
+                let hasAvailable = false;
+                ownedTitles.forEach(id => {
+                    if(!allTitles[id] || window.tempEquippedTitles.includes(id)) return;
+                    let expiry = currentUserData.earnedTitles?.[id];
+                    if(typeof expiry === 'number' && Date.now() > expiry) return;
+                    hasAvailable = true;
+                    availableHTML += `<div class="relative w-full h-16 bg-[#2a2a2a] border border-gray-700 rounded-lg flex items-center justify-center cursor-pointer hover:border-yellow-500" onclick="equipTitle('${id}')"><img src="${allTitles[id].url}" class="h-10 w-auto object-contain"></div>`;
+                });
+                availableContainer.innerHTML = hasAvailable ? availableHTML : '<p class="col-span-full text-center text-gray-500 text-xs py-4">No available titles</p>';
+            }
+
+            // Actions
+            window.equipBadge = function(id) {
+                if(window.tempEquippedBadges.length >= 7) { showModal('error', 'Limit', 'Max 7 badges allowed.'); return; }
+                window.tempEquippedBadges.push(id); updateBadgeUI();
+            }
+            window.unequipBadge = function(id) {
+                window.tempEquippedBadges = window.tempEquippedBadges.filter(b => b !== id); updateBadgeUI();
+            }
+            window.equipTitle = function(id) {
+                if(window.tempEquippedTitles.length >= 4) { showModal('error', 'Limit', 'Max 4 titles allowed.'); return; }
+                window.tempEquippedTitles.push(id); updateTitleUI();
+            }
+            window.unequipTitle = function(id) {
+                window.tempEquippedTitles = window.tempEquippedTitles.filter(t => t !== id); updateTitleUI();
+            }
+            
+            
+function setupProfilePageListeners() {
+             document.addEventListener('click', e => {
+                if(e.target.closest('#profile-edit-icon-btn')) {
+                    isProfileFormDirty = false;
+                    document.getElementById('edit-profile-avatar-preview').src = currentUserData.avatar || DEFAULT_AVATAR;
+                    document.getElementById('edit-profile-name').value = currentUserData.name || '';
+                    const customizations = currentUserData.profileCustomization || {};
+                    const blurSlider = document.getElementById('profile-bg-blur');
+                    const blurValueEl = document.getElementById('blur-value');
+                    blurSlider.value = customizations.bgBlur || 0;
+                    blurValueEl.textContent = customizations.bgBlur || 0;
+                    document.getElementById('profile-text-color').value = customizations.textColor || '#ffffff';
+ renderBadgeManager();
+                    handleNavigation('edit-profile-content');
+                }
+            });
+
             document.getElementById('wallet-button').addEventListener('click', () => { handleNavigation('wallet-content'); });
             document.getElementById('profile-wallet-button').addEventListener('click', () => { handleNavigation('wallet-content'); });
             document.getElementById('lup-wallet-button').addEventListener('click', () => { handleNavigation('lup-wallet-screen'); });
@@ -4934,18 +5471,6 @@
                 }
             });
 
-            document.getElementById('edit-profile-btn').addEventListener('click', () => {
-                isProfileFormDirty = false;
-                document.getElementById('edit-profile-avatar-preview').src = currentUserData.avatar || DEFAULT_AVATAR;
-                document.getElementById('edit-profile-name').value = currentUserData.name || '';
-                const customizations = currentUserData.profileCustomization || {};
-                const blurSlider = document.getElementById('profile-bg-blur');
-                const blurValueEl = document.getElementById('blur-value');
-                blurSlider.value = customizations.bgBlur || 0;
-                blurValueEl.textContent = customizations.bgBlur || 0;
-                document.getElementById('profile-text-color').value = customizations.textColor || '#ffffff';
-                handleNavigation('edit-profile-content');
-            });
             document.getElementById('change-password-button').addEventListener('click', () => {
                 handleNavigation('change-password-content');
             });
@@ -5040,7 +5565,9 @@
                          name: newName, 
                          avatar: newAvatarUrl, 
                          avatarSizeKB: newAvatarSize,
-                         profileCustomization: {
+                         equippedBadges: window.tempEquippedBadges || [], 
+ equippedTitles: window.tempEquippedTitles || [], 
+ profileCustomization: {
                             ...currentUserData.profileCustomization, // Preserve existing customizations
                             bgBlur: parseInt(newBgBlur, 10),
                             textColor: newTextColor
@@ -5066,28 +5593,6 @@
                     document.querySelector('.lup-wallet-tab[data-target="lup-wallet-inventory"]')?.click();
                 }, 250);
             });
-
-            const emailToggle = document.getElementById('toggle-email-visibility');
-            const emailValue = document.getElementById('profile-page-email');
-            let emailVisibilityTimeout;
-            emailToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                clearTimeout(emailVisibilityTimeout);
-                const isBlurred = emailValue.classList.toggle('blurred');
-                emailToggle.classList.toggle('fa-eye', isBlurred);
-                emailToggle.classList.toggle('fa-eye-slash', !isBlurred);
-                emailValue.textContent = isBlurred ? maskEmail(emailValue.dataset.fullEmail) : emailValue.dataset.fullEmail;
-                
-                if (!isBlurred) { // If it was just revealed
-                    emailVisibilityTimeout = setTimeout(() => {
-                        emailValue.classList.add('blurred');
-                        emailToggle.classList.add('fa-eye');
-                        emailToggle.classList.remove('fa-eye-slash');
-                        emailValue.textContent = maskEmail(emailValue.dataset.fullEmail);
-                    }, 3000); // Auto-hide after 3 seconds
-                }
-            });
-
 
             document.getElementById('change-password-form').querySelectorAll('.password-toggle').forEach(el => { el.addEventListener('click', (e) => { const input = e.target.previousElementSibling; const type = input.getAttribute('type') === 'password' ? 'text' : 'password'; input.setAttribute('type', type); e.target.classList.toggle('fa-eye'); e.target.classList.toggle('fa-eye-slash'); }); });
             document.getElementById('change-password-form').addEventListener('submit', e => {
@@ -5699,7 +6204,7 @@
             const container = document.getElementById('home-player-squad-feed');
             const allPosts = Object.values(window.dbData.playerSquadPosts || {});
             const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
-            const activePosts = allPosts.filter(p => new Date(p.timestamp).getTime() > thirtyDaysAgo).sort((a,b) => new Date(b.timestamp) - a.timestamp);
+            const activePosts = allPosts.filter(p => new Date(p.timestamp).getTime() > thirtyDaysAgo).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
 
             if(activePosts.length === 0) {
                 container.innerHTML = `<div class="text-center text-gray-500 p-10 bg-gray-800/50 rounded-lg"><i class="fa-solid fa-user-plus text-4xl mb-4"></i><p>No one is looking for players or squads right now.</p></div>`;
@@ -6983,16 +7488,18 @@
             
             const allItems = {
                 badges: { ...window.dbData.admin?.config?.verifiedBadges },
+                titles: { ...window.dbData.admin?.config?.titles }, // NEW
                 frames: { ...window.dbData.admin?.config?.profileFrames },
                 effects: { ...window.dbData.admin?.config?.profileEffects }
             };
 
             const teamBadges = Object.keys(currentUserData.team?.earnedBadges || {}).map(id => ({ id, ...allItems.badges[id], itemType: 'team', expiry: currentUserData.team.earnedBadges[id] })).filter(b => b.title && b.type === 'team');
             const profileBadges = Object.keys(currentUserData.earnedBadges || {}).map(id => ({ id, ...allItems.badges[id], itemType: 'profile_badge', expiry: currentUserData.earnedBadges[id] })).filter(b => b.title && b.type === 'profile');
+            const profileTitles = Object.keys(currentUserData.earnedTitles || {}).map(id => ({ id, ...allItems.titles[id], itemType: 'title', expiry: currentUserData.earnedTitles[id] })).filter(t => t.url); // NEW
             const profileFrames = Object.keys(currentUserData.inventory?.frames || {}).map(id => ({ id, ...allItems.frames[id], itemType: 'frame', expiry: currentUserData.inventory.frames[id] })).filter(f => f.url);
             const profileEffects = Object.keys(currentUserData.inventory?.effects || {}).map(id => ({ id, ...allItems.effects[id], itemType: 'profile_effect', expiry: currentUserData.inventory.effects[id] })).filter(e => e.url);
 
-            const inventoryItems = [...teamBadges, ...profileBadges, ...profileFrames, ...profileEffects];
+            const inventoryItems = [...teamBadges, ...profileBadges, ...profileTitles, ...profileFrames, ...profileEffects];
 
             if (inventoryItems.length === 0) {
                 container.innerHTML = `<div class="text-center text-gray-500 p-10"><i class="fa-solid fa-box-open text-5xl mb-4"></i><h3 class="text-2xl font-bold">Inventory is Empty</h3><p>Earn items from matches and events!</p></div>`;
@@ -7003,7 +7510,7 @@
                 if (items.length === 0) return '';
                 const itemsHTML = items.map(item => {
                     const isEquipped = item.id === equippedId;
-                    const media = item.type === 'video' || item.itemType === 'profile_effect'
+                    const media = (item.type === 'video' || item.itemType === 'profile_effect' || item.itemType === 'title')
                         ? `<video src="${item.url}" class="inventory-item-media" autoplay loop muted playsinline></video>`
                         : `<img src="${item.url}" class="inventory-item-media" loading="lazy">`;
                     
@@ -7028,6 +7535,7 @@
                 <div id="inventory-grid-container">
                     ${createSection('Team Badges', teamBadges, currentUserData.team?.equippedBadge, 'inventory-grid')}
                     ${createSection('Profile Badges', profileBadges, currentUserData.equippedProfileBadge, 'inventory-grid')}
+                    ${createSection('Profile Titles', profileTitles, null, 'inventory-grid')} 
                     ${createSection('Profile Frames', profileFrames, currentUserData.equippedFrame, 'inventory-grid')}
                     ${createSection('Profile Backgrounds', profileEffects, currentUserData.equippedEffect, 'inventory-grid-fullwidth')}
                 </div>`;
