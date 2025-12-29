@@ -36,7 +36,8 @@
         @keyframes fade-in-animation { from { opacity: 0; } to { opacity: 1; } }
 
         @keyframes header-icon-dance {
-            0%, 100% { transform: rotate(0deg); } 20% { transform: rotate(15deg); } 40% { transform: rotate(-15deg); } 80% { transform: rotate(360deg); }
+            0%, 100% { transform: rotate(0deg); } 20% { transform: rotate(15deg); }
+            40% { transform: rotate(-15deg); } 80% { transform: rotate(360deg); }
         }
         
         #chat-header { background-color: #111214; border-bottom: 1px solid #2d2f34; flex-shrink: 0; }
@@ -56,7 +57,8 @@
         .profile-badge-chat { height: 1.1em; width: auto; vertical-align: middle; }
         .timestamp { font-size: 0.7rem; color: #72767d; }
         .message-text { font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; padding-top: 0.1rem; }
-        .message-text.blocked, .message-text.deleted { color: #72767d; font-style: italic; font-size: 0.9rem; }
+        /* NEW: Blocked message style */
+        .message-text.blocked { color: #72767d; font-style: italic; font-size: 0.9rem; }
 
         .replied-message-block { display: flex; align-items: center; padding: 4px 8px; margin-bottom: 8px; margin-left: 58px; position: relative; cursor: pointer; width: fit-content; max-width: 80%; border-radius: 8px; }
         .replied-message-block.premium { background: linear-gradient(to right, var(--reply-bg-color-start, rgba(88, 101, 242, 0.4)) 0%, var(--reply-bg-color-mid, rgba(116, 79, 195, 0.25)) 60%, var(--reply-bg-color-end, rgba(116, 79, 195, 0)) 100%); }
@@ -70,8 +72,9 @@
         .date-separator hr { flex-grow: 1; border: none; border-top: 1px solid #36393f; }
         .date-separator span { padding: 0 1rem; }
 
-        #chat-footer { flex-shrink: 0; background-color: #111214; padding: 0.75rem 1rem; border-top: 1px solid #2d2f34; position: relative; }
-        #ban-overlay, #chat-lock-overlay { position: absolute; inset: 0; background-color: rgba(17, 18, 20, 0.9); backdrop-filter: blur(2px); z-index: 20; }
+        #chat-footer { flex-shrink: 0; background-color: #111214; padding: 0.75rem 1rem; border-top: 1px solid #2d2f34; position: relative; } /* Added relative */
+        /* NEW: Ban Overlay */
+        #ban-overlay { position: absolute; inset: 0; background-color: rgba(17, 18, 20, 0.9); backdrop-filter: blur(2px); z-index: 20; }
         #ban-reason-btn { transition: color 0.2s; }
         .input-wrapper { background-color: #202225; border-radius: 22px; padding: 0 0.5rem; border: 1px solid #383a40; }
         #message-input:focus { outline: none !important; box-shadow: none !important; ring: 0 !important; }
@@ -88,13 +91,12 @@
         #scroll-to-bottom-btn { position: absolute; bottom: 110px; right: 20px; z-index: 10; transition: opacity 0.3s, transform 0.3s; }
         #scroll-to-bottom-btn.hidden { opacity: 0; transform: translateY(20px); pointer-events: none; }
         
-        #refresh-btn-container { position: absolute; top: -55px; right: 0; }
+        #refresh-btn-container { position: absolute; top: -45px; right: 0; }
         #refresh-btn { width: 36px; height: 36px; background-color: #202225; border: 1px solid #383a40; }
         #refresh-btn.refreshing i { animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        .modal-container { z-index: 50; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
-        .modal-box { background-color: #18191c; border-radius: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        #premium-settings-modal { z-index: 50; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
         .color-swatch { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; transition: transform 0.2s; border: 2px solid transparent; }
         .color-swatch:hover { transform: scale(1.1); }
         .color-swatch.selected { border-color: #ffffff; box-shadow: 0 0 10px #fff; }
@@ -105,9 +107,13 @@
         .typing-dot:nth-child(1) { animation-delay: -0.32s; } .typing-dot:nth-child(2) { animation-delay: -0.16s; }
         @keyframes typing-bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
 
-        #user-profile-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; z-index: 1000; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); overflow: hidden; color: white; }
+        #user-profile-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000; z-index: 1000;
+            transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            overflow-y: auto; color: white;
+        }
         #user-profile-screen.show { transform: translateX(0); }
-        .profile-content-wrapper { height: 100%; overflow-y: auto; }
         
         #chat-profile-banner { border-bottom-left-radius: 2rem; border-bottom-right-radius: 2rem; overflow: hidden; }
         #chat-profile-banner-media video, #chat-profile-banner-media img { width: 100%; height: 100%; object-fit: cover; }
@@ -116,19 +122,30 @@
         .premium-section-header { font-family: 'Oswald', sans-serif; text-align: center; color: #a1a1aa; font-weight: 600; font-size: 0.9rem; position: relative; display: flex; align-items: center; gap: 1rem; }
         .premium-section-header::before, .premium-section-header::after { content: ''; flex-grow: 1; height: 1px; background: #3a3a3a; }
         
-        #chat-profile-badges-container .badge-slot, #chat-profile-titles-grid .title-slot { background: transparent !important; border: none !important; box-shadow: none !important; display: flex; align-items: center; justify-content: center; padding: 0; margin: 0; }
+        #chat-profile-badges-container .badge-slot, #chat-profile-titles-grid .title-slot {
+            background: transparent !important; border: none !important; box-shadow: none !important;
+            display: flex; align-items: center; justify-content: center; padding: 0; margin: 0;
+        }
         #chat-profile-badges-container .badge-slot { width: 40px; height: 40px; }
         #chat-profile-titles-grid .title-slot { width: 100%; height: 48px; }
         #chat-profile-badges-container .badge-slot img, #chat-profile-badges-container .badge-slot video, #chat-profile-titles-grid .title-slot img { width: 100%; height: 100%; object-fit: contain; background: transparent !important; border: none !important; box-shadow: none !important; }
         .empty-text-bn { color: #6b7280; font-size: 0.8rem; text-align: center; width: 100%; padding: 10px; }
 
-        .follow-button { background-image: linear-gradient(to right, #1DB954, #1ed760); } .unfollow-button { background-image: linear-gradient(to right, #ef4444, #dc2626); }
+        .follow-button { background-image: linear-gradient(to right, #1DB954, #1ed760); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.2s ease-in-out; }
+        .unfollow-button { background-image: linear-gradient(to right, #ef4444, #dc2626); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.2s ease-in-out; }
+
         #chat-my-team-card { background-color: #1e1e1e; border: 1px solid #3a3a3a; border-radius: 1rem; padding: 1rem; }
         #chat-my-team-card .team-logo { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 2px solid #4a4a4a; }
         #chat-my-team-card .rank-score { font-family: 'Oswald', sans-serif; font-size: 2rem; font-weight: 700; }
         #chat-my-team-card .rank-change-arrows { display: flex; flex-direction: column; font-size: 1.1rem; margin-left: 0.25rem; }
         
-        #user-report-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #111214; z-index: 1001; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); color: white; overflow-y: auto; }
+        /* NEW: Report Screen */
+        #user-report-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #111214; z-index: 1001;
+            transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            color: white; overflow-y: auto;
+        }
         #user-report-screen.show { transform: translateX(0); }
         .form-label { color: #a1a1aa; font-size: 0.8rem; margin-bottom: 0.5rem; font-weight: 600; display: block; }
         .form-input, .form-select, .form-textarea { background: #202225; border: 1px solid #3a3a40; color: white; padding: 0.75rem; border-radius: 0.5rem; width: 100%; transition: border-color 0.2s; }
@@ -136,29 +153,12 @@
         .action-button { background-image: linear-gradient(to right, #22c55e, #16a34a); color: white; font-weight: bold; padding: 0.75rem; border-radius: 0.5rem; border: none; cursor: pointer; }
         .action-button:disabled { opacity: 0.5; cursor: not-allowed; }
         .spinner { border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: #ffffff; width: 18px; height: 18px; animation: spin 1s linear infinite; }
-        
-        /* NEW: Moderator Features CSS */
-        #mod-input-popup { position: absolute; bottom: 60px; left: 1rem; background-color: #202225; border: 1px solid #383a40; border-radius: 2rem; padding: 0.5rem; display: flex; gap: 0.75rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s; transform: translateY(20px) scale(0.9); opacity: 0; pointer-events: none; }
-        #mod-input-popup.show { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
-        .mod-popup-btn { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: #b9bbbe; background-color: #2b2d31; }
-        
-        #message-context-menu { position: fixed; z-index: 100; background-color: #18191c; border-radius: 6px; padding: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); display: none; }
-        .context-menu-btn { padding: 8px 12px; background: none; border: none; color: #dcddde; cursor: pointer; text-align: left; width: 100%; border-radius: 4px; font-size: 0.9rem; }
-        .context-menu-btn:hover { background-color: #2b2d31; }
-        .context-menu-btn.delete { color: #f04747; }
-
-        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #4a4a52; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #22c55e; }
-        input:checked + .slider:before { transform: translateX(22px); }
     </style>
 </head>
 <body>
 
     <div id="loading-chat" class="flex items-center justify-center h-full">
-        <div id="loading-icon" class="w-24 h-24"><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 60 60" viewBox="0 0 60 60" id="discord"><g><path fill="#FFF" d="M50,60H10C4.477,60,0,55.523,0,50V10C0,4.477,4.477,0,10,0h40c5.523,0,10,4.477,10,10v40 C60,55.523,55.523,60,50,60z"></path></g><g><path fill="#D2BBFF" d="M44.82,50.27l-3.49-4.36c-5.55,1.45-11.11,1.45-16.66,0l-3.49,4.36C7.68,48.29,9,43,9,43c0-16,6-24,6-24 s3.62-2.4,10.84-3.48l1.29,3.86C28.86,19.15,30.82,19,33,19s4.14,0.15,5.87,0.38l1.29-3.86C47.38,16.6,51,19,51,19s6,8,6,24 C57,43,58.32,48.29,44.82,50.27z"></path><path fill="#7D40F4" d="M18.18 48.77c-.072 0-.145-.005-.218-.016C11.44 47.798 7.21 45.933 5.387 43.212c-.993-1.483-.959-2.793-.887-3.332.029-16.233 6.043-24.438 6.3-24.781.103-.137.229-.256.371-.35.159-.106 3.983-2.597 11.447-3.713.716-.113 1.413.318 1.645 1.008l1.29,3.86c.263.786-.162 1.636-.947 1.898-.789.264-1.636-.162-1.898-.947l-.885-2.647c-5.017.911-7.966 2.447-8.771 2.909C12.151 18.477 7.5 26.176 7.5 40c0 .123-.015.245-.045.363 0 0 .001-.001.001-.001.005 0-.077.791.951 1.811 1.104 1.096 3.584 2.563 9.145 3.481l2.947-3.682c.518-.648 1.463-.751 2.108-.233.646.518.751 1.461.233 2.108l-3.49 4.36C19.063 48.566 18.631 48.77 18.18 48.77zM41.82 48.77c-.452 0-.884-.204-1.171-.562l-3.49-4.36c-.518-.647-.413-1.591.233-2.108.646-.517 1.592-.414 2.108.233l2.947 3.682c5.561-.917 8.04-2.385 9.145-3.481 1.047-1.039.943-1.84.938-1.874C52.501 40.181 52.5 40.123 52.5 40c0-13.898-4.643-21.526-5.548-22.881-.796-.457-3.746-1.998-8.774-2.911l-.885 2.647c-.263.785-1.111 1.209-1.898.947-.785-.263-1.21-1.113-.947-1.898l1.29-3.86c.23-.69.922-1.12 1.645-1.008 7.464 1.116 11.288 3.607 11.447 3.713.143.094.269.213.371.35.257.342 6.271 8.548 6.3 24.781.072.539.106 1.849-.887 3.332-1.823 2.721-6.054 4.585-12.575 5.542C41.965 48.765 41.893 48.77 41.82 48.77z"></path><g><circle cx="22" cy="32" r="4" fill="#FFF"></circle><path fill="#7D40F4" d="M22,36.75c-2.619,0-4.75-2.131-4.75-4.75s2.131-4.75,4.75-4.75s4.75,2.131,4.75,4.75 S24.619,36.75,22,36.75z M22,28.75c-1.792,0-3.25,1.458-3.25,3.25s1.458,3.25,3.25,3.25s3.25-1.458,3.25-3.25 S23.792,28.75,22,28.75z"></path></g><g><circle cx="38" cy="32" r="4" fill="#FFF"></circle><path fill="#7D40F4" d="M38,36.75c-2.619,0-4.75-2.131-4.75-4.75s2.131-4.75,4.75-4.75s4.75,2.131,4.75,4.75 S40.619,36.75,38,36.75z M38,28.75c-1.792,0-3.25,1.458-3.25,3.25s1.458,3.25,3.25,3.25s3.25-1.458,3.25-3.25 S39.792,28.75,38,28.75z"></path></g><ellipse cx="24.298" cy="17.231" fill="#D2BBFF" rx="1.702" ry=".705"></ellipse><ellipse cx="35.596" cy="17.231" fill="#FFF" rx="1.702" ry=".705"></ellipse><path fill="#7D40F4" d="M45.184,19.756c-0.113,0-0.229-0.026-0.338-0.081C43.107,18.795,38.18,16.75,30,16.75 c-8.177,0-13.104,2.042-14.842,2.92c-0.371,0.188-0.82,0.039-1.008-0.332c-0.187-0.37-0.038-0.821,0.332-1.007 C16.316,17.405,21.501,15.25,30,15.25c8.502,0,13.688,2.159,15.523,3.086c0.369,0.187,0.518,0.638,0.33,1.008 C45.722,19.605,45.458,19.756,45.184,19.756z"></path><g><path fill="#D2BBFF" d="M14,40c10.667,5.333,21.333,5.333,32,0"></path><path fill="#7D40F4" d="M30,44.735c-5.458,0-10.916-1.354-16.335-4.064c-0.371-0.186-0.521-0.636-0.336-1.006 c0.187-0.37,0.636-0.52,1.006-0.335c10.395,5.197,20.936,5.197,31.33,0c0.371-0.185,0.82-0.035,1.006,0.335 c0.186,0.371,0.035,0.821-0.336,1.006C40.916,43.381,35.458,44.735,30,44.735z"></path></g></g></svg></div>
+        <div id="loading-icon" class="w-24 h-24"><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 60 60" viewBox="0 0 60 60" id="discord"><g><path fill="#FFF" d="M50,60H10C4.477,60,0,55.523,0,50V10C0,4.477,4.477,0,10,0h40c5.523,0,10,4.477,10,10v40 C60,55.523,55.523,60,50,60z"></path></g><g><path fill="#D2BBFF" d="M44.82,50.27l-3.49-4.36c-5.55,1.45-11.11,1.45-16.66,0l-3.49,4.36C7.68,48.29,9,43,9,43c0-16,6-24,6-24 s3.62-2.4,10.84-3.48l1.29,3.86C28.86,19.15,30.82,19,33,19s4.14,0.15,5.87,0.38l1.29-3.86C47.38,16.6,51,19,51,19s6,8,6,24 C57,43,58.32,48.29,44.82,50.27z"></path><path fill="#7D40F4" d="M18.18 48.77c-.072 0-.145-.005-.218-.016C11.44 47.798 7.21 45.933 5.387 43.212c-.993-1.483-.959-2.793-.887-3.332.029-16.233 6.043-24.438 6.3-24.781.103-.137.229-.256.371-.35.159-.106 3.983-2.597 11.447-3.713.716-.113 1.413.318 1.645 1.008l1.29 3.86c.263.786-.162 1.636-.947 1.898-.789.264-1.636-.162-1.898-.947l-.885-2.647c-5.017.911-7.966 2.447-8.771 2.909C12.151 18.477 7.5 26.176 7.5 40c0 .123-.015.245-.045.363 0 0 .001-.001.001-.001.005 0-.077.791.951 1.811 1.104 1.096 3.584 2.563 9.145 3.481l2.947-3.682c.518-.648 1.463-.751 2.108-.233.646.518.751 1.461.233 2.108l-3.49 4.36C19.063 48.566 18.631 48.77 18.18 48.77zM41.82 48.77c-.452 0-.884-.204-1.171-.562l-3.49-4.36c-.518-.647-.413-1.591.233-2.108.646-.517 1.592-.414 2.108.233l2.947 3.682c5.561-.917 8.04-2.385 9.145-3.481 1.047-1.039.943-1.84.938-1.874C52.501 40.181 52.5 40.123 52.5 40c0-13.898-4.643-21.526-5.548-22.881-.796-.457-3.746-1.998-8.774-2.911l-.885 2.647c-.263.785-1.111 1.209-1.898.947-.785-.263-1.21-1.113-.947-1.898l1.29-3.86c.23-.69.922-1.12 1.645-1.008 7.464 1.116 11.288 3.607 11.447 3.713.143.094.269.213.371.35.257.342 6.271 8.548 6.3 24.781.072.539.106 1.849-.887 3.332-1.823 2.721-6.054 4.585-12.575 5.542C41.965 48.765 41.893 48.77 41.82 48.77z"></path><g><circle cx="22" cy="32" r="4" fill="#FFF"></circle><path fill="#7D40F4" d="M22,36.75c-2.619,0-4.75-2.131-4.75-4.75s2.131-4.75,4.75-4.75s4.75,2.131,4.75,4.75 S24.619,36.75,22,36.75z M22,28.75c-1.792,0-3.25,1.458-3.25,3.25s1.458,3.25,3.25,3.25s3.25-1.458,3.25-3.25 S23.792,28.75,22,28.75z"></path></g><g><circle cx="38" cy="32" r="4" fill="#FFF"></circle><path fill="#7D40F4" d="M38,36.75c-2.619,0-4.75-2.131-4.75-4.75s2.131-4.75,4.75-4.75s4.75,2.131,4.75,4.75 S40.619,36.75,38,36.75z M38,28.75c-1.792,0-3.25,1.458-3.25,3.25s1.458,3.25,3.25,3.25s3.25-1.458,3.25-3.25 S39.792,28.75,38,28.75z"></path></g><ellipse cx="24.298" cy="17.231" fill="#D2BBFF" rx="1.702" ry=".705"></ellipse><ellipse cx="35.596" cy="17.231" fill="#FFF" rx="1.702" ry=".705"></ellipse><path fill="#7D40F4" d="M45.184,19.756c-0.113,0-0.229-0.026-0.338-0.081C43.107,18.795,38.18,16.75,30,16.75 c-8.177,0-13.104,2.042-14.842,2.92c-0.371,0.188-0.82,0.039-1.008-0.332c-0.187-0.37-0.038-0.821,0.332-1.007 C16.316,17.405,21.501,15.25,30,15.25c8.502,0,13.688,2.159,15.523,3.086c0.369,0.187,0.518,0.638,0.33,1.008 C45.722,19.605,45.458,19.756,45.184,19.756z"></path><g><path fill="#D2BBFF" d="M14,40c10.667,5.333,21.333,5.333,32,0"></path><path fill="#7D40F4" d="M30,44.735c-5.458,0-10.916-1.354-16.335-4.064c-0.371-0.186-0.521-0.636-0.336-1.006 c0.187-0.37,0.636-0.52,1.006-0.335c10.395,5.197,20.936,5.197,31.33,0c0.371-0.185,0.82-0.035,1.006,0.335 c0.186,0.371,0.035,0.821-0.336,1.006C40.916,43.381,35.458,44.735,30,44.735z"></path></g></g></svg></div>
     </div>
 
     <div id="chat-ui" class="hidden flex flex-col relative" style="opacity: 0;">
@@ -166,20 +166,9 @@
             <div class="flex items-center gap-3">
                 <a href="index.html" class="w-10 h-10 bg-gray-800/50 rounded-full flex items-center justify-center text-gray-300 hover:text-white shadow-md transition-colors"><i class="fas fa-arrow-left text-lg"></i></a>
                 <svg id="header-discord-icon" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 100 100" viewBox="0 0 100 100" class="w-8 h-8"><g id="Layer_2"><path fill="#D2BBFF" d="M64.193 47.63c2.334 0 4.465 1.302 5.698 3.484.256.452.726.706 1.21.706 1.029.026 1.747-1.183 1.208-2.074-1.708-3.019-4.818-4.894-8.117-4.894-12.607.418-12.524 19.726 0 20.216 5.312 0 9.473-4.44 9.473-10.108-.033-1.828-2.747-1.825-2.779 0 0 4.11-2.94 7.329-6.695 7.329C55.358 61.976 55.299 47.89 64.193 47.63zM44.737 54.982c.211-5.297-4.149-10.216-9.474-10.131-12.608.419-12.523 19.727 0 20.215C40.576 65.067 44.737 60.627 44.737 54.982zM28.569 54.959c-.157-6.239 7.012-9.771 11.312-5.363 4.305 4.223 1.52 12.82-4.618 12.693C31.573 62.288 28.569 59.001 28.569 54.959z"></path><path fill="#7D40F4" d="M86.094,24.562c-10.864-8.869-24.123-9.672-24.451-8.483c0,0-1.11,1.268-1.11,1.268c-0.669,0.722-0.299,1.989,0.647,2.245 c0.674,0.202,1.328,0.409,1.965,0.62c-9.388-1.933-19.11-1.551-28.487,0.298c1.233-0.426,2.539-0.838,3.918-1.229 c0.946-0.234,1.333-1.5,0.688-2.227c-0.411-0.44-1.054-1.537-1.83-1.45c-0.02-0.083-12.775,0.089-23.438,8.957 c-0.078,0.141-1.943,3.515-4.18,9.224c-0.626,1.723,1.884,2.697,2.587,1.014c1.821-4.647,3.413-7.747,3.883-8.63 c4.241-3.105,8.396-4.973,11.883-6.096c-7.792,3.468-11.499,6.977-11.703,7.174c-1.146,1.104,0.232,2.987,1.629,2.22 c18.938-10.094,43.589-10.543,62.559,0.004c1.369,0.775,2.794-1.151,1.615-2.231c-0.222-0.211-4.747-4.436-14.232-8.206 c4.014,0.839,9.827,2.756,15.764,7.133c1.277,2.416,10.979,21.53,11.101,44.45c-1.563,2.222-8.137,10.217-22.156,10.904 c-0.682-0.818-2.069-2.485-3.488-4.216c9.308-3.242,12.995-9.069,13.157-9.332c0.773-1.24-0.729-2.707-1.947-1.889 C62.612,77.828,38.071,77.51,20.207,66.105c-1.166-0.879-2.784,0.641-1.983,1.861c0.156,0.257,3.703,5.949,12.729,9.243 c-1.455,1.805-2.906,3.551-3.608,4.393c-8.549-0.112-18.133-4.802-22.157-10.959c0.048-9.99,1.869-20.379,5.411-30.886 c0.569-1.73-2.029-2.612-2.632-0.888c-3.59,11.159-5.989,22.27-5.37,32.881c0.288,0.493,7.253,12.084,25.33,12.656 c0.424,0.014,0.834-0.168,1.107-0.494c0.03-0.035,2.975-3.538,5.339-6.532c0.612-0.734,0.225-1.943-0.693-2.192 c4.547,1.498,20.09,4.356,32.365,0.304c-0.616,0.444-0.728,1.402-0.237,1.981c2.357,2.907,5.217,6.324,5.245,6.358 c0.275,0.327,0.651,0.51,1.11,0.497c16.405-0.52,23.844-10.359,25.241-12.444C98.707,47.531,86.21,24.87,86.094,24.562z"></path></g></svg>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <h1 id="header-username" class="font-bold text-white text-lg"></h1>
-                        <div id="header-status" class="flex items-center gap-1 text-xs font-semibold text-green-400">
-                            <div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div><span>Online</span>
-                        </div>
-                    </div>
-                    <p class="text-xs text-gray-400">Global Chat Community</p>
-                </div>
+                <div><div class="flex items-center gap-2"><h1 id="header-username" class="font-bold text-white text-lg"></h1><div class="flex items-center gap-1 text-xs font-semibold text-green-400"><div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div><span>Online</span></div></div><p class="text-xs text-gray-400">Global Chat Community</p></div>
             </div>
-            <div class="flex items-center gap-2">
-                <button id="open-premium-settings-btn" class="w-12 h-12 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" viewBox="0 0 24 24" id="discord-nitro"><path fill="#FF4DA5" d="M15 4.25C10.7198 4.25 7.25 7.71979 7.25 12C7.25 16.2802 10.7198 19.75 15 19.75C19.2802 19.75 22.75 16.2802 22.75 12C22.75 7.71979 19.2802 4.25 15 4.25Z"></path><path fill="#FF4DA5" fill-rule="evenodd" d="M5.25 5C5.25 4.58579 5.58579 4.25 6 4.25H15C15.4142 4.25 15.75 4.58579 15.75 5 15.75 5.41421 15.4142 5.75 15 5.75H6C5.58579 5.75 5.25 5.41421 5.25 5zM4.75 8.5C4.75 8.08579 5.08579 7.75 5.5 7.75H8.5C8.91421 7.75 9.25 8.08579 9.25 8.5 9.25 8.91421 8.91421 9.25 8.5 9.25H5.5C5.08579 9.25 4.75 8.91421 4.75 8.5zM1.25 8.5C1.25 8.08579 1.58579 7.75 2 7.75H3.5C3.91421 7.75 4.25 8.08579 4.25 8.5 4.25 8.91421 3.91421 9.25 3.5 9.25H2C1.58579 9.25 1.25 8.91421 1.25 8.5zM3.25 12.5C3.25 12.0858 3.58579 11.75 4 11.75H8C8.41421 11.75 8.75 12.0858 8.75 12.5 8.75 12.9142 8.41421 13.25 8 13.25H4C3.58579 13.25 3.25 12.9142 3.25 12.5z" clip-rule="evenodd"></path><path fill="#ECEFF1" fill-rule="evenodd" d="M12.376 8.58397C12.5151 8.37533 12.7492 8.25 13 8.25H17C17.2508 8.25 17.4849 8.37533 17.624 8.58397L19.624 11.584C19.792 11.8359 19.792 12.1641 19.624 12.416L17.624 15.416C17.4849 15.6247 17.2508 15.75 17 15.75H13C12.7492 15.75 12.5151 15.6247 12.376 15.416L10.376 12.416C10.208 12.1641 10.208 11.8359 10.376 11.584L12.376 8.58397ZM13.4014 9.75L11.9014 12L13.4014 14.25H16.5986L18.0986 12L16.5986 9.75H13.4014Z" clip-rule="evenodd"></path></svg></button>
-                <button id="mod-settings-btn" class="hidden w-12 h-12 flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-cog text-2xl"></i></button>
-            </div>
+            <button id="open-premium-settings-btn" class="w-12 h-12 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" viewBox="0 0 24 24" id="discord-nitro"><path fill="#FF4DA5" d="M15 4.25C10.7198 4.25 7.25 7.71979 7.25 12C7.25 16.2802 10.7198 19.75 15 19.75C19.2802 19.75 22.75 16.2802 22.75 12C22.75 7.71979 19.2802 4.25 15 4.25Z"></path><path fill="#FF4DA5" fill-rule="evenodd" d="M5.25 5C5.25 4.58579 5.58579 4.25 6 4.25H15C15.4142 4.25 15.75 4.58579 15.75 5 15.75 5.41421 15.4142 5.75 15 5.75H6C5.58579 5.75 5.25 5.41421 5.25 5zM4.75 8.5C4.75 8.08579 5.08579 7.75 5.5 7.75H8.5C8.91421 7.75 9.25 8.08579 9.25 8.5 9.25 8.91421 8.91421 9.25 8.5 9.25H5.5C5.08579 9.25 4.75 8.91421 4.75 8.5zM1.25 8.5C1.25 8.08579 1.58579 7.75 2 7.75H3.5C3.91421 7.75 4.25 8.08579 4.25 8.5 4.25 8.91421 3.91421 9.25 3.5 9.25H2C1.58579 9.25 1.25 8.91421 1.25 8.5zM3.25 12.5C3.25 12.0858 3.58579 11.75 4 11.75H8C8.41421 11.75 8.75 12.0858 8.75 12.5 8.75 12.9142 8.41421 13.25 8 13.25H4C3.58579 13.25 3.25 12.9142 3.25 12.5z" clip-rule="evenodd"></path><path fill="#ECEFF1" fill-rule="evenodd" d="M12.376 8.58397C12.5151 8.37533 12.7492 8.25 13 8.25H17C17.2508 8.25 17.4849 8.37533 17.624 8.58397L19.624 11.584C19.792 11.8359 19.792 12.1641 19.624 12.416L17.624 15.416C17.4849 15.6247 17.2508 15.75 17 15.75H13C12.7492 15.75 12.5151 15.6247 12.376 15.416L10.376 12.416C10.208 12.1641 10.208 11.8359 10.376 11.584L12.376 8.58397ZM13.4014 9.75L11.9014 12L13.4014 14.25H16.5986L18.0986 12L16.5986 9.75H13.4014Z" clip-rule="evenodd"></path></svg></button>
         </header>
 
         <main id="chat-messages" class="flex-1 overflow-y-auto no-scrollbar"></main>
@@ -187,17 +176,12 @@
         <button id="scroll-to-bottom-btn" class="hidden w-10 h-10 bg-gray-800 text-white rounded-full shadow-lg flex items-center justify-center"><i class="fas fa-chevron-down"></i></button>
 
         <footer id="chat-footer">
-            <div id="ban-overlay" class="hidden flex-col items-center justify-center text-center p-4">
+            <div id="ban-overlay" class="hidden absolute inset-0 bg-black/90 z-20 flex-col items-center justify-center text-center p-4">
                 <i class="fas fa-gavel text-3xl text-red-500 mb-2"></i>
                 <h3 class="text-lg font-bold text-red-400">You are Banned</h3>
                 <p id="ban-timer" class="text-2xl font-oswald my-2 text-white">00d 00h 00m 00s</p>
                 <button id="ban-reason-btn" class="text-sm text-blue-400 underline hover:text-blue-300">Why am I banned?</button>
                 <p id="ban-reason-text" class="hidden text-xs text-gray-300 mt-2 max-w-xs bg-gray-800 p-2 rounded-md"></p>
-            </div>
-            <div id="chat-lock-overlay" class="hidden flex-col items-center justify-center text-center p-4">
-                <i class="fas fa-lock text-3xl text-yellow-400 mb-2"></i>
-                <h3 class="text-lg font-bold text-yellow-300">Chat is Locked</h3>
-                <p class="text-sm text-gray-300 mt-1">Chat is currently locked by officials. Please wait.</p>
             </div>
             <div id="reply-indicator" class="hidden items-center justify-between p-2 mb-2 text-sm rounded-md"><div><p class="text-gray-400">Replying to <strong id="reply-username" class="text-white"></strong></p><p id="reply-text" class="text-gray-300 truncate max-w-xs"></p></div><button id="cancel-reply-btn" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button></div>
             <div id="typing-indicator" class="h-6 mb-1 flex items-center gap-2 text-sm text-gray-400 opacity-0 hidden"></div>
@@ -208,12 +192,8 @@
                         <i class="fa-solid fa-sync"></i>
                     </button>
                 </div>
-                <div id="mod-input-popup">
-                    <button class="mod-popup-btn"><i class="fas fa-microphone"></i></button>
-                    <button class="mod-popup-btn"><i class="fas fa-image"></i></button>
-                </div>
                 <div class="flex items-end gap-2">
-                    <button id="input-action-btn" class="w-11 h-11 flex-shrink-0 text-gray-400 hover:text-gray-200 text-xl flex items-center justify-center bg-gray-700/80 hover:bg-gray-600 rounded-full transition-colors shadow-md"><i class="fas fa-gift"></i></button>
+                    <button class="w-11 h-11 flex-shrink-0 text-gray-400 hover:text-gray-200 text-xl flex items-center justify-center bg-gray-700/80 hover:bg-gray-600 rounded-full transition-colors shadow-md"><i class="fas fa-gift"></i></button>
                     <div class="input-wrapper flex-1 flex items-center">
                         <div class="relative flex-1">
                             <textarea id="message-input" rows="1" maxlength="30" placeholder="Message Global Chat" class="w-full text-white placeholder-gray-400 border-none no-scrollbar"></textarea>
@@ -226,65 +206,27 @@
         </footer>
     </div>
     
-    <!-- MODALS -->
-    <div id="premium-settings-modal" class="hidden fixed inset-0 flex items-center justify-center p-4 modal-container">
-        <div class="modal-box w-full max-w-md p-6 text-white relative">
+    <div id="premium-settings-modal" class="hidden fixed inset-0 flex items-center justify-center p-4">
+        <div class="bg-[#18191c] rounded-lg shadow-xl w-full max-w-md p-6 text-white relative">
             <button id="close-premium-settings-btn" class="absolute top-3 right-3 text-gray-400 hover:text-white"><i class="fas fa-times fa-lg"></i></button>
             <h2 class="text-2xl font-bold mb-4 text-center">Premium Settings</h2>
-            <div class="mb-6"><h3 class="font-semibold mb-3 text-gray-300 text-center">Live Preview</h3><div id="settings-reply-preview" class="replied-message-block premium mx-auto" style="margin-left: auto;"><i class="fas fa-reply reply-prefix-icon"></i><img src="https://firebasestorage.googleapis.com/v0/b/viptask-5c1fc.appspot.com/o/dfdc00fc6bb93771364bbf5000dad222.jpg?alt=media&token=ff33f08b-1b2e-424e-b636-f664d8044bed" class="replied-avatar"><span id="settings-reply-username-preview" class="replied-username">LEVEL UP</span><span class="replied-text">Hello</span></div></div>
+            <div class="mb-6">
+                <h3 class="font-semibold mb-3 text-gray-300 text-center">Live Preview</h3>
+                <div id="settings-reply-preview" class="replied-message-block premium mx-auto" style="margin-left: auto;">
+                    <i class="fas fa-reply reply-prefix-icon"></i>
+                    <img src="https://firebasestorage.googleapis.com/v0/b/viptask-5c1fc.appspot.com/o/dfdc00fc6bb93771364bbf5000dad222.jpg?alt=media&token=ff33f08b-1b2e-424e-b636-f664d8044bed" class="replied-avatar">
+                    <span id="settings-reply-username-preview" class="replied-username">LEVEL UP</span>
+                    <span class="replied-text">Hello</span>
+                </div>
+            </div>
             <div class="mb-6"><h3 class="font-semibold mb-3 text-gray-300">Reply Box Color</h3><div id="reply-box-color-picker" class="flex flex-wrap gap-3 justify-center"></div></div>
             <div class="mb-8"><h3 class="font-semibold mb-3 text-gray-300">Replied Name Color</h3><div id="reply-name-color-picker" class="flex flex-wrap gap-3 justify-center"></div></div>
             <button id="save-settings-btn" class="w-full bg-green-600 hover:bg-green-700 font-bold py-3 rounded-lg transition-colors">Save Settings</button>
         </div>
     </div>
-    <div id="mod-settings-modal" class="hidden fixed inset-0 flex items-center justify-center p-4 modal-container">
-        <div class="modal-box w-full max-w-sm p-6 text-white relative">
-            <button id="close-mod-settings-btn" class="absolute top-3 right-3 text-gray-400 hover:text-white"><i class="fas fa-times fa-lg"></i></button>
-            <h2 class="text-2xl font-bold mb-6 text-center">Moderator Settings</h2>
-            <div class="bg-gray-800/50 p-4 rounded-lg flex items-center justify-between">
-                <label for="chat-lock-toggle" class="font-semibold text-gray-200 text-lg">Lock Global Chat</label>
-                <label class="switch"><input type="checkbox" id="chat-lock-toggle"><span class="slider"></span></label>
-            </div>
-        </div>
-    </div>
-    <div id="mod-ban-user-modal" class="hidden fixed inset-0 flex items-center justify-center p-4 modal-container">
-        <div class="modal-box w-full max-w-sm p-6 text-white relative">
-             <button id="close-mod-ban-btn" class="absolute top-3 right-3 text-gray-400 hover:text-white"><i class="fas fa-times fa-lg"></i></button>
-             <h2 class="text-2xl font-bold mb-4">Ban User</h2>
-             <form id="mod-ban-form" class="space-y-4">
-                <input type="hidden" id="ban-target-uid">
-                <p>You are banning <strong id="ban-target-username"></strong>.</p>
-                <div>
-                    <label for="ban-duration-unit" class="form-label">Duration</label>
-                    <div class="flex gap-2">
-                        <select id="ban-duration-unit" class="form-select flex-1">
-                            <option value="minutes">Minutes</option>
-                            <option value="hours">Hours</option>
-                            <option value="days">Days</option>
-                            <option value="permanent">Permanent</option>
-                        </select>
-                        <input type="number" id="ban-duration-value" class="form-input flex-1" value="30" required>
-                    </div>
-                </div>
-                <div><label for="ban-reason" class="form-label">Reason</label><input type="text" id="ban-reason" class="form-input" placeholder="e.g., Spamming" required></div>
-                <button type="submit" class="w-full action-button py-3 mt-2">Confirm Ban</button>
-             </form>
-        </div>
-    </div>
-    <div id="mod-edit-message-modal" class="hidden fixed inset-0 flex items-center justify-center p-4 modal-container">
-        <div class="modal-box w-full max-w-sm p-6 text-white relative">
-             <button id="close-mod-edit-btn" class="absolute top-3 right-3 text-gray-400 hover:text-white"><i class="fas fa-times fa-lg"></i></button>
-             <h2 class="text-2xl font-bold mb-4">Edit Message</h2>
-             <form id="mod-edit-form" class="space-y-4">
-                <input type="hidden" id="edit-message-id">
-                <div><textarea id="edit-message-input" class="form-textarea" rows="3" required></textarea></div>
-                <button type="submit" class="w-full action-button py-3 mt-2">Save Changes</button>
-             </form>
-        </div>
-    </div>
 
     <!-- USER PROFILE SCREEN -->
-    <div id="user-profile-screen">
+    <div id="user-profile-screen" class="no-scrollbar">
         <header class="p-2 flex items-center justify-between absolute top-0 left-0 w-full z-20 bg-gradient-to-b from-black/50 to-transparent">
             <button id="close-profile-btn" class="w-10 h-10 bg-gray-800/50 rounded-full flex items-center justify-center text-gray-300 hover:text-white shadow-md transition-colors"><i class="fas fa-arrow-left text-lg"></i></button>
             <div class="relative">
@@ -292,30 +234,93 @@
                 <div id="profile-options-menu" class="hidden absolute right-0 mt-2 w-48 bg-[#202225] rounded-md shadow-lg py-1 z-30">
                     <a href="#" id="report-user-btn" class="block px-4 py-2 text-sm text-gray-300 hover:bg-[#2b2d31]">Report User</a>
                     <a href="#" id="block-user-btn" class="block px-4 py-2 text-sm text-gray-300 hover:bg-[#2b2d31]">Block User</a>
-                    <!-- Moderator option will be added here by JS -->
                 </div>
             </div>
         </header>
-        <div class="profile-content-wrapper no-scrollbar">
-            <div class="w-full text-white pb-10">
-                <div id="chat-profile-banner" class="relative w-full h-40 bg-gray-800"><div id="chat-profile-banner-media" class="w-full h-full"></div><div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div></div>
-                <div class="relative px-4 pb-4 -mt-14"><div class="flex justify-center"><div class="relative w-28 h-28"><img id="chat-profile-avatar" src="" class="w-full h-full rounded-full object-cover"><img id="chat-profile-avatar-frame" src="" class="absolute top-1/2 left-1/2 w-[140%] h-[140%] -translate-x-1/2 -translate-y-1/2 object-contain pointer-events-none hidden"></div></div><div id="chat-profile-username-container" class="text-center mt-3 flex items-center justify-center"></div><p id="chat-profile-uid" class="text-center text-xs text-gray-500 mt-1"></p><div class="flex justify-center items-center gap-8 mt-4" id="chat-profile-follow-stats"></div><div class="mt-6 px-4"><button id="follow-toggle-btn" class="w-full py-3 rounded-lg text-sm"></button></div><div class="mt-8"><h3 class="premium-section-header">BADGES</h3><div id="chat-profile-badges-container" class="flex justify-center items-center gap-2 mt-3 min-h-[40px]"></div></div><div class="mt-8"><h3 class="premium-section-header">MY TITLE</h3><div id="chat-profile-titles-grid" class="grid grid-cols-2 gap-3 mt-3 max-w-sm mx-auto min-h-[48px]"></div></div><div id="chat-profile-team-section" class="mt-8 px-4"></div></div>
+        <div class="w-full text-white pb-10">
+            <div id="chat-profile-banner" class="relative w-full h-40 bg-gray-800">
+                <div id="chat-profile-banner-media" class="w-full h-full"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+            </div>
+            <div class="relative px-4 pb-4 -mt-14">
+                <div class="flex justify-center">
+                    <div class="relative w-28 h-28">
+                        <img id="chat-profile-avatar" src="" class="w-full h-full rounded-full object-cover">
+                        <img id="chat-profile-avatar-frame" src="" class="absolute top-1/2 left-1/2 w-[140%] h-[140%] -translate-x-1/2 -translate-y-1/2 object-contain pointer-events-none hidden">
+                    </div>
+                </div>
+                <div id="chat-profile-username-container" class="text-center mt-3 flex items-center justify-center">
+                    <h2 id="chat-profile-username" class="text-3xl font-bold font-oswald inline"></h2>
+                </div>
+                <p id="chat-profile-uid" class="text-center text-xs text-gray-500 mt-1"></p>
+                <div class="flex justify-center items-center gap-8 mt-4" id="chat-profile-follow-stats"></div>
+                <div class="mt-6 px-4">
+                    <button id="follow-toggle-btn" class="w-full py-3 rounded-lg text-sm"></button>
+                </div>
+                <div class="mt-8">
+                    <h3 class="premium-section-header">BADGES</h3>
+                    <div id="chat-profile-badges-container" class="flex justify-center items-center gap-2 mt-3 min-h-[40px]"></div>
+                </div>
+                <div class="mt-8">
+                    <h3 class="premium-section-header">MY TITLE</h3>
+                    <div id="chat-profile-titles-grid" class="grid grid-cols-2 gap-3 mt-3 max-w-sm mx-auto min-h-[48px]"></div>
+                </div>
+                <div id="chat-profile-team-section" class="mt-8 px-4"></div>
             </div>
         </div>
     </div>
 
-    <!-- USER REPORT SCREEN -->
+    <!-- NEW: USER REPORT SCREEN -->
     <div id="user-report-screen" class="p-4 flex flex-col no-scrollbar">
-        <header class="flex items-center justify-between mb-6 flex-shrink-0"><button id="close-report-btn" class="w-10 h-10 flex items-center justify-center text-gray-300"><i class="fas fa-arrow-left text-xl"></i></button><h1 class="text-xl font-bold">Report User</h1><div class="w-10"></div></header>
-        <div id="report-form-container" class="flex-grow overflow-y-auto no-scrollbar"><form id="report-form" class="space-y-4"><input type="hidden" id="reported-user-uid"><div><label for="report-reason" class="form-label">Reason for Report</label><select id="report-reason" class="form-select" required><option value="">Select a reason...</option><option value="spam">Spam or Misleading</option><option value="harassment">Harassment or Bullying</option><option value="hate_speech">Hate Speech</option><option value="inappropriate_content">Inappropriate Content/Profile</option><option value="scam">Scam or Fraud</option><option value="other">Other</option></select></div><div><label for="report-details" class="form-label">Details</label><textarea id="report-details" class="form-textarea" rows="4" placeholder="Provide more information..." required></textarea></div><div><label for="report-proof-url" class="form-label">Proof URL (Optional)</label><input type="url" id="report-proof-url" class="form-input" placeholder="https://"><p class="text-xs text-gray-400 mt-1">প্রমানের জন্য স্ক্রিনশট বা ভিডিও গুগল ড্রাইভে আপলোড করে লিঙ্কটি দিন।</p></div><div><label for="report-screenshot" class="form-label">Upload Screenshot (Optional)</label><input type="file" id="report-screenshot" class="form-input" accept="image/*"></div><button type="submit" id="submit-report-btn" class="w-full action-button py-3 mt-4"><span id="submit-report-text">Submit Report</span><div id="submit-report-spinner" class="spinner mx-auto hidden"></div></button></form></div>
-        <div id="report-status-container" class="hidden text-center p-6 flex flex-col items-center justify-center flex-grow"><h2 class="text-2xl font-bold mb-4">Report Status</h2><p class="mb-2">Your report against <strong id="status-reported-username"></strong> is:</p><p id="report-status-badge" class="px-4 py-1.5 rounded-full font-bold text-lg"></p><p class="text-xs text-gray-500 mt-8">Thank you for helping keep our community safe. Solved reports are automatically deleted after 7 days.</p></div>
+        <header class="flex items-center justify-between mb-6 flex-shrink-0">
+            <button id="close-report-btn" class="w-10 h-10 flex items-center justify-center text-gray-300"><i class="fas fa-arrow-left text-xl"></i></button>
+            <h1 class="text-xl font-bold">Report User</h1>
+            <div class="w-10"></div> <!-- Spacer -->
+        </header>
+        
+        <div id="report-form-container" class="flex-grow overflow-y-auto no-scrollbar">
+            <form id="report-form" class="space-y-4">
+                <input type="hidden" id="reported-user-uid">
+                <div>
+                    <label for="report-reason" class="form-label">Reason for Report</label>
+                    <select id="report-reason" class="form-select" required>
+                        <option value="">Select a reason...</option>
+                        <option value="spam">Spam or Misleading</option>
+                        <option value="harassment">Harassment or Bullying</option>
+                        <option value="hate_speech">Hate Speech</option>
+                        <option value="inappropriate_content">Inappropriate Content/Profile</option>
+                        <option value="scam">Scam or Fraud</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="report-details" class="form-label">Details</label>
+                    <textarea id="report-details" class="form-textarea" rows="4" placeholder="Provide more information..." required></textarea>
+                </div>
+                <div>
+                    <label for="report-proof-url" class="form-label">Proof URL (Optional)</label>
+                    <input type="url" id="report-proof-url" class="form-input" placeholder="https://">
+                    <p class="text-xs text-gray-400 mt-1">প্রমানের জন্য স্ক্রিনশট বা ভিডিও গুগল ড্রাইভে আপলোড করে লিঙ্কটি দিন।</p>
+                </div>
+                <div>
+                    <label for="report-screenshot" class="form-label">Upload Screenshot (Optional)</label>
+                    <input type="file" id="report-screenshot" class="form-input" accept="image/*">
+                </div>
+                <button type="submit" id="submit-report-btn" class="w-full action-button py-3 mt-4">
+                    <span id="submit-report-text">Submit Report</span>
+                    <div id="submit-report-spinner" class="spinner mx-auto hidden"></div>
+                </button>
+            </form>
+        </div>
+
+        <div id="report-status-container" class="hidden text-center p-6 flex flex-col items-center justify-center flex-grow">
+             <h2 class="text-2xl font-bold mb-4">Report Status</h2>
+             <p class="mb-2">Your report against <strong id="status-reported-username"></strong> is:</p>
+             <p id="report-status-badge" class="px-4 py-1.5 rounded-full font-bold text-lg"></p>
+             <p class="text-xs text-gray-500 mt-8">Thank you for helping keep our community safe. Solved reports are automatically deleted after 7 days.</p>
+        </div>
     </div>
 
-    <!-- Message Context Menu -->
-    <div id="message-context-menu">
-        <button id="context-edit-btn" class="context-menu-btn"><i class="fas fa-edit w-5 mr-2"></i>Edit</button>
-        <button id="context-delete-btn" class="context-menu-btn delete"><i class="fas fa-trash w-5 mr-2"></i>Delete</button>
-    </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -330,16 +335,12 @@
         const chatRef = database.ref('chats/public-v2');
         const typingRef = database.ref('typingStatus/public-v2');
         const reportsRef = database.ref('reports');
-        const chatStateRef = database.ref('chatState/public-v2'); // NEW: For chat lock status
-        
         const loadingScreen = document.getElementById('loading-chat'), chatUI = document.getElementById('chat-ui');
         const messagesContainer = document.getElementById('chat-messages');
         const messageInput = document.getElementById('message-input'), sendBtn = document.getElementById('send-btn');
         const replyIndicator = document.getElementById('reply-indicator');
         const scrollToBottomBtn = document.getElementById('scroll-to-bottom-btn');
-        
-        let currentUser = null, currentUserData = null, allData = {}, replyToMessage = null, lastRenderedDate = null, banInterval = null, dataSyncInterval = null;
-        let isCurrentUserModerator = false; // NEW: Moderator flag
+        let currentUser = null, currentUserData = null, allData = {}, replyToMessage = null, lastRenderedDate = null, banInterval = null;
         
         let blockedUsers = new Set(JSON.parse(localStorage.getItem('blockedUsers_v2') || '[]'));
         
@@ -355,9 +356,7 @@
                 fixViewportHeight(); window.addEventListener('resize', fixViewportHeight);
                 fetchAndCacheAllData().then(() => {
                     currentUserData = allData.users[currentUser.uid];
-                    isCurrentUserModerator = currentUserData?.role === 'moderator'; // NEW: Set moderator flag
-                    checkUserBanStatus();
-                    startRealtimeDataSync();
+                    checkUserBanStatus(); // NEW: Check for ban
                     setTimeout(() => { 
                         loadingScreen.classList.add('fade-out'); 
                         setTimeout(() => { 
@@ -367,7 +366,6 @@
                         }, 500); 
                         setupChatUI(user); 
                         listenForMessages(); 
-                        listenForChatState(); // NEW: Listen for chat lock changes
                     }, 3000); 
                 }); 
             } else { 
@@ -375,7 +373,7 @@
             } 
         });
         
-        async function fetchAndCacheAllData() { allData = (await database.ref().once('value')).val() || { users: {}, admin: {}, chatState: {} }; }
+        async function fetchAndCacheAllData() { allData = (await database.ref().once('value')).val() || { users: {}, admin: {} }; }
         
         function setupChatUI(user) {
             const userData = allData.users[user.uid] || {};
@@ -385,29 +383,22 @@
             setInterval(() => { icon.style.animation = 'none'; void icon.offsetWidth; icon.style.animation = 'header-icon-dance 2.5s ease-in-out'; }, 15000);
 
             setupInputListeners(); setupReplyListeners(); setupSwipeToReply(); setupReplyNavigation(); setupScrollListener(); setupPremiumSettings(); setupTypingIndicator(); setupProfileScreenListeners(); setupRefreshButton();
-            setupModeratorFeatures(); // NEW: Setup moderator UI if applicable
         }
 
         function listenForMessages() {
             let initialLoad = true, lastKey = null;
             chatRef.limitToLast(50).once('value', snapshot => {
-                messagesContainer.innerHTML = ''; lastRenderedDate = null;
-                snapshot.forEach(childSnapshot => { lastKey = childSnapshot.key; renderMessage(childSnapshot.key, childSnapshot.val()); });
-                setTimeout(() => scrollToBottom(), 100); initialLoad = false;
+                messagesContainer.innerHTML = '';
+                lastRenderedDate = null;
+                snapshot.forEach(childSnapshot => {
+                    lastKey = childSnapshot.key;
+                    renderMessage(childSnapshot.key, childSnapshot.val());
+                });
+                setTimeout(() => scrollToBottom(), 100);
+                initialLoad = false;
             });
-            chatRef.limitToLast(1).on('child_added', snapshot => { if (!initialLoad && snapshot.key !== lastKey) { renderMessage(snapshot.key, childSnapshot.val()); lastKey = snapshot.key; } });
-            // NEW: Listen for message changes (for edit/delete)
-            chatRef.on('child_changed', snapshot => {
-                const messageEl = document.querySelector(`.message-container[data-message-id="${snapshot.key}"]`);
-                if (messageEl) {
-                    const msgData = snapshot.val();
-                    const textEl = messageEl.querySelector('.message-text');
-                    if (textEl) {
-                        textEl.classList.toggle('deleted', !!msgData.isDeleted);
-                        textEl.innerHTML = msgData.isDeleted ? 'Deleted by L-UP Bot' : `${(msgData.text || "").replace(/</g, "&lt;").replace(/>/g, "&gt;")} ${msgData.isEdited ? '<span class="text-xs text-gray-500">(edited)</span>' : ''}`;
-                    }
-                }
-            });
+
+            chatRef.limitToLast(1).on('child_added', snapshot => { if (!initialLoad && snapshot.key !== lastKey) { renderMessage(snapshot.key, snapshot.val()); lastKey = snapshot.key; } });
         }
         
         function renderMessage(messageId, msgData) {
@@ -433,19 +424,27 @@
                 replyHTML = `<div class="replied-message-block ${boxClass}" ${boxStyle} data-reply-to-id="${msgData.replyTo.id}"><i class="fas fa-reply reply-prefix-icon"></i><img src="${msgData.replyTo.authorAvatar}" class="replied-avatar"><span class="replied-username" ${nameStyle}>${msgData.replyTo.authorName}</span><span class="replied-text">${msgData.replyTo.text}</span></div>`;
             }
             
-            const ts = new Date(msgData.timestamp).toLocaleString('en-US', { hour: 'numeric', minute: '2-digit' });
-            let frameHTML = ''; if (senderData.equippedFrame && allData.admin?.config?.profileFrames?.[senderData.equippedFrame]) { frameHTML = `<img src="${allData.admin.config.profileFrames[senderData.equippedFrame].url}" class="avatar-frame">`; }
-            let badgeHTML = ''; if (senderData.equippedProfileBadge && allData.admin?.config?.verifiedBadges?.[senderData.equippedProfileBadge]) { const badge = allData.admin.config.verifiedBadges[senderData.equippedProfileBadge]; if (badge.type === 'profile') { badgeHTML = `<img src="${badge.url}" class="profile-badge-chat">`; } }
+            const tsOptions = { hour: 'numeric', minute: '2-digit' };
+            const ts = new Date(msgData.timestamp).toLocaleString('en-US', tsOptions);
             
+            let frameHTML = '';
+            if (senderData.equippedFrame && allData.admin?.config?.profileFrames?.[senderData.equippedFrame]) { frameHTML = `<img src="${allData.admin.config.profileFrames[senderData.equippedFrame].url}" class="avatar-frame">`; }
+
+            let badgeHTML = '';
+            if (senderData.equippedProfileBadge && allData.admin?.config?.verifiedBadges?.[senderData.equippedProfileBadge]) {
+                const badge = allData.admin.config.verifiedBadges[senderData.equippedProfileBadge];
+                if (badge.type === 'profile') { badgeHTML = `<img src="${badge.url}" class="profile-badge-chat">`; }
+            }
+            
+            // NEW: Blocked user check
             const isBlocked = blockedUsers.has(msgData.senderUid);
-            let messageTextHTML = '';
-            if (isBlocked) { messageTextHTML = `<div class="message-text blocked">Message unavailable</div>`; }
-            else if (msgData.isDeleted) { messageTextHTML = `<div class="message-text deleted">Deleted by L-UP Bot</div>`; }
-            else { messageTextHTML = `<div class="message-text">${(msgData.text || "").replace(/</g, "&lt;").replace(/>/g, "&gt;")} ${msgData.isEdited ? '<span class="text-xs text-gray-500">(edited)</span>' : ''}</div>`; }
+            const messageTextHTML = isBlocked
+                ? `<div class="message-text blocked">Message unavailable</div>`
+                : `<div class="message-text">${(msgData.text || "").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>`;
 
             const messageGroup = document.createElement('div');
             messageGroup.className = 'message-group';
-            messageGroup.dataset.authorUid = msgData.senderUid;
+            messageGroup.dataset.authorUid = msgData.senderUid; // Add author uid for easy selection
             messageGroup.innerHTML = `${replyHTML}<div class="reply-icon-container"><i class="fas fa-reply"></i></div><div class="message-container" data-message-id="${messageId}" data-author-uid="${msgData.senderUid}" data-author-name="${senderData.name || 'User'}" data-author-avatar="${senderData.avatar || 'https://via.placeholder.com/42'}" data-message-text="${msgData.text}" data-timestamp="${msgData.timestamp}"><div class="avatar-container" data-user-id="${msgData.senderUid}"><img src="${senderData.avatar || 'https://via.placeholder.com/42'}" alt="avatar" class="avatar">${frameHTML}</div><div class="message-content-wrapper"><div class="message-header"><span class="username" data-user-id="${msgData.senderUid}">${senderData.name || 'User'}</span>${badgeHTML}<span class="timestamp">${ts}</span></div>${messageTextHTML}</div></div>`;
             messagesContainer.appendChild(messageGroup);
             
@@ -453,62 +452,62 @@
         }
 
         function setupProfileScreenListeners() {
-            messagesContainer.addEventListener('click', e => { const target = e.target.closest('[data-user-id]'); if (target) { const userId = target.dataset.userId; if (userId) showUserProfile(userId); } });
+            messagesContainer.addEventListener('click', e => {
+                const target = e.target.closest('[data-user-id]');
+                if (target) {
+                    const userId = target.dataset.userId;
+                    if (userId) showUserProfile(userId);
+                }
+            });
             document.getElementById('close-profile-btn').addEventListener('click', hideUserProfile);
-            const optionsBtn = document.getElementById('profile-options-btn'), optionsMenu = document.getElementById('profile-options-menu');
+            
+            // NEW: Profile options menu
+            const optionsBtn = document.getElementById('profile-options-btn');
+            const optionsMenu = document.getElementById('profile-options-menu');
             optionsBtn.addEventListener('click', (e) => { e.stopPropagation(); optionsMenu.classList.toggle('hidden'); });
             document.addEventListener('click', () => optionsMenu.classList.add('hidden'));
-            document.getElementById('report-user-btn').addEventListener('click', handleReportUser); document.getElementById('block-user-btn').addEventListener('click', handleBlockUser);
-            document.getElementById('close-report-btn').addEventListener('click', hideReportScreen); document.getElementById('report-form').addEventListener('submit', handleSubmitReport);
+            
+            // NEW: Report and Block button listeners
+            document.getElementById('report-user-btn').addEventListener('click', handleReportUser);
+            document.getElementById('block-user-btn').addEventListener('click', handleBlockUser);
+            document.getElementById('close-report-btn').addEventListener('click', hideReportScreen);
+            document.getElementById('report-form').addEventListener('submit', handleSubmitReport);
         }
 
         function showUserProfile(userId) {
             const user = allData.users[userId]; if (!user) return;
             renderChatProfile(user, userId);
             
-            const optionsMenu = document.getElementById('profile-options-menu');
-            const optionsBtn = document.getElementById('profile-options-btn');
+            const blockBtn = document.getElementById('block-user-btn');
+            blockBtn.dataset.userId = userId;
+            blockBtn.textContent = blockedUsers.has(userId) ? 'Unblock User' : 'Block User';
             
-            // NEW: Moderator check for profile options
-            if (user.role === 'moderator') {
-                optionsBtn.style.display = 'none'; // Hide menu for mods
-            } else {
-                optionsBtn.style.display = 'flex';
-                document.getElementById('block-user-btn').dataset.userId = userId;
-                document.getElementById('block-user-btn').textContent = blockedUsers.has(userId) ? 'Unblock User' : 'Block User';
-                document.getElementById('report-user-btn').dataset.userId = userId;
-                document.getElementById('report-user-btn').dataset.userName = user.name || 'User';
+            const reportBtn = document.getElementById('report-user-btn');
+            reportBtn.dataset.userId = userId;
+            reportBtn.dataset.userName = user.name || 'User';
 
-                // Add/Remove Ban button for moderators
-                let banBtn = optionsMenu.querySelector('#ban-user-btn');
-                if (isCurrentUserModerator) {
-                    if (!banBtn) {
-                        banBtn = document.createElement('a'); banBtn.href = "#"; banBtn.id = "ban-user-btn";
-                        banBtn.className = "block px-4 py-2 text-sm text-red-400 hover:bg-[#2b2d31]";
-                        banBtn.innerHTML = '<i class="fas fa-gavel mr-2"></i>Ban User';
-                        optionsMenu.appendChild(banBtn);
-                    }
-                    banBtn.style.display = 'block';
-                    banBtn.dataset.userId = userId; banBtn.dataset.userName = user.name || 'User';
-                    banBtn.onclick = (e) => {
-                        e.preventDefault();
-                        optionsMenu.classList.add('hidden'); hideUserProfile();
-                        showBanUserModal(userId, user.name || 'User');
-                    };
-                } else if (banBtn) { banBtn.style.display = 'none'; }
-            }
             profileScreen.classList.add('show');
         }
+
         function hideUserProfile() { profileScreen.classList.remove('show'); }
+
         function renderChatProfile(user, userId) {
             const DEFAULT_BANNER = "https://firebasestorage.googleapis.com/v0/b/viptask-5c1fc.appspot.com/o/Levelup%2F2e8e97546eae310a4edfaa46874232ef.jpg?alt=media&token=3f5dd29a-24d8-4aec-80e6-11504b80bdf7";
-            let badgeHTML = ''; if (user.equippedProfileBadge && allData.admin?.config?.verifiedBadges?.[user.equippedProfileBadge]) { const badge = allData.admin.config.verifiedBadges[user.equippedProfileBadge]; if(badge.type === 'profile') { badgeHTML = `<img src="${badge.url}" class="profile-badge-view">`; } }
+            let badgeHTML = '';
+            if (user.equippedProfileBadge && allData.admin?.config?.verifiedBadges?.[user.equippedProfileBadge]) {
+                const badge = allData.admin.config.verifiedBadges[user.equippedProfileBadge];
+                if(badge.type === 'profile') { badgeHTML = `<img src="${badge.url}" class="profile-badge-view">`; }
+            }
+            const usernameContainer = document.getElementById('chat-profile-username-container');
             let myProfileTag = userId === currentUser.uid ? `<span class="text-sm font-semibold text-gray-400 ml-2">(My Profile)</span>` : '';
-            let modTag = user.role === 'moderator' ? `<span class="text-sm font-semibold text-blue-400 ml-2">(Moderator)</span>` : '';
-            document.getElementById('chat-profile-username-container').innerHTML = `<h2 id="chat-profile-username" class="text-3xl font-bold font-oswald inline">${user.name || 'User'}</h2>${badgeHTML}${myProfileTag}${modTag}`;
+            usernameContainer.innerHTML = `<h2 id="chat-profile-username" class="text-3xl font-bold font-oswald inline">${user.name || 'User'}</h2>${badgeHTML}${myProfileTag}`;
+            
+            // NEW: Display UID
             document.getElementById('chat-profile-uid').textContent = `UID: ${user.userId || 'N/A'}`;
+
             document.getElementById('chat-profile-avatar').src = user.avatar || 'https://via.placeholder.com/42';
-            const bannerMedia = document.getElementById('chat-profile-banner-media'); let bannerSet = false;
+            const bannerMedia = document.getElementById('chat-profile-banner-media');
+            let bannerSet = false;
             if (user.equippedEffect && allData.admin?.config?.profileEffects?.[user.equippedEffect]) { const effect = allData.admin.config.profileEffects[user.equippedEffect]; bannerMedia.innerHTML = `<video src="${effect.url}" autoplay loop muted playsinline></video>`; bannerSet = true; }
             if (!bannerSet) { bannerMedia.innerHTML = `<img src="${DEFAULT_BANNER}" alt="Default Banner">`; }
             const avatarFrame = document.getElementById('chat-profile-avatar-frame'); avatarFrame.classList.add('hidden');
@@ -519,18 +518,19 @@
             followBtn.dataset.targetUid = userId; followBtn.onclick = () => handleFollowToggle(userId);
             if (userId === currentUser.uid) { followBtn.style.display = 'none'; document.getElementById('profile-options-btn').style.display = 'none'; } 
             else {
-                followBtn.style.display = 'block';
+                followBtn.style.display = 'block'; document.getElementById('profile-options-btn').style.display = 'flex';
                 const isFollowing = currentUserData.following && currentUserData.following[userId];
-                followBtn.className = 'w-full py-3 rounded-lg text-sm ' + (isFollowing ? 'unfollow-button' : 'follow-button');
-                followBtn.textContent = isFollowing ? 'Unfollow' : 'Follow';
+                if (isFollowing) { followBtn.textContent = 'Unfollow'; followBtn.className = 'w-full py-3 rounded-lg text-sm unfollow-button'; } 
+                else { followBtn.textContent = 'Follow'; followBtn.className = 'w-full py-3 rounded-lg text-sm follow-button'; }
             }
             renderChatProfileBadges(user); renderChatProfileTitles(user); renderChatProfileTeam(user);
         }
+
         async function handleFollowToggle(targetUserId) { const followBtn = document.getElementById('follow-toggle-btn'); followBtn.disabled = true; const isCurrentlyFollowing = currentUserData.following && currentUserData.following[targetUserId]; const updates = {}; if (isCurrentlyFollowing) { updates[`/users/${currentUser.uid}/following/${targetUserId}`] = null; updates[`/users/${targetUserId}/followers/${currentUser.uid}`] = null; updates[`/users/${currentUser.uid}/followingCount`] = firebase.database.ServerValue.increment(-1); updates[`/users/${targetUserId}/followersCount`] = firebase.database.ServerValue.increment(-1); } else { updates[`/users/${currentUser.uid}/following/${targetUserId}`] = true; updates[`/users/${targetUserId}/followers/${currentUser.uid}`] = true; updates[`/users/${currentUser.uid}/followingCount`] = firebase.database.ServerValue.increment(1); updates[`/users/${targetUserId}/followersCount`] = firebase.database.ServerValue.increment(1); } try { await database.ref().update(updates); if (isCurrentlyFollowing) { if (currentUserData.following) delete currentUserData.following[targetUserId]; currentUserData.followingCount = (currentUserData.followingCount || 1) - 1; if (allData.users[targetUserId].followers) delete allData.users[targetUserId].followers[currentUser.uid]; allData.users[targetUserId].followersCount = (allData.users[targetUserId].followersCount || 1) - 1; } else { if (!currentUserData.following) currentUserData.following = {}; currentUserData.following[targetUserId] = true; currentUserData.followingCount = (currentUserData.followingCount || 0) + 1; if (!allData.users[targetUserId].followers) allData.users[targetUserId].followers = {}; allData.users[targetUserId].followers[currentUser.uid] = true; allData.users[targetUserId].followersCount = (allData.users[targetUserId].followersCount || 0) + 1; } renderChatProfile(allData.users[targetUserId], targetUserId); } catch (error) { console.error("Follow/Unfollow failed:", error); alert("An error occurred. Please try again."); } finally { followBtn.disabled = false; } }
         function renderChatProfileBadges(user) { const container = document.getElementById('chat-profile-badges-container'); const allDbBadges = allData.admin?.config?.verifiedBadges || {}; const equippedBadges = (user.equippedBadges || []).filter(id => id && allDbBadges[id]); if (equippedBadges.length === 0) { container.innerHTML = '<p class="empty-text-bn">No badges equipped</p>'; return; } container.innerHTML = equippedBadges.map(id => { const badge = allDbBadges[id]; const mediaTag = badge.type === 'video' ? 'video' : 'img'; return `<div class="badge-slot"><${mediaTag} src="${badge.url}" alt="badge" ${mediaTag === 'video' ? 'autoplay loop muted playsinline' : ''}></${mediaTag}></div>`; }).join(''); }
         function renderChatProfileTitles(user) { const container = document.getElementById('chat-profile-titles-grid'); const allDbTitles = allData.admin?.config?.titles || {}; const equippedTitles = (user.equippedTitles || []).filter(id => id && allDbTitles[id]); if (equippedTitles.length === 0) { container.innerHTML = '<p class="empty-text-bn col-span-2">No titles equipped</p>'; return; } container.innerHTML = equippedTitles.map(id => { const title = allDbTitles[id]; return `<div class="title-slot"><img src="${title.url}" alt="title"></div>`; }).join(''); }
         function renderChatProfileTeam(user) { const container = document.getElementById('chat-profile-team-section'); const team = user.team; let teamHTML = `<h3 class="premium-section-header">MY TEAM</h3>`; if (team) { const rankScore = team.rankScore || 0; const teamUID = team.teamUid ? `@${team.teamUid}` : `Joined: ${new Date(team.id).toLocaleDateString()}`; teamHTML += `<div id="chat-my-team-card" class="mt-3 flex items-center justify-between gap-4"><div class="flex items-center gap-4 flex-1 min-w-0"><img src="${team.logo || 'https://via.placeholder.com/56'}" class="team-logo"><div class="flex-1 min-w-0"><p class="font-bold text-lg truncate">${team.name}</p><p class="text-xs text-gray-500">${teamUID}</p></div></div><div class="text-center flex-shrink-0"><div class="flex items-center"><p class="rank-score">${rankScore}</p><div class="rank-change-arrows"><i class="fa-solid fa-caret-up text-green-500"></i><i class="fa-solid fa-caret-down text-red-500"></i></div></div><p class="text-xs text-gray-400 uppercase tracking-wider">Rank Score</p></div></div>`; } else { teamHTML += `<div class="mt-3 text-center p-6 bg-[#1e1e1e] border border-gray-700 rounded-lg"><p class="text-gray-500">Not part of a team.</p></div>`; } container.innerHTML = teamHTML; }
-        function setupRefreshButton() { document.getElementById('refresh-btn').addEventListener('click', () => window.location.reload()); }
+        function setupRefreshButton() { const refreshBtn = document.getElementById('refresh-btn'); refreshBtn.addEventListener('click', async () => { refreshBtn.classList.add('refreshing'); refreshBtn.disabled = true; await fetchAndCacheAllData(); currentUserData = allData.users[currentUser.uid]; listenForMessages(); setTimeout(() => { refreshBtn.classList.remove('refreshing'); refreshBtn.disabled = false; }, 1000); }); }
         function sendMessage() { const text = messageInput.value.trim();if (text.length === 0 || text.length > 30) return;const messageData = { senderUid: currentUser.uid, text: text, timestamp: firebase.database.ServerValue.TIMESTAMP };if (replyToMessage) messageData.replyTo = replyToMessage;chatRef.push(messageData).then(() => {messageInput.value = ''; messageInput.dispatchEvent(new Event('input')); cancelReply();});typingRef.child(currentUser.uid).remove();}
         function setReply(messageEl) { replyToMessage = { id: messageEl.dataset.messageId, authorUid: messageEl.dataset.authorUid, authorName: messageEl.dataset.authorName, authorAvatar: messageEl.dataset.authorAvatar, text: messageEl.dataset.messageText };document.getElementById('reply-username').textContent = replyToMessage.authorName;document.getElementById('reply-text').textContent = replyToMessage.text;replyIndicator.classList.remove('hidden'); replyIndicator.classList.add('flex');messageInput.focus();}
         function setupPremiumSettings() { const modal = document.getElementById('premium-settings-modal'); const openBtn = document.getElementById('open-premium-settings-btn'); const closeBtn = document.getElementById('close-premium-settings-btn'); const saveBtn = document.getElementById('save-settings-btn'); const boxColorPicker = document.getElementById('reply-box-color-picker'); const nameColorPicker = document.getElementById('reply-name-color-picker'); const previewBox = document.getElementById('settings-reply-preview'); const previewName = document.getElementById('settings-reply-username-preview'); const colors = ['rgb(255, 82, 82)', 'rgb(255, 128, 0)', 'rgb(255, 215, 0)', 'rgb(50, 205, 50)', 'rgb(0, 191, 255)', 'rgb(65, 105, 225)', 'rgb(138, 43, 226)', 'rgb(255, 20, 147)', 'rgb(233, 233, 233)', 'rgb(139, 69, 19)']; let tempReplyBoxColor = null, tempReplyNameColor = null; const updatePreview = () => { if (tempReplyBoxColor) { const [r,g,b] = tempReplyBoxColor.match(/\d+/g); previewBox.style.setProperty('--reply-bg-color-start', `rgba(${r},${g},${b},0.4)`); previewBox.style.setProperty('--reply-bg-color-mid', `rgba(${r},${g},${b},0.25)`); previewBox.style.setProperty('--reply-bg-color-end', `rgba(${r},${g},${b},0)`); } else { previewBox.style.removeProperty('--reply-bg-color-start'); previewBox.style.removeProperty('--reply-bg-color-mid'); previewBox.style.removeProperty('--reply-bg-color-end'); } previewName.style.color = tempReplyNameColor || '#ffffff'; }; const createSwatches = (container, colorList, onSelect) => { container.innerHTML = ''; colorList.forEach(color => { const swatch = document.createElement('div'); swatch.className = 'color-swatch'; swatch.style.backgroundColor = color; swatch.dataset.color = color; swatch.addEventListener('click', () => onSelect(swatch)); container.appendChild(swatch); }); }; const selectSwatch = (container, selectedColor) => { container.querySelectorAll('.color-swatch').forEach(s => s.classList.toggle('selected', s.dataset.color === selectedColor)); }; createSwatches(boxColorPicker, colors, (s) => { tempReplyBoxColor = s.dataset.color; selectSwatch(boxColorPicker, tempReplyBoxColor); updatePreview(); }); createSwatches(nameColorPicker, colors, (s) => { tempReplyNameColor = s.dataset.color; selectSwatch(nameColorPicker, tempReplyNameColor); updatePreview(); }); openBtn.addEventListener('click', () => { const userSettings = (allData.users[currentUser.uid] || {}).settings || {}; tempReplyBoxColor = userSettings.replyColor || null; tempReplyNameColor = userSettings.replyNameColor || null; selectSwatch(boxColorPicker, tempReplyBoxColor); selectSwatch(nameColorPicker, tempReplyNameColor); updatePreview(); modal.classList.remove('hidden'); }); closeBtn.addEventListener('click', () => modal.classList.add('hidden')); saveBtn.addEventListener('click', () => { const settings = { replyColor: tempReplyBoxColor, replyNameColor: tempReplyNameColor }; database.ref('users/' + currentUser.uid + '/settings').update(settings).then(() => { if (!allData.users[currentUser.uid]) allData.users[currentUser.uid] = {}; allData.users[currentUser.uid].settings = settings; alert('Settings saved successfully!'); modal.classList.add('hidden'); }).catch(err => alert('Error saving settings: ' + err.message)); });}
@@ -542,158 +542,169 @@
         function setupScrollListener() { messagesContainer.addEventListener('scroll', () => { const isScrolledUp = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight > 200; if (isScrolledUp) { scrollToBottomBtn.classList.remove('hidden'); } else { scrollToBottomBtn.classList.add('hidden'); } }); scrollToBottomBtn.addEventListener('click', () => { scrollToBottom(true); }); }
         function setupSwipeToReply() { let isDragging = false, startX = 0, deltaX = 0, draggedElement = null, iconElement = null; const swipeThreshold = -60, maxSwipe = -70; const getEventX = e => e.touches ? e.touches[0].clientX : e.clientX; const onDragStart = (e) => { const target = e.target.closest('.message-container'); if (!target) return; draggedElement = target; iconElement = target.previousElementSibling; startX = getEventX(e); isDragging = true; draggedElement.style.transition = 'none'; }; const onDragMove = (e) => { if (!isDragging || !draggedElement) return; deltaX = getEventX(e) - startX; if (deltaX > 0) deltaX = 0; if (deltaX < maxSwipe) deltaX = maxSwipe; draggedElement.style.transform = `translateX(${deltaX}px)`; iconElement.style.opacity = (Math.abs(deltaX) / Math.abs(maxSwipe)); }; const onDragEnd = () => { if (!isDragging || !draggedElement) return; isDragging = false; draggedElement.style.transition = 'transform 0.2s ease-out'; draggedElement.style.transform = 'translateX(0px)'; iconElement.style.opacity = 0; if (deltaX <= swipeThreshold) setReply(draggedElement); draggedElement = null; deltaX = 0; }; messagesContainer.addEventListener('mousedown', onDragStart); messagesContainer.addEventListener('touchstart', onDragStart, { passive: true }); document.addEventListener('mousemove', onDragMove); document.addEventListener('touchmove', onDragMove, { passive: true }); document.addEventListener('mouseup', onDragEnd); document.addEventListener('touchend', onDragEnd); }
         function setupReplyNavigation() { messagesContainer.addEventListener('click', e => { const replyBox = e.target.closest('.replied-message-block'); if (!replyBox) return; const targetId = replyBox.dataset.replyToId; const targetMessage = document.querySelector(`.message-container[data-message-id="${targetId}"]`); if (targetMessage) { targetMessage.scrollIntoView({ behavior: 'smooth', block: 'center' }); targetMessage.classList.add('highlight'); setTimeout(() => targetMessage.classList.remove('highlight'), 2000); } }); }
-        function startRealtimeDataSync() { if (dataSyncInterval) clearInterval(dataSyncInterval); dataSyncInterval = setInterval(async () => { await fetchAndCacheAllData(); currentUserData = allData.users[currentUser.uid]; checkUserBanStatus(); }, 2000); }
+        
+        // --- NEW BLOCK/REPORT/BAN ---
         function updateBlockedUsersStorage() { localStorage.setItem('blockedUsers_v2', JSON.stringify(Array.from(blockedUsers))); }
-        function handleBlockUser(e) { e.preventDefault(); const userId = e.target.dataset.userId; const blockBtn = e.target; if (blockedUsers.has(userId)) { blockedUsers.delete(userId); blockBtn.textContent = 'Block User'; } else { blockedUsers.add(userId); blockBtn.textContent = 'Unblock User'; } updateBlockedUsersStorage(); document.querySelectorAll(`.message-group[data-author-uid="${userId}"]`).forEach(group => { const textEl = group.querySelector('.message-text'); const msgContainer = group.querySelector('.message-container'); if (textEl && msgContainer) { const isNowBlocked = blockedUsers.has(userId); textEl.classList.toggle('blocked', isNowBlocked); textEl.textContent = isNowBlocked ? 'Message unavailable' : msgContainer.dataset.messageText; } }); }
+        function handleBlockUser(e) {
+            e.preventDefault();
+            const userId = e.target.dataset.userId;
+            const blockBtn = e.target;
+            if (blockedUsers.has(userId)) {
+                blockedUsers.delete(userId);
+                blockBtn.textContent = 'Block User';
+            } else {
+                blockedUsers.add(userId);
+                blockBtn.textContent = 'Unblock User';
+            }
+            updateBlockedUsersStorage();
+            
+            // Re-render affected messages
+            document.querySelectorAll(`.message-group[data-author-uid="${userId}"]`).forEach(group => {
+                const textEl = group.querySelector('.message-text');
+                const msgContainer = group.querySelector('.message-container');
+                if (textEl && msgContainer) {
+                     const isNowBlocked = blockedUsers.has(userId);
+                     textEl.classList.toggle('blocked', isNowBlocked);
+                     textEl.textContent = isNowBlocked ? 'Message unavailable' : msgContainer.dataset.messageText;
+                }
+            });
+        }
         function showReportScreen() { reportScreen.classList.add('show'); }
         function hideReportScreen() { reportScreen.classList.remove('show'); }
-        async function handleReportUser(e) { e.preventDefault(); const userId = e.target.dataset.userId; const userName = e.target.dataset.userName; document.getElementById('reported-user-uid').value = userId; const existingReports = JSON.parse(localStorage.getItem('userReports_v2') || '{}'); const existingReportId = existingReports[userId]; if (existingReportId) { const snapshot = await reportsRef.child(existingReportId).once('value'); if (snapshot.exists()) { showReportStatus(snapshot.val()); } else { delete existingReports[userId]; localStorage.setItem('userReports_v2', JSON.stringify(existingReports)); showReportForm(); } } else { showReportForm(); } showReportScreen(); }
-        function showReportForm() { document.getElementById('report-form').reset(); document.getElementById('report-form-container').classList.remove('hidden'); document.getElementById('report-status-container').classList.add('hidden'); }
-        function showReportStatus(reportData) { document.getElementById('report-form-container').classList.add('hidden'); document.getElementById('report-status-container').classList.remove('hidden'); const reportedUser = allData.users[reportData.reportedUid]; document.getElementById('status-reported-username').textContent = reportedUser ? reportedUser.name : 'this user'; const statusBadge = document.getElementById('report-status-badge'); statusBadge.textContent = reportData.status.replace('_', ' ').toUpperCase(); statusBadge.className = 'px-4 py-1.5 rounded-full font-bold text-lg'; if (reportData.status === 'pending') statusBadge.classList.add('bg-yellow-500/20', 'text-yellow-300'); else if (reportData.status === 'action_taken') statusBadge.classList.add('bg-blue-500/20', 'text-blue-300'); else if (reportData.status === 'solved') statusBadge.classList.add('bg-green-500/20', 'text-green-300'); }
-        async function handleSubmitReport(e) { e.preventDefault(); const btn = document.getElementById('submit-report-btn'); const spinner = document.getElementById('submit-report-spinner'); const btnText = document.getElementById('submit-report-text'); btn.disabled = true; spinner.classList.remove('hidden'); btnText.textContent = 'Submitting...'; try { const reportedUid = document.getElementById('reported-user-uid').value; const screenshotFile = document.getElementById('report-screenshot').files[0]; let screenshotUrl = null; if (screenshotFile) { const storageRef = storage.ref(`reports/${currentUser.uid}/${Date.now()}_${screenshotFile.name}`); const snapshot = await storageRef.put(screenshotFile); screenshotUrl = await snapshot.ref.getDownloadURL(); } const reportData = { reporterUid: currentUser.uid, reportedUid: reportedUid, reason: document.getElementById('report-reason').value, details: document.getElementById('report-details').value, proofUrl: document.getElementById('report-proof-url').value, screenshotUrl: screenshotUrl, timestamp: firebase.database.ServerValue.TIMESTAMP, status: 'pending' }; const newReportRef = reportsRef.push(); await newReportRef.set(reportData); const existingReports = JSON.parse(localStorage.getItem('userReports_v2') || '{}'); existingReports[reportedUid] = newReportRef.key; localStorage.setItem('userReports_v2', JSON.stringify(existingReports)); showReportStatus(reportData); } catch (error) { console.error("Report submission failed:", error); alert("Failed to submit report. Please try again."); } finally { btn.disabled = false; spinner.classList.add('hidden'); btnText.textContent = 'Submit Report'; } }
-        
-        // --- NEW/UPDATED MODERATOR & BAN LOGIC ---
+        async function handleReportUser(e) {
+            e.preventDefault();
+            const userId = e.target.dataset.userId;
+            const userName = e.target.dataset.userName;
+            document.getElementById('reported-user-uid').value = userId;
+            
+            const existingReports = JSON.parse(localStorage.getItem('userReports_v2') || '{}');
+            const existingReportId = existingReports[userId];
+
+            if (existingReportId) {
+                // Fetch and show status
+                const snapshot = await reportsRef.child(existingReportId).once('value');
+                if (snapshot.exists()) {
+                    showReportStatus(snapshot.val());
+                } else {
+                    // Report was deleted (e.g., solved), allow new report
+                    delete existingReports[userId];
+                    localStorage.setItem('userReports_v2', JSON.stringify(existingReports));
+                    showReportForm();
+                }
+            } else {
+                showReportForm();
+            }
+            showReportScreen();
+        }
+        function showReportForm() {
+            document.getElementById('report-form').reset();
+            document.getElementById('report-form-container').classList.remove('hidden');
+            document.getElementById('report-status-container').classList.add('hidden');
+        }
+        function showReportStatus(reportData) {
+            document.getElementById('report-form-container').classList.add('hidden');
+            document.getElementById('report-status-container').classList.remove('hidden');
+            const reportedUser = allData.users[reportData.reportedUid];
+            document.getElementById('status-reported-username').textContent = reportedUser ? reportedUser.name : 'this user';
+            
+            const statusBadge = document.getElementById('report-status-badge');
+            statusBadge.textContent = reportData.status.replace('_', ' ').toUpperCase();
+            statusBadge.className = 'px-4 py-1.5 rounded-full font-bold text-lg'; // Reset classes
+            if (reportData.status === 'pending') statusBadge.classList.add('bg-yellow-500/20', 'text-yellow-300');
+            else if (reportData.status === 'action_taken') statusBadge.classList.add('bg-blue-500/20', 'text-blue-300');
+            else if (reportData.status === 'solved') statusBadge.classList.add('bg-green-500/20', 'text-green-300');
+        }
+        async function handleSubmitReport(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-report-btn');
+            const spinner = document.getElementById('submit-report-spinner');
+            const btnText = document.getElementById('submit-report-text');
+            btn.disabled = true; spinner.classList.remove('hidden'); btnText.textContent = 'Submitting...';
+
+            try {
+                const reportedUid = document.getElementById('reported-user-uid').value;
+                const screenshotFile = document.getElementById('report-screenshot').files[0];
+                let screenshotUrl = null;
+
+                if (screenshotFile) {
+                    const storageRef = storage.ref(`reports/${currentUser.uid}/${Date.now()}_${screenshotFile.name}`);
+                    const snapshot = await storageRef.put(screenshotFile);
+                    screenshotUrl = await snapshot.ref.getDownloadURL();
+                }
+                
+                const reportData = {
+                    reporterUid: currentUser.uid,
+                    reportedUid: reportedUid,
+                    reason: document.getElementById('report-reason').value,
+                    details: document.getElementById('report-details').value,
+                    proofUrl: document.getElementById('report-proof-url').value,
+                    screenshotUrl: screenshotUrl,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    status: 'pending'
+                };
+                
+                const newReportRef = reportsRef.push();
+                await newReportRef.set(reportData);
+                
+                const existingReports = JSON.parse(localStorage.getItem('userReports_v2') || '{}');
+                existingReports[reportedUid] = newReportRef.key;
+                localStorage.setItem('userReports_v2', JSON.stringify(existingReports));
+
+                showReportStatus(reportData);
+
+            } catch (error) {
+                console.error("Report submission failed:", error);
+                alert("Failed to submit report. Please try again.");
+            } finally {
+                btn.disabled = false; spinner.classList.add('hidden'); btnText.textContent = 'Submit Report';
+            }
+        }
         function checkUserBanStatus() {
-            const banInfo = currentUserData?.banInfo; const banOverlay = document.getElementById('ban-overlay'); const footer = document.getElementById('chat-footer'); const headerStatus = document.getElementById('header-status');
+            const banInfo = currentUserData?.banInfo;
             if (banInfo && banInfo.liftTimestamp && (banInfo.liftTimestamp === -1 || banInfo.liftTimestamp > Date.now())) {
+                const banOverlay = document.getElementById('ban-overlay');
+                const footer = document.getElementById('chat-footer');
+                const reasonBtn = document.getElementById('ban-reason-btn');
+                const reasonText = document.getElementById('ban-reason-text');
+                
                 footer.querySelectorAll('button, textarea').forEach(el => el.disabled = true);
-                banOverlay.classList.remove('hidden'); banOverlay.classList.add('flex');
-                headerStatus.innerHTML = `<div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div><span class="text-red-400 font-semibold">Banned</span>`;
-                document.getElementById('ban-reason-text').textContent = banInfo.reason || 'No reason provided.';
-                document.getElementById('ban-reason-btn').onclick = () => document.getElementById('ban-reason-text').classList.toggle('hidden');
+                banOverlay.classList.remove('hidden');
+                banOverlay.classList.add('flex');
+                
+                reasonText.textContent = banInfo.reason || 'No reason provided.';
+                reasonBtn.onclick = () => reasonText.classList.toggle('hidden');
+
                 if (banInterval) clearInterval(banInterval);
                 banInterval = setInterval(() => {
-                    const timerEl = document.getElementById('ban-timer'); const now = Date.now(); const liftTime = banInfo.liftTimestamp;
-                    if (liftTime === -1) { timerEl.textContent = "PERMANENTLY"; clearInterval(banInterval); return; }
-                    if (now >= liftTime) { clearInterval(banInterval); checkUserBanStatus(); return; }
-                    const r = liftTime - now; const d = Math.floor(r/864e5), h = Math.floor((r%864e5)/36e5), m = Math.floor((r%36e5)/6e4), s = Math.floor((r%6e4)/1e3);
-                    timerEl.textContent = `${String(d).padStart(2,'0')}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+                    const timerEl = document.getElementById('ban-timer');
+                    const now = Date.now();
+                    const liftTime = banInfo.liftTimestamp;
+
+                    if (liftTime === -1) {
+                        timerEl.textContent = "PERMANENTLY";
+                        clearInterval(banInterval);
+                        return;
+                    }
+
+                    if (now >= liftTime) {
+                        clearInterval(banInterval);
+                        banOverlay.classList.add('hidden');
+                        footer.querySelectorAll('button, textarea').forEach(el => el.disabled = false);
+                        // Also re-check send button status
+                        messageInput.dispatchEvent(new Event('input'));
+                        return;
+                    }
+                    
+                    const remaining = liftTime - now;
+                    const d = Math.floor(remaining / (1000 * 60 * 60 * 24));
+                    const h = Math.floor((remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const m = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((remaining % (1000 * 60)) / 1000);
+                    timerEl.textContent = `${String(d).padStart(2, '0')}d ${String(h).padStart(2, '0')}h ${String(m).padStart(2, '0')}m ${String(s).padStart(2, '0')}s`;
                 }, 1000);
-            } else { if (banInterval) clearInterval(banInterval); banOverlay.classList.add('hidden'); headerStatus.innerHTML = `<div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div><span class="text-green-400">Online</span>`; footer.querySelectorAll('textarea').forEach(el => el.disabled = false); messageInput.dispatchEvent(new Event('input')); }
-        }
-
-        function listenForChatState() { chatStateRef.on('value', snapshot => { const state = snapshot.val() || {}; updateChatLockUI(state.isLocked); }); }
-
-        function updateChatLockUI(isLocked) {
-            const lockOverlay = document.getElementById('chat-lock-overlay');
-            const modSettingsToggle = document.getElementById('chat-lock-toggle');
-            if (modSettingsToggle) modSettingsToggle.checked = !!isLocked;
-
-            if (isLocked && !isCurrentUserModerator) {
-                lockOverlay.classList.remove('hidden'); lockOverlay.classList.add('flex');
-                messageInput.disabled = true; sendBtn.disabled = true;
-                document.getElementById('input-action-btn').disabled = true;
-            } else {
-                lockOverlay.classList.add('hidden');
-                messageInput.disabled = false;
-                document.getElementById('input-action-btn').disabled = false;
-                messageInput.dispatchEvent(new Event('input')); // Re-check send button state
             }
         }
-        
-        function setupModeratorFeatures() {
-            if (!isCurrentUserModerator) return;
-            // Show mod settings button
-            document.getElementById('mod-settings-btn').classList.remove('hidden');
-            // Change input action button to '+'
-            const inputActionBtn = document.getElementById('input-action-btn');
-            inputActionBtn.innerHTML = '<i class="fas fa-plus"></i>';
-            inputActionBtn.onclick = () => document.getElementById('mod-input-popup').classList.toggle('show');
-            document.addEventListener('click', (e) => { if(!e.target.closest('#input-action-btn')) document.getElementById('mod-input-popup').classList.remove('show'); });
 
-            // Setup Mod Settings Modal
-            const modSettingsModal = document.getElementById('mod-settings-modal');
-            document.getElementById('mod-settings-btn').addEventListener('click', () => modSettingsModal.classList.remove('hidden'));
-            document.getElementById('close-mod-settings-btn').addEventListener('click', () => modSettingsModal.classList.add('hidden'));
-            document.getElementById('chat-lock-toggle').addEventListener('change', (e) => chatStateRef.child('isLocked').set(e.target.checked));
-
-            // Setup Long-press for message edit/delete
-            let pressTimer;
-            messagesContainer.addEventListener('mousedown', e => { const target = e.target.closest('.message-container'); if(target) pressTimer = setTimeout(() => showMessageContextMenu(e, target), 800); });
-            messagesContainer.addEventListener('touchstart', e => { const target = e.target.closest('.message-container'); if(target) pressTimer = setTimeout(() => showMessageContextMenu(e, target), 800); });
-            messagesContainer.addEventListener('mouseup', () => clearTimeout(pressTimer));
-            messagesContainer.addEventListener('touchend', () => clearTimeout(pressTimer));
-            messagesContainer.addEventListener('mousemove', () => clearTimeout(pressTimer));
-
-            // Setup Ban Modal
-            document.getElementById('close-mod-ban-btn').addEventListener('click', () => document.getElementById('mod-ban-user-modal').classList.add('hidden'));
-            document.getElementById('mod-ban-form').addEventListener('submit', handleModBanSubmit);
-            // Setup Edit Modal
-            document.getElementById('close-mod-edit-btn').addEventListener('click', () => document.getElementById('mod-edit-message-modal').classList.add('hidden'));
-            document.getElementById('mod-edit-form').addEventListener('submit', handleModEditSubmit);
-        }
-        
-        function showBanUserModal(userId, userName) {
-            const modal = document.getElementById('mod-ban-user-modal');
-            document.getElementById('ban-target-uid').value = userId;
-            document.getElementById('ban-target-username').textContent = userName;
-            modal.classList.remove('hidden');
-        }
-
-        function handleModBanSubmit(e) {
-            e.preventDefault();
-            const targetUid = document.getElementById('ban-target-uid').value;
-            const unit = document.getElementById('ban-duration-unit').value;
-            const value = parseInt(document.getElementById('ban-duration-value').value, 10);
-            const reason = document.getElementById('ban-reason').value.trim();
-            
-            if (!reason) { alert("Please provide a reason."); return; }
-            if (unit !== 'permanent' && (isNaN(value) || value <= 0)) { alert("Please enter a valid duration."); return; }
-
-            let liftTimestamp;
-            if (unit === 'permanent') { liftTimestamp = -1; }
-            else {
-                let multiplier = 60000; // minutes
-                if (unit === 'hours') multiplier = 3600000;
-                if (unit === 'days') multiplier = 86400000;
-                liftTimestamp = Date.now() + (value * multiplier);
-            }
-
-            const banInfo = { liftTimestamp, reason, bannedBy: currentUser.uid };
-            database.ref(`users/${targetUid}/banInfo`).set(banInfo).then(() => {
-                alert('User has been banned successfully.');
-                document.getElementById('mod-ban-user-modal').classList.add('hidden');
-            }).catch(err => alert('Error: ' + err.message));
-        }
-
-        function showMessageContextMenu(event, messageEl) {
-            event.preventDefault();
-            const menu = document.getElementById('message-context-menu');
-            const messageId = messageEl.dataset.messageId;
-            const messageText = messageEl.dataset.messageText;
-
-            menu.style.display = 'block';
-            menu.style.left = `${event.clientX}px`;
-            menu.style.top = `${event.clientY}px`;
-
-            document.getElementById('context-edit-btn').onclick = () => { menu.style.display = 'none'; showEditMessageModal(messageId, messageText); };
-            document.getElementById('context-delete-btn').onclick = () => { menu.style.display = 'none'; deleteMessage(messageId); };
-
-            const hideMenu = () => { menu.style.display = 'none'; document.removeEventListener('click', hideMenu); };
-            setTimeout(() => document.addEventListener('click', hideMenu), 0);
-        }
-
-        function showEditMessageModal(messageId, currentText) {
-            const modal = document.getElementById('mod-edit-message-modal');
-            document.getElementById('edit-message-id').value = messageId;
-            document.getElementById('edit-message-input').value = currentText;
-            modal.classList.remove('hidden');
-        }
-
-        function handleModEditSubmit(e) {
-            e.preventDefault();
-            const messageId = document.getElementById('edit-message-id').value;
-            const newText = document.getElementById('edit-message-input').value;
-            chatRef.child(messageId).update({ text: newText, isEdited: true })
-                .then(() => document.getElementById('mod-edit-message-modal').classList.add('hidden'))
-                .catch(err => alert('Error editing message: ' + err.message));
-        }
-
-        function deleteMessage(messageId) {
-            if (confirm("Are you sure you want to delete this message?")) {
-                chatRef.child(messageId).update({ text: '', isDeleted: true });
-            }
-        }
     </script>
 </body>
 </html>
