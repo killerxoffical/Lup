@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEVEL UP - Ultimate Esports</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Lottie Player -->
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@latest/dist/dotlottie-wc.js" type="module"></script>
+    <!-- Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- GSAP LIBRARY ADDED HERE -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- আপনার কাস্টম CSS ফাইল এখানে লিঙ্ক করা হয়েছে -->
+    <link rel="stylesheet" href="styles.css">
+    
+</head>
+<body class="overflow-hidden bg-black">
+    
+    <!-- New Sidebar -->
+    <div id="sidebar-overlay" class="hidden"></div>
+    <aside id="sidebar" class="flex flex-col">
+        <!-- Top Fixed Section -->
+        <div class="p-4 border-b border-gray-700/50 flex-shrink-0">
+            <div id="sidebar-profile-header" class="flex items-center gap-4 cursor-pointer">
+                <div class="relative w-16 h-16 flex-shrink-0">
+                    <img id="sidebar-avatar" src="https://firebasestorage.googleapis.com/v0/b/viptask-5c1fc.appspot.com/o/dfdc00fc6bb93771364bbf5000dad222.jpg?alt=media&token=ff33f08b-1b2e-424e-b636-f664d8044bed" class="w-full h-full rounded-full object-cover border-2 border-gray-600" loading="lazy">
+                    <img id="sidebar-avatar-frame" src="" class="absolute top-1/2 left-1/2 w-[140%] h-[140%] -translate-x-1/2 -translate-y-1/2 object-contain pointer-events-none hidden">
+                </div>
+                <div>
+                    <h2 id="sidebar-username" class="text-xl font-bold text-white">USER NAME</h2>
+                    <div class="flex items-center">
+                       <p id="sidebar-teamname" class="text-sm text-gray-400">TEAM NAME</p>
+                       <div id="sidebar-team-badge-container" class="flex items-center ml-2"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- NEW PREMIUM BALANCE CARDS (GSAP Animated) -->
+            <div class="mt-6 grid grid-cols-2 gap-3">
+                 <div class="premium-balance-card coin-card">
+                    <div id="sidebar-coin-plus" class="plus-btn"><i class="fa-solid fa-plus"></i></div>
+                    <img src="https://cdn-icons-png.flaticon.com/512/217/217853.png" class="icon" loading="lazy">
+                    <span id="sidebar-coin-balance" class="amount">0.00</span>
+                </div>
+                 <div class="premium-balance-card diamond-card">
+                    <div id="sidebar-diamond-plus" class="plus-btn"><i class="fa-solid fa-plus"></i></div>
+                    <img src="https://firebasestorage.googleapis.com/v0/b/viptask-5c1fc.appspot.com/o/Levelup%2F1762763297995.png?alt=media&token=db9ebed1-ff51-49ed-a311-0327313dae56" class="icon" loading="lazy">
+                    <span id="sidebar-diamond-balance" class="amount">0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scrollable Navigation Section -->
+        <nav id="sidebar-nav" class="flex-grow p-2 space-y-1 overflow-y-auto">
+            
+            <a id="sidebar-leaderboard" class="sidebar-menu-item"><div class="icon-bg bg-yellow-500/20"><i class="fa-solid fa-trophy text-yellow-300"></i></div><span>Leaderboard</span></a>
+            <a id="sidebar-redeem" class="sidebar-menu-item"><div class="icon-bg bg-green-500/20"><i class="fa-solid fa-gift text-green-300"></i></div><span>Redeem Code</span></a>
+            
+            <a id="sidebar-lucky-box" class="sidebar-menu-item">
+                <div class="icon-bg bg-purple-500/20"><i class="fa-solid fa-dice-d6 text-purple-300"></i></div>
+                <span>Lucky Box</span>
+            </a>
+
+            <a id="sidebar-topup" class="sidebar-menu-item"><div class="icon-bg bg-orange-500/20"><i class="fa-solid fa-fire text-orange-300"></i></div><span>Free Fire TopUp</span></a>
+            <a id="sidebar-buy-sell" class="sidebar-menu-item"><div class="icon-bg bg-teal-500/20"><i class="fa-solid fa-repeat text-teal-300"></i></div><span>Buy & Sell</span></a>
+            <a id="sidebar-store" class="sidebar-menu-item"><div class="icon-bg bg-purple-500/20"><i class="fa-solid fa-store text-purple-300"></i></div><span>Store</span></a>
+            <a id="sidebar-history" class="sidebar-menu-item"><div class="icon-bg bg-blue-500/20"><i class="fa-solid fa-receipt text-blue-300"></i></div><span>History</span></a>
+            <a id="sidebar-partner" class="sidebar-menu-item"><div class="icon-bg bg-green-500/20"><i class="fa-solid fa-handshake-simple text-green-300"></i></div><span class="text-green-400 font-bold">Join a Partner</span></a>
+            
+            <a id="sidebar-help-community" class="sidebar-menu-item"><div class="icon-bg bg-cyan-500/20"><i class="fa-solid fa-headset text-cyan-300"></i></div><span>Help & Community</span></a>
+            <a id="sidebar-video-tutorials" class="sidebar-menu-item"><div class="icon-bg bg-red-500/20"><i class="fa-brands fa-youtube text-red-400"></i></div><span>Video Tutorials</span></a>
+        </nav>
+        <div id="sidebar-scroll-indicator" class="hidden">
+            <i class="fa-solid fa-chevron-down"></i>
+        </div>
+
+        <!-- Bottom Fixed Section -->
+        <div class="p-4 border-t border-gray-700/50 flex-shrink:0">
+            <div class="bg-gray-800/50 p-2 rounded-full flex justify-around items-center">
+                <a href="https://t.me/levelupbd" target="_blank" class="text-gray-400 hover:text-white text-2xl"><i class="fab fa-facebook"></i></a>
+                <a href="https://t.me/levelupbd" target="_blank" class="text-gray-400 hover:text-white text-2xl"><i class="fab fa-telegram"></i></a>
+            </div>
+        </div>
+    </aside>
+
+    <div id="page-transition-overlay"></div>
+    <div id="page-transition-cover"></div>
+
+    <!-- Screen 1: Splash (GSAP Controlled) -->
+    <div id="splash-screen" class="screen bg-black !justify-center z-[2000]">
+        <div class="relative w-full h-full flex items-center justify-center">
+            <!-- Lottie -->
+            <dotlottie-wc id="splash-screen-lottie" src="https://lottie.host/09fd19d9-9bd5-42ca-8089-880621573a27/qqEJoYOp7E.lottie" style="width: 300px; height: 300px; position: absolute;" autoplay loop></dotlottie-wc>
+            <!-- Logo -->
+            <img id="splash-screen-logo" src="https://firebasestorage.googleapis.com/v0/b/viptask-5c1fc.appspot.com/o/dfdc00fc6bb93771364bbf5000dad222.jpg?alt=media&token=ff33f08b-1b2e-424e-b636-f664d8044bed" alt="LEVEL UP Logo" class="w-48 h-48 rounded-full opacity-0 transform scale-50" loading="lazy">
+        </div>
+    </div>
+
+    <!-- Screen 2: Auth -->
+    <div id="auth-container" class="screen bg-black hidden !justify-center p-4">
+        <!-- Login View -->
+        <div id="login-view" class="auth-view active w-full max-w-sm">
+            <div class="auth-card">
+                <img src="https://firebasestorage.googleapis.com/v0/b/viptask-5c1fc.appspot.com/o/dfdc00fc6bb93771364bbf5000dad222.jpg?alt=media&token=ff33f08b-1b2e-424e-b636-f664d8044bed" alt="Logo" class="w-20 h-20 mx-auto mb-4 rounded-full" loading="lazy">
+                <h1 class="text-3xl font-oswald font-bold text-white text-center">Welcome Back</h1>
+                <p class="text-gray-400 mb-8 text-center">Sign in to continue</p>
+                <form id="login-form-element" class="space-y-5">
+                    <div class="relative flex items-center w-full input-field p-1">
+                        <i class="fa-solid fa-envelope absolute left-4 text-gray-400"></i>
+                        <input id="login-email" type="text" placeholder="Email" required class="w-full bg-transparent pl-10 pr-4 py-3 text-white placeholder-gray-400 border-none rounded-lg focus:outline-none">
+                    </div>
+                    <div class="relative flex items-center w-full input-field p-1">
+                        <i class="fa-solid fa-lock absolute left-4 text-gray-400"></i>
+                        <input id="login-password" type="password" placeholder="Password" required class="w-full bg-transparent pl-10 pr-10 py-3 text-white placeholder-gray-400 border-none rounded-lg focus:outline-none">
+                        <i id="toggle-login-password" class="fa-solid fa-eye password-toggle"></i>
+                    </div>
+                    <a href="#" id="forgot-password-link" class="block text-sm text-right text-gray-400 hover:text-white -mt-2">Forgot password?</a>
+                    <button type="submit" class="w-full py-3 rounded-xl action-button text-lg flex items-center justify-center h-[52px]">Sign In</button>
+                </form>
+                <div class="flex items-center my-6"><div class="flex-grow border-t border-gray-600"></div><span class="flex-shrink mx-4 text-gray-500 text-sm">OR</span><div class="flex-grow border-t border-gray-600"></div></div>
+                <button id="google-signin-btn" class="w-full py-3 rounded-xl bg-white text-black font-semibold flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors"><img src="https://www.vectorlogo.zone/logos/google/google-icon.svg" class="w-5 h-5"> Sign In with Google</button>
+                <div class="mt-6 text-center text-sm">
+                    <p class="text-gray-400">Don't have an account? <a href="#" id="show-signup" class="font-semibold text-green-400 hover:text-green-300">Sign Up</a></p>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Signup View -->
+        <div id="signup-view" class="auth-view w-full max-w-sm">
+            <div class="auth-card">
+                 <h1 class="text-3xl font-oswald font-bold text-white text-center">Create Account</h1>
+                 <p class="text-gray-400 mb-6 text-center">Get started with LEVEL UP</p>
+                 <form id="signup-form-element" class="space-y-4">
+                    <div class="relative flex items-center w-full input-field p-1">
+                        <i class="fa-solid fa-user absolute left-4 text-gray-400"></i>
+                        <input id="signup-fullname" type="text" placeholder="Full Name" required class="w-full bg-transparent pl-10 pr-4 py-2 text-sm text-white placeholder-gray-400 border-none rounded-lg focus:outline-none">
+                    </div>
+                    <div class="relative flex items-center w-full input-field p-1">
+                        <i class="fa-solid fa-envelope absolute left-4 text-gray-400"></i>
+                        <input id="signup-email" type="email" placeholder="Email Address (@gmail.com only)" required class="w-full bg-transparent pl-10 pr-4 py-2 text-sm text-white placeholder-gray-400 border-none rounded-lg focus:outline-none">
+                    </div>
+                    <div class="flex items-center w-full input-field rounded-lg px-4 py-2">
+                        <i class="fa-brands fa-whatsapp text-gray-400 mr-3 text-lg"></i>
+                        <span class="text-gray-400 text-sm pr-2 border-r border-gray-600">+880</span>
+                        <input id="signup-whatsapp" type="tel" placeholder="WhatsApp Number" required class="flex-1 bg-transparent pl-2 text-sm text-white placeholder-gray-400 border-none focus:outline-none">
+                    </div>
+                    <div class="relative flex items-center w-full input-field p-1">
+                        <i class="fa-solid fa-lock absolute left-4 text-gray-400"></i>
+                        <input id="signup-password" type="password" placeholder="Password" required class="w-full bg-transparent pl-10 pr-10 py-2 text-sm text-white placeholder-gray-400 border-none rounded-lg focus:outline-none">
+                        <i id="toggle-signup-password" class="fa-solid fa-eye password-toggle"></i>
+                    </div>
+                    <div id="strength-bar-container" class="!mt-1 !mb-2"><div id="strength-bar"></div></div>
+                    <div class="relative flex items-center w-full input-field p-1">
+                        <i class="fa-solid fa-lock absolute left-4 text-gray-400"></i>
+                        <input id="signup-confirm-password" type="password" placeholder="Confirm Password" required class="w-full bg-transparent pl-10 pr-10 py-2 text-sm text-white placeholder-gray-400 border-none rounded-lg focus:outline-none">
+                        <i id="toggle-confirm-password" class="fa-solid fa-eye password-toggle"></i>
+                    </div>
+                    <p id="password-match-msg" class="text-xs -mt-2 ml-2 h-4"></p>
+                    <div class="flex justify-center space-x-2">
+                        <div><input type="radio" id="male" name="gender" class="hidden gender-radio" value="male" checked><label for="male" class="cursor-pointer flex items-center justify-center w-24 h-10 text-xs text-gray-300 rounded-lg">Male</label></div>
+                        <div><input type="radio" id="female" name="gender" class="hidden gender-radio" value="female"><label for="female" class="cursor-pointer flex items-center justify-center w-24 h-10 text-xs text-gray-300 rounded-lg">Female</label></div>
+                        <div><input type="radio" id="other" name="gender" class="hidden gender-radio" value="other"><label for="other" class="cursor-pointer flex items-center justify-center w-24 h-10 text-xs text-gray-300 rounded-lg">Other</label></div>
+                    </div>
+                    <button type="submit" class="w-full py-3 mt-4 rounded-xl action-button text-lg flex items-center justify-center h-[52px]">Sign Up</button>
+                </form>
+                <div class="flex items-center my-6"><div class="flex-grow border-t border-gray-600"></div><span class="flex-shrink mx-4 text-gray-500 text-sm">OR</span><div class="flex-grow border-t border-gray-600"></div></div>
+                <button id="google-signup-btn" class="w-full py-3 rounded-xl bg-white text-black font-semibold flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors"><img src="https://www.vectorlogo.zone/logos/google/google-icon.svg" class="w-5 h-5"> Sign Up with Google</button>
+                 <div class="mt-6 text-center text-sm">
+                    <p class="text-gray-400">Already have an account? <a href="#" id="show-login" class="font-semibold text-green-400 hover:text-green-300">Sign In</a></p>
+                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Screen 3: Dashboard -->
+    <div id="dashboard-screen" class="screen hidden p-0 justify-start">
+        <main class="w-full h-full text-white overflow-y-auto no-scrollbar bg-black">
+            <!-- Headers -->
+            <header id="main-header" class="sticky top-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800 px-3 py-2 flex justify-between items-center gap-2">
+                <div class="flex items-center gap-3">
+                    <button id="sidebar-toggle" class="text-xl text-gray-300 w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <!-- MODIFIED: Animated header title -->
+                    <h1 id="animated-header-title" class="text-2xl font-oswald font-bold tracking-wider text-white flex">
+                        <span>L</span><span>E</span><span>V</span><span>E</span><span>L</span><span class="inline-block w-2"></span><span>U</span><span>P</span>
+                    </h1>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="home-search-btn" class="text-xl text-gray-300 w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
+                    <!-- MODIFIED: Wallet button UI updated -->
+                    <div id="wallet-button" class="bg-gray-800/50 border border-gray-700 rounded-full py-1 px-3 flex items-center gap-2 cursor-pointer hover:border-green-500 transition-all duration-300">
+                        <i class="fa-solid fa-wallet text-lg text-green-400"></i>
+                        <div class="text-left">
+                            <p class="text-sm font-bold text-white font-oswald tracking-wider leading-none"><span id="header-wallet-balance">0.00</span> TK</p>
+                            <p class="text-[9px] text-gray-400 uppercase font-semibold">Live Balance</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- NEW: Animated Search Header -->
+            <header id="home-search-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                 <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <div class="relative w-full ml-2">
+                    <input id="home-search-input" type="text" placeholder="Search..." class="w-full bg-gray-900/50 border border-gray-700 rounded-full pl-10 pr-4 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                </div>
+            </header>
+            
+            <header id="search-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <div class="relative w-full">
+                    <input id="search-input-mobile" type="text" placeholder="Search by event, sponsor, or tags..." class="w-full bg-gray-900/50 border border-gray-700 rounded-full pl-10 pr-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                </div>
+            </header>
+            <header id="my-matches-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 text-center">
+                <h2 class="text-lg font-bold">My Matches</h2>
+            </header>
+            <header id="leaderboard-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">Season Leaderboard</h2>
+                <button id="season-details-btn" class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full">
+                    <i class="fa-solid fa-hourglass-half"></i>
+                </button>
+            </header>
+            <header id="team-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">Manage Your Team</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="wallet-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">My Wallet & Stats</h2>
+                <div class="w-10"></div>
+            </header>
+             <header id="lup-wallet-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">L-UP Wallet</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="topup-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">Free Fire TopUp</h2>
+                <button id="topup-history-btn" class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full">
+                    <i class="fa-solid fa-history"></i>
+                </button>
+            </header>
+            <header id="topup-history-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">TopUp History</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="profile-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">Profile</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="mailbox-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">Mailbox</h2>
+                <button id="delete-all-mail-btn" class="header-back-btn text-red-400 text-xl w-10 h-10 flex items-center justify-center rounded-full">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </header>
+            <header id="history-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">Transaction History</h2>
+                <div class="w-10"></div>
+            </header>
+             <header id="redeem-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">Redeem Code</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="edit-profile-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">Edit Profile</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="complete-profile-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">Complete Your Profile</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="change-password-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">Change Password</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="manage-posts-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">My Community Posts</h2>
+                <div class="w-10"></div>
+            </header>
+             <header id="lucky-box-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">Lucky Box</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="help-community-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">Help & Community</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="video-tutorials-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">Video Tutorials</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="buy-sell-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">Buy & Sell</h2>
+                <div class="w-10"></div>
+            </header>
+
+
+            <!-- [NEW] Headers for integrated pages -->
+            <header id="booking-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2 class="text-lg font-bold">Book Match</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="participant-list-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2 id="participant-list-header-title" class="text-lg font-bold">Participants</h2>
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full show-match-details-btn"><i class="fa-solid fa-file-lines"></i></button>
+            </header>
+            <header id="results-submission-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2 id="results-submission-header-title" class="text-lg font-bold">Match Details</h2>
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full show-match-details-btn"><i class="fa-solid fa-file-lines"></i></button>
+            </header>
+             <header id="sponsor-profile-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2 class="text-lg font-bold">Sponsor Profile</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="user-profile-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2 class="text-lg font-bold">User Profile</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="guild-post-form-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2 class="text-lg font-bold">Create Guild Post</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="guild-application-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2 class="text-lg font-bold">Guild Application</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="player-squad-post-form-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2 class="text-lg font-bold">Need Player/Squad</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="payment-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2 class="text-lg font-bold">Payment</h2>
+                <div class="w-10"></div>
+            </header>
+            <header id="redeem-task-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2 class="text-lg font-bold">Complete Task</h2>
+                <div class="w-10"></div>
+            </header>
+            
+            <header id="partner-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2 class="text-lg font-bold">Join a Partner</h2>
+                <div class="w-10"></div>
+            </header>
+            
+            <header id="season-details-header" class="hidden sticky top-0 z-40 premium-header py-2 px-4 flex justify-between items-center">
+                <button class="header-back-btn text-gray-300 text-xl w-10 h-10 flex items-center justify-center rounded-full back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h2 class="text-lg font-bold">Season Details</h2>
+                <div class="w-10"></div>
+            </header>
+
+            <!-- Page Content Area -->
+            <div class="w-full">
+                <div id="home-content" class="dashboard-page">
+                    <div id="home-tabs" class="px-4 py-2 flex items-center gap-4 overflow-x-auto no-scrollbar sticky top-[52px] bg-black z-30">
+                        <button class="home-tab-link active-home-tab" data-target="post-feed">All</button>
+                        <button class="home-tab-link" data-target="home-news-feed">News</button>
+                        <button class="home-tab-link" data-target="home-tournaments-feed">Tournament</button>
+                        <button class="home-tab-link" data-target="home-guild-feed">Guild</button>
+                        <button class="home-tab-link" data-target="home-player-squad-feed">Squad</button>
+                        <button class="home-tab-link" data-target="home-missions-feed">Missions</button>
+                        <button class="home-tab-link" data-target="home-store-feed">Store</button>
+                    </div>
+                    <div id="slider-wrapper" class="px-4 pt-2 pb-4">
+                        <div class="relative w-full overflow-hidden shadow-lg rounded-xl">
+                            <h2 class="absolute top-4 left-0 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-bold uppercase tracking-wider px-5 py-2 rounded-r-full shadow-lg z-10">Promotion</h2>
+                            <div class="flex" id="slider-container"></div>
+                            <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-2" id="slider-dots"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="post-feed" class="home-tab-content active space-y-6 px-4"></div>
+                    <div id="home-news-feed" class="home-tab-content space-y-6 px-4"></div>
+                    <div id="home-tournaments-feed" class="home-tab-content space-y-6 px-4"></div>
+                    <div id="home-guild-feed" class="home-tab-content space-y-6 px-4"></div>
+                    <div id="home-player-squad-feed" class="home-tab-content space-y-6 px-4"></div>
+                    <div id="home-missions-feed" class="home-tab-content space-y-4 px-4"></div>
+                    <div id="home-store-feed" class="home-tab-content px-4"></div>
+                </div>
+
+                <div id="search-content" class="dashboard-page hidden p-4"><div id="search-results-container" class="space-y-6"></div></div>
+                
+                <div id="my-matches-content" class="dashboard-page hidden p-4 md:p-6">
+                    <div class="flex justify-around gap-4 mb-4 border-b border-gray-800">
+                        <button class="icon-tab-button my-matches-tab" data-target="upcoming-matches-section" data-title="Booked Matches">
+                            <i class="fa-solid fa-calendar-check text-xl"></i>
+                            <span class="icon-tab-label">Booked</span>
+                        </button>
+                        <button class="icon-tab-button my-matches-tab" data-target="live-matches-section" data-title="Live Matches">
+                            <i class="fa-solid fa-tower-broadcast text-xl"></i>
+                            <span class="icon-tab-label">Live</span>
+                        </button>
+                        <button class="icon-tab-button my-matches-tab" data-target="claimable-matches-section" data-title="Price Money">
+                            <i class="fa-solid fa-hand-holding-dollar text-xl"></i>
+                            <span class="icon-tab-label">Price Money</span>
+                        </button>
+                        <button class="icon-tab-button my-matches-tab" data-target="history-matches-section" data-title="Match History">
+                            <i class="fa-solid fa-history text-xl"></i>
+                            <span class="icon-tab-label">History</span>
+                        </button>
+                    </div>
+                    <div id="upcoming-matches-section" class="tab-content-section"><div id="upcoming-matches-container" class="space-y-6"></div></div>
+                    <div id="live-matches-section" class="tab-content-section"><div id="live-matches-container" class="space-y-6"></div></div>
+                    <div id="claimable-matches-section" class="tab-content-section"><div id="claimable-matches-container" class="space-y-6"></div></div>
+                    <div id="history-matches-section" class="tab-content-section"><div id="history-matches-container" class="space-y-6"></div></div>
+                </div>
+
+                <div id="leaderboard-content" class="dashboard-page hidden">
+                    <div class="relative rounded-b-2xl overflow-hidden shadow-lg">
+                        <img id="leaderboard-banner-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPxVDr9trNNTRTuHh26ZxcW86Gf5wVx9R2IjSvi20GjA&s=10" class="w-full h-36 object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
+                         <div class="absolute bottom-2 right-2 text-right">
+                            <p id="season-countdown-label" class="text-xs font-bold text-yellow-300 uppercase"></p>
+                            <p id="season-countdown-timer" class="text-lg font-oswald font-bold text-white"></p>
+                        </div>
+                    </div>
+                    <div class="px-4 pb-4 mt-4">
+                        <div id="br-leaderboard-section" class="tab-content-section active-section">
+                            <div class="grid grid-cols-12 text-xs text-gray-400 font-bold p-2 mb-2">
+                                <span class="col-span-1 text-center">#</span>
+                                <span class="col-span-5">TEAM</span>
+                                <span class="col-span-2 text-center">WINS</span>
+                                <span class="col-span-2 text-center">KILLS</span>
+                                <span class="col-span-2 text-center">POINTS</span>
+                            </div>
+                            <div id="br-leaderboard-container" class="space-y-2"></div>
+                        </div>
+                        <div id="cs-leaderboard-section" class="tab-content-section">
+                            <div id="cs-leaderboard-container" class="space-y-2"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="manage-posts-content" class="dashboard-page hidden p-4">
+                    <div class="flex gap-2 mb-4">
+                        <button class="tab-button manage-need-tab active-tab" data-target="my-posts-section">My Posts</button>
+                        <button class="tab-button manage-need-tab" data-target="approvals-section">Approvals</button>
+                        <button class="tab-button manage-need-tab" data-target="my-requests-section">My Requests</button>
+                    </div>
+                    <div id="my-posts-section" class="tab-content-section active-section space-y-4"></div>
+                    <div id="approvals-section" class="tab-content-section space-y-4"></div>
+                    <div id="my-requests-section" class="tab-content-section space-y-4"></div>
+                </div>
+
+                <div id="profile-content" class="dashboard-page hidden p-0">
+                    <div id="premium-profile-container" class="w-full text-white">
+                        <!-- 1. Background Banner -->
+                        <div id="profile-banner" class="relative w-full h-40 bg-gray-800">
+                            <div id="profile-banner-media" class="w-full h-full"></div>
+                            <div id="profile-banner-overlay" class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                            
+                            <div class="absolute top-4 right-4 flex flex-col items-end gap-2 z-10">
+                                <div id="profile-uid-pill" class="flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer">
+                                    <i class="fa-solid fa-fingerprint text-gray-400"></i>
+                                    <span class="font-bold text-sm">UID:</span>
+                                    <span id="profile-page-uid" class="font-mono text-sm"></span>
+                                    <i class="fa-solid fa-copy text-gray-400"></i>
+                                </div>
+                                <button id="profile-edit-icon-btn" class="w-10 h-10 rounded-full flex items-center justify-center">
+                                    <i class="fa-solid fa-pencil"></i>
+                                </button>
+                            </div>
+                        </div>
+                
+                        <!-- 2. Main content area below banner -->
+                        <div class="relative px-4 pb-4 -mt-14">
+                            <!-- Avatar -->
+                            <div class="flex justify-center">
+                                <div id="premium-avatar-container" class="relative w-28 h-28">
+                                    <img id="premium-profile-avatar" src="" class="w-full h-full rounded-full object-cover">
+                                    <img id="premium-profile-avatar-frame" src="" class="absolute top-1/2 left-1/2 w-[140%] h-[140%] -translate-x-1/2 -translate-y-1/2 object-contain pointer-events-none hidden">
+                                </div>
+                            </div>
+                
+                            <!-- User Name -->
+                            <h2 id="premium-user-name" class="text-3xl font-bold text-center mt-3">USER NAME</h2>
+                
+                            <!-- Follow Stats -->
+                            <div id="follow-stats-container" class="flex justify-center items-center gap-8 mt-4">
+                                <!-- JS will populate this -->
+                            </div>
+                
+                            <!-- Badges -->
+                            <div id="profile-badges-container" class="flex justify-center items-center gap-2 mt-6">
+                                <!-- JS will populate this -->
+                            </div>
+                            
+                            <!-- My Title Section -->
+                            <div id="my-titles-section" class="mt-8">
+                                <h3 class="premium-section-header">MY TITLE</h3>
+                                <div id="my-titles-grid" class="grid grid-cols-2 gap-3 mt-3">
+                                    <!-- JS will populate this -->
+                                </div>
+                            </div>
+                            
+                            <!-- My Team Section -->
+                            <div id="my-team-section" class="mt-8">
+                                <h3 class="premium-section-header">MY TEAM</h3>
+                                <div id="my-team-card-clickable-wrapper" class="mt-3 cursor-pointer">
+                                    <div id="my-team-card-content">
+                                        <!-- JS will populate this with team data or empty state -->
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <!-- Existing Settings Section (Moved) -->
+                            <div id="profile-settings-section" class="mt-8">
+                                <div class="space-y-4">
+                                    <div>
+                                        <div id="profile-completion-prompt-container" class="mb-6"></div>
+                                        <h4 class="section-header">Account</h4>
+                                        <div class="space-y-3">
+                                            <button id="profile-wallet-button" class="setting-item">
+                                                <div class="flex items-center">
+                                                    <div class="setting-icon bg-icon-green"><i class="fa-solid fa-wallet"></i></div>
+                                                    <span class="setting-label">My Wallet</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-right text-gray-500"></i>
+                                            </button>
+                                            <button id="lup-wallet-button" class="setting-item">
+                                                <div class="flex items-center">
+                                                    <div class="setting-icon bg-icon-yellow"><i class="fa-solid fa-coins"></i></div>
+                                                    <span class="setting-label">L-UP Wallet</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-right text-gray-500"></i>
+                                            </button>
+                                            <button id="create-team-button" class="setting-item">
+                                                <div class="flex items-center">
+                                                    <div class="setting-icon bg-icon-orange"><i class="fa-solid fa-users"></i></div>
+                                                    <span class="setting-label">My Team</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-right text-gray-500"></i>
+                                            </button>
+                                            <button id="manage-posts-button" class="setting-item">
+                                                <div class="flex items-center">
+                                                    <div class="setting-icon bg-icon-purple"><i class="fa-solid fa-handshake-angle"></i></div>
+                                                    <span class="setting-label">Guild & Squad Post</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-right text-gray-500"></i>
+                                            </button>
+                                            <button id="change-password-button" class="setting-item">
+                                                <div class="flex items-center">
+                                                    <div class="setting-icon bg-icon-blue"><i class="fa-solid fa-key"></i></div>
+                                                    <span class="setting-label">Change Password</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-right text-gray-500"></i>
+                                            </button>
+                                            <button id="mailbox-button" class="setting-item relative">
+                                                <div class="flex items-center">
+                                                    <div class="setting-icon bg-icon-yellow"><i class="fa-solid fa-envelope"></i></div>
+                                                    <span class="setting-label">Mailbox</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-right text-gray-500"></i>
+                                            </button>
+                                            <button id="help-button-profile" class="setting-item">
+                                                <div class="flex items-center">
+                                                    <div class="setting-icon bg-icon-cyan"><i class="fa-solid fa-headset"></i></div>
+                                                    <span class="setting-label">Help & Community</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-right text-gray-500"></i>
+                                            </button>
+                                             <button id="logout-button-settings" class="setting-item">
+                                                <div class="flex items-center">
+                                                    <div class="setting-icon bg-icon-red"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
+                                                    <span class="setting-label">Logout</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-right text-gray-500"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <p class="text-center text-gray-600 mt-4 pb-4 text-sm">App ver 1.1.0</p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id="team-form-content" class="dashboard-page hidden p-4 md:p-6">
+                    <div id="team-view-mode" class="hidden relative"></div>
+                    <div id="team-edit-mode">
+                        <form id="team-form" class="space-y-6">
+                            <div class="form-section p-4 rounded-xl space-y-4">
+                                <div>
+                                    <label class="form-label text-center block">Team Logo</label>
+                                    <div class="relative w-24 h-24 mx-auto">
+                                        <input type="file" id="team-logo-upload" class="hidden" accept="image/*">
+                                        <label for="team-logo-upload" class="cursor-pointer group">
+                                            <img id="team-logo-preview" src="" class="rounded-full w-full h-full object-cover border-2 border-gray-600 group-hover:border-green-500 transition-colors" loading="lazy">
+                                            <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <i class="fa-solid fa-camera text-2xl"></i>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="team-name" class="form-label">Team Name</label>
+                                    <div class="relative">
+                                        <input type="text" id="team-name" class="form-input pr-12" placeholder="Enter your team's name" required readonly>
+                                        <button type="button" id="edit-team-name-btn" class="absolute right-1 top-1/2 -translate-y-1/2 w-10 h-10 bg-gray-600 rounded-md flex items-center justify-center hover:bg-gray-500 transition-colors"><i class="fa-solid fa-pencil"></i></button>
+                                    </div>
+                                    <p class="text-xs text-yellow-400 mt-2 hidden" id="team-name-change-notice"><i class="fa-solid fa-coins mr-1"></i>Changing your team name will cost 1000 Coins.</p>
+                                </div>
+                                <div>
+                                    <label class="form-label">Squad Type</label>
+                                    <div class="flex gap-2">
+                                        <div><input type="radio" id="squad-boys" name="squad-type" class="hidden custom-radio" value="boys" checked><label for="squad-boys" class="block w-full text-center py-2 px-4 rounded-lg cursor-pointer flex items-center justify-center gap-2"><i class="fa-solid fa-mars"></i> Boys Squad</label></div>
+                                        <div><input type="radio" id="squad-girls" name="squad-type" class="hidden custom-radio" value="girls"><label for="squad-girls" class="block w-full text-center py-2 px-4 rounded-lg cursor-pointer flex items-center justify-center gap-2"><i class="fa-solid fa-venus"></i> Girls Squad</label></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="team-members-container" class="space-y-4">
+                                 <p class="text-xs text-center text-gray-400 -mb-2">টিম তৈরি করতে কমপক্ষে ৪ জন সদস্য যোগ করতে হবে।</p>
+                                <div class="form-section p-3 rounded-lg igl-input-box">
+                                    <p class="text-sm font-semibold text-yellow-300 mb-2">IGL (In-Game Leader)</p>
+                                    <p class="text-xs text-gray-400 mb-2">আপনার ইন-গেম নাম এবং গেম UID দিন।</p>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <input type="text" id="member-0-name" placeholder="Game Name" class="form-input text-sm" required>
+                                        <input type="text" id="member-0-game-uid" placeholder="Game UID" class="form-input text-sm" required>
+                                    </div>
+                                </div>
+                                <div class="form-section p-3 rounded-lg"><p class="text-sm font-semibold text-gray-300 mb-2">Player 2</p><div class="grid grid-cols-2 gap-2"><input type="text" id="member-1-name" placeholder="Game Name" class="form-input text-sm" required><input type="text" id="member-1-game-uid" placeholder="Game UID" class="form-input text-sm" required></div></div>
+                                <div class="form-section p-3 rounded-lg"><p class="text-sm font-semibold text-gray-300 mb-2">Player 3</p><div class="grid grid-cols-2 gap-2"><input type="text" id="member-2-name" placeholder="Game Name" class="form-input text-sm" required><input type="text" id="member-2-game-uid" placeholder="Game UID" class="form-input text-sm" required></div></div>
+                                <div class="form-section p-3 rounded-lg"><p class="text-sm font-semibold text-gray-300 mb-2">Player 4</p><div class="grid grid-cols-2 gap-2"><input type="text" id="member-3-name" placeholder="Game Name" class="form-input text-sm" required><input type="text" id="member-3-game-uid" placeholder="Game UID" class="form-input text-sm" required></div></div>
+                                <div class="form-section p-3 rounded-lg"><p class="text-sm font-semibold text-gray-300 mb-2">Player 5 (Optional)</p><div class="grid grid-cols-2 gap-2"><input type="text" id="member-4-name" placeholder="Game Name" class="form-input text-sm"><input type="text" id="member-4-game-uid" placeholder="Game UID" class="form-input text-sm"></div></div>
+                                 <div class="form-section p-3 rounded-lg"><p class="text-sm font-semibold text-gray-300 mb-2">Player 6 (Optional)</p><div class="grid grid-cols-2 gap-2"><input type="text" id="member-5-name" placeholder="Game Name" class="form-input text-sm"><input type="text" id="member-5-game-uid" placeholder="Game UID" class="form-input text-sm"></div></div>
+                                <div class="form-section p-3 rounded-lg"><p class="text-sm font-semibold text-gray-300 mb-2">Player 7 (Optional)</p><div class="grid grid-cols-2 gap-2"><input type="text" id="member-6-name" placeholder="Game Name" class="form-input text-sm"><input type="text" id="member-6-game-uid" placeholder="Game UID" class="form-input text-sm"></div></div>
+                            </div>
+                            <button type="submit" id="save-team-btn" class="w-full py-4 mt-4 rounded-xl action-button text-lg flex items-center justify-center h-[52px]">Create Team</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div id="wallet-content" class="dashboard-page hidden"></div>
+                <div id="lup-wallet-screen" class="dashboard-page hidden"></div>
+                <div id="topup-screen" class="dashboard-page hidden"></div>
+                <div id="topup-history-content" class="dashboard-page hidden p-4"></div>
+                <div id="mailbox-content" class="dashboard-page hidden"></div>
+                <div id="history-content" class="dashboard-page hidden p-4"></div>
+                <div id="redeem-content" class="dashboard-page hidden"></div>
+                <div id="lucky-box-content" class="dashboard-page hidden">
+                    <div class="flex flex-col items-center justify-center h-full p-4 text-center relative">
+                        <!-- Content goes here via JS -->
+                    </div>
+                </div>
+                <div id="help-community-content" class="dashboard-page hidden p-6"></div>
+                <div id="video-tutorials-content" class="dashboard-page hidden p-4"></div>
+                <div id="buy-sell-content" class="dashboard-page hidden p-4"></div>
+
+                <div id="edit-profile-content" class="dashboard-page hidden p-4">
+                    <form id="edit-profile-form" class="space-y-6">
+                        <div class="relative w-32 h-32 mx-auto">
+                            <input type="file" id="new-profile-image-upload" class="hidden" accept="image/*">
+                            <label for="new-profile-image-upload" class="cursor-pointer group">
+                                <img id="edit-profile-avatar-preview" src="" class="rounded-full w-full h-full object-cover border-4 border-gray-700 group-hover:border-green-500 transition-colors" loading="lazy">
+                                <div class="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <i class="fa-solid fa-camera text-3xl"></i>
+                                </div>
+                            </label>
+                        </div>
+                        <div>
+                            <label for="edit-profile-name" class="form-label">Full Name</label>
+                            <input type="text" id="edit-profile-name" class="form-input" required>
+                        </div>
+                        
+                        <!-- NEW: Customization Section -->
+                        <div class="bg-[#1e1e1e] border border-gray-700 rounded-xl p-4 space-y-4">
+                            <h3 class="font-bold text-lg text-green-400">Profile Customization</h3>
+                             <div>
+                                <label class="form-label flex justify-between">Background Blur: <span id="blur-value">0</span>px</label>
+                                <div class="flex items-center gap-4">
+                                    <button type="button" id="blur-decrease" class="w-10 h-10 bg-gray-700 rounded-md font-bold text-lg">-</button>
+                                    <input type="range" id="profile-bg-blur" min="0" max="20" value="0" class="w-full">
+                                    <button type="button" id="blur-increase" class="w-10 h-10 bg-gray-700 rounded-md font-bold text-lg">+</button>
+                                </div>
+                            </div>
+                             <div>
+                                <label for="profile-text-color" class="form-label">Name & UID Color (Profile Header)</label>
+                                <input type="color" id="profile-text-color" value="#FFFFFF" class="w-full h-10 p-1 bg-transparent border border-gray-600 rounded-lg cursor-pointer">
+                            </div>
+                            <button type="button" id="customize-profile-inventory-btn" class="w-full py-2 bg-blue-600/20 text-blue-300 border border-blue-500/50 rounded-lg font-semibold text-sm">Customize from Inventory</button>
+                        </div>
+                        
+                        <!-- Badge & Title Management -->
+                        <div class="bg-[#1e1e1e] border border-gray-700 rounded-xl p-4 space-y-4">
+                            <h3 class="font-bold text-lg text-green-400">Manage Badges (Max 7)</h3>
+                            <div id="badge-equip-slots" class="grid grid-cols-7 gap-1">
+                                <!-- 7 slots will be generated here -->
+                            </div>
+                            <div class="border-t border-gray-600 my-4"></div>
+                            <h4 class="font-semibold text-gray-300">Your Available Badges</h4>
+                            <div id="available-badges-container" class="grid grid-cols-5 gap-2">
+                                <!-- Available badges from inventory will be shown here -->
+                            </div>
+                        </div>
+                        <div class="bg-[#1e1e1e] border border-gray-700 rounded-xl p-4 space-y-4">
+                            <h3 class="font-bold text-lg text-green-400">Manage Titles (Max 4)</h3>
+                            <div id="title-equip-slots" class="grid grid-cols-2 gap-3">
+                                <!-- 4 slots will be generated here -->
+                            </div>
+                            <div class="border-t border-gray-600 my-4"></div>
+                            <h4 class="font-semibold text-gray-300">Your Available Titles</h4>
+                            <div id="available-titles-container" class="grid grid-cols-2 gap-3">
+                                <!-- Available titles will be shown here -->
+                            </div>
+                        </div>
+
+
+                        <button type="submit" class="w-full py-3 mt-4 rounded-xl action-button text-lg flex items-center justify-center h-[48px]">Save Changes</button>
+                    </form>
+                </div>
+                <!-- NEW: Complete Profile Screen -->
+                <div id="complete-profile-content" class="dashboard-page hidden p-4">
+                    <form id="complete-profile-form" class="space-y-6">
+                        <p class="text-center text-gray-400">আপনার একাউন্ট সম্পূর্ণ করতে নিচের তথ্যগুলো দিন।</p>
+                        <div>
+                            <label for="complete-profile-name" class="form-label">Full Name</label>
+                            <input type="text" id="complete-profile-name" class="form-input" required>
+                        </div>
+                        <div>
+                            <label for="complete-profile-whatsapp" class="form-label">WhatsApp Number</label>
+                            <div class="flex items-center w-full rounded-md bg-[#121212] border border-gray-600 px-3">
+                                <i class="fa-brands fa-whatsapp text-gray-400 mr-2"></i>
+                                <span class="text-gray-400 text-sm pr-2">+880</span>
+                                <input id="complete-profile-whatsapp" type="tel" placeholder="1xxxxxxxxx" required class="flex-1 bg-transparent py-2 text-sm text-white placeholder-gray-400 border-none focus:outline-none">
+                            </div>
+                        </div>
+                         <div>
+                            <label class="form-label">Gender</label>
+                            <div class="flex justify-center space-x-2">
+                                <div><input type="radio" id="complete-male" name="complete-gender" class="hidden gender-radio" value="male" checked><label for="complete-male" class="cursor-pointer flex items-center justify-center w-24 h-10 text-xs text-gray-300 rounded-lg">Male</label></div>
+                                <div><input type="radio" id="complete-female" name="complete-gender" class="hidden gender-radio" value="female"><label for="complete-female" class="cursor-pointer flex items-center justify-center w-24 h-10 text-xs text-gray-300 rounded-lg">Female</label></div>
+                                <div><input type="radio" id="complete-other" name="complete-gender" class="hidden gender-radio" value="other"><label for="complete-other" class="cursor-pointer flex items-center justify-center w-24 h-10 text-xs text-gray-300 rounded-lg">Other</label></div>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full py-3 mt-4 rounded-xl action-button text-lg flex items-center justify-center h-[48px]">Save and Continue</button>
+                    </form>
+                </div>
+
+                 <div id="change-password-content" class="dashboard-page hidden p-4">
+                    <form id="change-password-form" class="space-y-4">
+                        <div class="relative flex items-center w-full input-field rounded-xl p-1">
+                            <i class="fa-solid fa-key absolute left-4 text-gray-400"></i>
+                            <input id="current-password" type="password" placeholder="Current Password" required class="w-full bg-transparent pl-10 pr-10 py-2 text-sm text-white placeholder-gray-400 border-none rounded-lg focus:outline-none">
+                             <i class="fa-solid fa-eye password-toggle"></i>
+                        </div>
+                        <div class="relative flex items-center w-full input-field rounded-xl p-1">
+                            <i class="fa-solid fa-lock absolute left-4 text-gray-400"></i>
+                            <input id="new-password" type="password" placeholder="New Password" required class="w-full bg-transparent pl-10 pr-10 py-2 text-sm text-white placeholder-gray-400 border-none rounded-lg focus:outline-none">
+                            <i class="fa-solid fa-eye password-toggle"></i>
+                        </div>
+                        <div class="relative flex items-center w-full input-field rounded-xl p-1">
+                           <i class="fa-solid fa-lock absolute left-4 text-gray-400"></i>
+                            <input id="confirm-new-password" type="password" placeholder="Confirm New Password" required class="w-full bg-transparent pl-10 pr-10 py-2 text-sm text-white placeholder-gray-400 border-none rounded-lg focus:outline-none">
+                             <i class="fa-solid fa-eye password-toggle"></i>
+                        </div>
+                        <button type="submit" class="w-full py-3 mt-4 rounded-xl action-button text-lg flex items-center justify-center h-[48px]">Update Password</button>
+                    </form>
+                    <div class="mt-12 border-t-2 border-red-500/30 pt-6">
+                        <h3 class="text-xl font-bold text-red-400 text-center">Danger Zone</h3>
+                        <p class="text-center text-gray-400 text-sm mt-2 mb-4">Once you delete your account, there is no going back. Please be certain.</p>
+                        <button id="delete-account-btn" class="w-full py-3 rounded-xl bg-red-800 hover:bg-red-700 text-white font-bold transition-colors">Delete My Account</button>
+                    </div>
+                </div>
+                
+                <div id="coming-soon-content" class="dashboard-page hidden p-6 text-center flex flex-col justify-center items-center h-[calc(100vh-100px)] overflow-y-hidden">
+                    <i class="fa-solid fa-tools text-6xl text-green-500 mb-6"></i>
+                    <h1 class="text-4xl font-bold">Coming Soon!</h1>
+                    <p class="text-gray-400 mt-2">This feature is under active development.</p>
+                    <button id="back-home-btn" class="mt-8 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg">Back to Home</button>
+                </div>
+
+                <!-- [REFACTORED] Fullscreen Overlays are now regular pages -->
+                <div id="booking-content" class="dashboard-page hidden p-4 md:p-6"></div>
+                <div id="participant-list-content" class="dashboard-page hidden"></div>
+                <div id="results-submission-content" class="dashboard-page hidden pb-4"></div>
+                <div id="sponsor-profile-content" class="dashboard-page hidden p-4 md:p-6"></div>
+                
+                <!-- NEW/UPDATED USER PROFILE PAGE -->
+                <div id="user-profile-content" class="dashboard-page hidden p-0">
+                    <div class="w-full text-white pb-10">
+                        <!-- 1. Background Banner -->
+                        <div id="user-profile-banner" class="relative w-full h-40 bg-gray-800">
+                            <div id="user-profile-banner-media" class="w-full h-full"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                            <button class="back-button header-back-btn absolute top-4 left-4 z-10 text-white w-10 h-10 flex items-center justify-center rounded-full"><i class="fa-solid fa-arrow-left"></i></button>
+                        </div>
+                
+                        <!-- 2. Main content area below banner -->
+                        <div class="relative px-4 pb-4 -mt-14">
+                            <!-- Avatar -->
+                            <div class="flex justify-center">
+                                <div class="relative w-28 h-28">
+                                    <img id="user-profile-avatar" src="" class="w-full h-full rounded-full object-cover border-4 border-black">
+                                    <img id="user-profile-avatar-frame" src="" class="absolute top-1/2 left-1/2 w-[140%] h-[140%] -translate-x-1/2 -translate-y-1/2 object-contain pointer-events-none hidden">
+                                </div>
+                            </div>
+                
+                            <!-- User Name -->
+                            <div id="user-profile-username-container" class="text-center mt-3 flex items-center justify-center">
+                                <h2 id="user-profile-username" class="text-3xl font-bold font-oswald inline"></h2>
+                                <!-- Badge will be inserted here by JS -->
+                            </div>
+                
+                            <!-- Follow Stats -->
+                            <div id="user-profile-follow-stats" class="flex justify-center items-center gap-8 mt-4">
+                                <!-- JS will populate this -->
+                            </div>
+                
+                            <!-- Follow Button -->
+                            <div class="mt-6 px-4">
+                                <button id="user-profile-follow-toggle-btn" class="w-full py-3 rounded-lg text-sm"></button>
+                            </div>
+                            
+                            <!-- Conditional Sections -->
+                            <div id="user-profile-badges-section" class="mt-8 hidden">
+                                <h3 class="premium-section-header">BADGES</h3>
+                                <div id="user-profile-badges-container" class="flex justify-center items-center gap-2 mt-3 min-h-[40px]"></div>
+                            </div>
+                            
+                            <div id="user-profile-titles-section" class="mt-8 hidden">
+                                <h3 class="premium-section-header">MY TITLE</h3>
+                                <div id="user-profile-titles-grid" class="grid grid-cols-2 gap-3 mt-3 max-w-sm mx-auto min-h-[48px]"></div>
+                            </div>
+                
+                            <div id="user-profile-team-section" class="mt-8 px-4 hidden">
+                                 <h3 class="premium-section-header">MY TEAM</h3>
+                                 <div id="user-profile-team-container" class="mt-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="guild-post-form-content" class="dashboard-page hidden p-4 md:p-6"></div>
+                <div id="guild-application-content" class="dashboard-page hidden p-4 md:p-6"></div>
+                <div id="player-squad-post-form-content" class="dashboard-page hidden"></div>
+                <div id="payment-content" class="dashboard-page hidden p-4 md:p-6"></div>
+                <div id="redeem-task-content" class="dashboard-page hidden p-4 md:p-6"></div>
+                <div id="partner-content" class="dashboard-page hidden p-6">
+                    <div class="text-center">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/viptask-5c1fc.appspot.com/o/dfdc00fc6bb93771364bbf5000dad222.jpg?alt=media&token=ff33f08b-1b2e-424e-b636-f664d8044bed" alt="LEVEL UP Logo" class="w-24 h-24 rounded-full mx-auto border-4 border-green-500 mb-4" loading="lazy">
+                        <h1 class="text-3xl font-bold font-oswald text-green-400">LEVEL UP পার্টনার প্রোগ্রামে স্বাগতম!</h1>
+                        <p class="text-gray-400 mt-2">আপনার গেমিং ইভেন্টগুলো আয়োজন করুন এবং আয় করুন আমাদের সাথে।</p>
+                    </div>
+                    <div class="bg-[#1e1e1e] p-4 rounded-xl border border-gray-700 mt-6">
+                        <h3 class="font-bold text-lg text-white mb-3">আমাদের পার্টনার হলে কী কী সুবিধা পাবেন?</h3>
+                        <ul class="space-y-3 text-gray-300 text-sm">
+                            <li class="flex items-start"><i class="fa-solid fa-check-circle text-green-400 mt-1 mr-3"></i><span>সহজেই টুর্নামেন্ট বা ম্যাচ পোস্ট করতে পারবেন।</span></li>
+                            <li class="flex items-start"><i class="fa-solid fa-check-circle text-green-400 mt-1 mr-3"></i><span>অংশগ্রহণকারীদের তালিকা এবং ফলাফল স্বয়ংক্রিয়ভাবে ম্যানেজ করতে পারবেন।</span></li>
+                            <li class="flex items-start"><i class="fa-solid fa-check-circle text-green-400 mt-1 mr-3"></i><span>আপনার ইভেন্টের জন্য পেমেন্ট গ্রহণ এবং বিজয়ীদের পুরস্কার প্রদান সহজ হবে।</span></li>
+                            <li class="flex items-start"><i class="fa-solid fa-check-circle text-green-400 mt-1 mr-3"></i><span>আপনার আয়ের সম্পূর্ণ হিসাব এবং স্টেটমেন্ট দেখতে পারবেন।</span></li>
+                            <li class="flex items-start"><i class="fa-solid fa-check-circle text-green-400 mt-1 mr-3"></i><span>বিশেষ ভেরিফাইড ব্যাজ পেয়ে বিশ্বস্ততা অর্জন করতে পারবেন।</span></li>
+                        </ul>
+                    </div>
+                    <div class="bg-[#1e1e1e] p-4 rounded-xl border border-gray-700 mt-6">
+                        <h3 class="font-bold text-lg text-white mb-3">কিভাবে শুরু করবেন?</h3>
+                        <p class="text-sm text-gray-300 mb-4">আমাদের স্পনসর প্যানেলে রেজিস্টার করতে নিচের ধাপগুলো অনুসরণ করুন:</p>
+                        <ol class="space-y-3 text-gray-300 text-sm">
+                            <li><span class="font-bold text-green-400">১. লিঙ্ক কপি করুন:</span> নিচের লিঙ্কটি কপি করুন।</li>
+                             <div class="bg-black/30 p-3 my-2 rounded-lg flex justify-between items-center">
+                                <code id="partner-link-text" class="text-sm text-gray-300 truncate">https://levelupbd.gamer.gd/</code>
+                                <button id="copy-partner-link-btn" class="bg-gray-600 hover:bg-gray-700 w-10 h-10 rounded-md flex items-center justify-center transition-colors flex-shrink-0 ml-2"><i class="fa-solid fa-copy"></i></button>
+                            </div>
+                            <li><span class="font-bold text-green-400">২. ব্রাউজারে খুলুন:</span> কপি করা লিঙ্কটি আপনার ফোনের যেকোনো ব্রাউজারে (যেমন Chrome) ওপেন করুন।</li>
+                            <li><span class="font-bold text-green-400">৩. অ্যাপ ডাউনলোড করুন:</span> ওয়েবসাইটে দেওয়া নির্দেশনা অনুযায়ী "আয়োজক হতে চাই " অ্যাপটি ডাউনলোড ও ইন্সটল করুন।</li>
+                            <li><span class="font-bold text-green-400">৪. রেজিস্টার করুন:</span> Sponsor অ্যাপটি খুলে একজন আয়োজক হিসেবে রেজিস্টার করুন।</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div id="season-details-content" class="dashboard-page hidden p-4">
+                    <div class="countdown-box-premium text-center">
+                        <p id="season-details-countdown-label" class="text-sm font-semibold text-yellow-300 uppercase tracking-widest mb-4">Season Countdown</p>
+                        
+                     <div id="season-details-countdown-timer" class="grid grid-cols-4 gap-2 md:gap-4">
+                             <!-- JS will populate this -->
+                        </div>
+                    </div>
+                    <div id="previous-winners-section" class="mt-8">
+                        <h3 class="section-header px-0">Previous Season Winners</h3>
+                        <div id="previous-winners-container" class="space-y-2">
+                             <!-- JS will populate this -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+        
+        <button id="need-fab" class="fab action-button"><i class="fa-solid fa-plus text-2xl"></i></button>
+        <button id="scroll-to-top-btn" class="fab !opacity-0 !transform-none !scale-0 transition-all duration-300"><i class="fa-solid fa-arrow-up text-2xl"></i></button>
+
+    </div>
+    
+    <!-- Modals -->
+    <div id="modal-screen" class="screen hidden !justify-center"></div>
+    <div id="forgot-password-modal" class="screen hidden !justify-center">
+        <div class="modal-box p-6 text-white text-center flex flex-col items-center relative">
+            <button id="close-forgot-modal" class="absolute top-3 right-4 text-gray-400 hover:text-white text-2xl">&times;</button>
+            <h3 class="text-2xl font-bold mb-2">Reset Password</h3>
+            <p class="text-gray-300 text-sm mb-6">Enter your email and we'll send you a reset link.</p>
+            <form id="forgot-password-form" class="w-full">
+                <div class="relative flex items-center w-full input-field rounded-xl mb-4 p-1">
+                    <i class="fa-solid fa-envelope absolute left-4 text-gray-400"></i>
+                    <input id="forgot-email-input" type="email" placeholder="Your Email Address" required class="w-full bg-transparent pl-10 pr-4 py-3 text-white placeholder-gray-400 border-none rounded-lg focus:outline-none">
+                </div>
+                <button type="submit" class="w-full py-3 rounded-xl action-button text-base flex items-center justify-center h-[44px]">Send Reset Link</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="loading-overlay" class="screen hidden !justify-center" style="z-index: 1001; background-color: rgba(18, 18, 18, 0.8); backdrop-filter: blur(8px);">
+        <div class="text-center">
+            <dotlottie-wc src="https://lottie.host/e21415f9-b849-4323-8646-a2e3f1699933/i57m53VT2e.lottie" style="width: 200px; height: 200px;" autoplay loop></dotlottie-wc>
+            <p id="loading-text" class="text-white font-semibold mt-4 text-lg">Processing...</p>
+        </div>
+    </div>
+
+    <!-- NEW Store Loading Overlay -->
+    <div id="store-loading-overlay" class="screen hidden !justify-center">
+        <dotlottie-wc src="https://lottie.host/64f9dd63-1469-425b-8664-9788f8319082/Y67O0k4YkK.lottie" style="width: 300px; height: 300px;" autoplay loop></dotlottie-wc>
+    </div>
+    
+    <div id="ad-view-screen" class="screen hidden !justify-start"></div>
+
+    <div id="topup-purchase-modal" class="screen hidden !justify-center"></div>
+    <div id="coupon-purchase-modal" class="screen hidden !justify-center"></div>
+
+    <div id="spin-result-modal" class="screen hidden !justify-center"></div>
+
+    <div id="badge-modal-screen" class="screen hidden !justify-center"></div>
+
+    <div id="image-lightbox" class="screen hidden !justify-center" onclick="hideLightbox()">
+        <button class="absolute top-4 right-4 text-white text-4xl">&times;</button>
+        <img id="lightbox-img" src="" alt="Screenshot" onclick="event.stopPropagation()" loading="lazy">
+    </div>
+
+    <audio id="booking-success-sound" preload="auto"></audio>
+    
+    <div class="nav-container hidden" id="main-nav-container">
+         <nav class="nav-bar">
+            <div id="nav-indicator"></div>
+            <a href="#" id="nav-home" class="nav-item active"><i class="fa-solid fa-house nav-icon"></i><span class="nav-label">Home</span></a>
+            <a href="#" id="nav-search" class="nav-item"><i class="fa-solid fa-magnifying-glass nav-icon"></i><span class="nav-label">Search</span></a>
+            <a href="#" id="nav-my-matches" class="nav-item"><i class="fa-solid fa-trophy nav-icon"></i><span class="nav-label">My Matches</span></a>
+            <a href="#" id="nav-social-chat" class="nav-item"><i class="fa-solid fa-comments nav-icon"></i><span class="nav-label">community</span></a>
+            <a href="#" id="nav-profile" class="nav-item"><i class="fa-solid fa-user nav-icon"></i><span class="nav-label">Profile</span></a>
+        </nav>
+    </div>
+    <div id="nav-restore-left" class="nav-restore-btn nav-restore-left"><i class="fa-solid fa-chevron-right"></i></div>
+    <div id="nav-restore-right" class="nav-restore-btn nav-restore-right"><i class="fa-solid fa-chevron-left"></i></div>
+
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    
+    <!-- আপনার কাস্টম JavaScript ফাইল এখানে লিঙ্ক করা হয়েছে -->
+    <script src="app.js"></script>
+
+</body>
+</html>
