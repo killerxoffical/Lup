@@ -1,451 +1,484 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEVEL-UP ARENA</title>
-    
-    <!-- CSS Styles - All styles are inside this file -->
+    <title>Tournament Registration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Teko:wght@400;600;700&display=swap');
-
         :root {
-            --brand-dark: #111827;
-            --brand-surface: #1F2937;
-            --brand-primary: #00F5FF;
-            --brand-secondary: #E025CE;
-            --brand-danger: #F87171;
-            --brand-warning: #FACC15;
-            --text-light: #F9FAFB;
-            --text-muted: #9CA3AF;
+            --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            --surface-color: rgba(255, 255, 255, 0.05);
+            --surface-blur: 10px;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --accent-color: #00c6ff;
+            --accent-glow: rgba(0, 198, 255, 0.5);
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0a8b7;
+            --success-color: #2ed573;
+            --danger-color: #ff4757;
+            --warning-color: #ffa500;
         }
 
+        /* General Styles */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #000000;
-            background-image: url('https://firebasestorage.googleapis.com/v0/b/viptask-5c1fc.appspot.com/o/dfdc00fc6bb93771364bbf5000dad222.jpg?alt=media&token=ff33f08b-1b2e-424e-b636-f664d8044bed');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: var(--text-light);
-            overflow-x: hidden;
-            transition: background 0.5s ease-in-out;
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px 20px;
+            overflow: hidden; /* Hide scrollbars during splash screen */
         }
         
-        /* This class will be added to body for the black login background */
-        body.login-active {
-            background-image: none;
-            background-color: #000000;
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #000; /* Black background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+            opacity: 1;
+            visibility: visible;
         }
+        #splash-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        #splash-logo {
+            width: 150px; /* Smaller size */
+            height: 150px; /* Smaller size */
+            border-radius: 50%; /* Perfectly round */
+            object-fit: cover; /* Prevents image stretching */
+            border: 3px solid var(--accent-color); /* Added border for visibility */
+            box-shadow: 0 0 20px var(--accent-glow);
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--surface-color);
+            backdrop-filter: blur(var(--surface-blur));
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s ease-in-out;
+            overflow: hidden;
+            display: none; /* Initially hidden */
+        }
+        h2, h3 { font-weight: 600; color: var(--accent-color); text-shadow: 0 0 10px var(--accent-glow); }
+
+        /* Header & Banner */
+        header { padding: 20px 30px; text-align: center; border-bottom: 1px solid var(--border-color); position: relative; }
+        .tournament-banner { width: 100%; display: block; }
+        .status-toggle {
+            position: absolute; top: 15px; right: 15px;
+            background: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-secondary);
+            padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; transition: all 0.3s;
+        }
+        .status-toggle:hover { background: var(--accent-color); color: #0f0c29; border-color: var(--accent-color); }
+
+        main { padding: 30px; }
+
+        /* Status Checker Overlay Screen */
+        #status-checker-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 12, 41, 0.9);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: fadeIn 0.5s;
+        }
+        .status-checker-modal {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            animation: slideUp 0.5s;
+        }
+        #close-status-checker {
+            background: none; border: none; color: var(--text-secondary);
+            font-size: 24px; cursor: pointer; position: absolute; top: 15px; right: 20px;
+        }
+        .status-checker-form { display: flex; gap: 15px; margin-top: 15px; }
+        #teamIdInput { flex-grow: 1; }
+        #status-result { margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 8px; min-height: 50px; }
+        .status-badge { padding: 5px 10px; border-radius: 5px; font-weight: bold; text-transform: uppercase; font-size: 12px; }
+        .status-pending { background: var(--warning-color); color: #000; }
+        .status-approved { background: var(--success-color); color: #000; }
+        .status-rejected { background: var(--danger-color); color: #fff; }
+
+        /* Form Wizard & Form Sections (styles remain the same) */
+        .form-stepper { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; }
+        .step { text-align: center; flex-grow: 1; position: relative; }
+        .step-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--surface-color); border: 2px solid var(--border-color); display: inline-flex; justify-content: center; align-items: center; font-weight: bold; transition: all 0.4s ease; }
+        .step-title { margin-top: 10px; font-size: 14px; color: var(--text-secondary); transition: color 0.4s ease; }
+        .step.active .step-icon { border-color: var(--accent-color); background: var(--accent-color); color: #0f0c29; box-shadow: 0 0 15px var(--accent-glow); }
+        .step.active .step-title { color: var(--accent-color); }
+        .stepper-line { position: absolute; top: 20px; left: 0; right: 0; height: 2px; background: var(--border-color); z-index: -1; }
+        .form-section { display: none; animation: slideUp 0.5s ease-out; }
+        .form-section.active { display: block; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        label { margin-bottom: 8px; font-weight: 500; color: var(--text-secondary); font-size: 14px; }
+        input[type="text"], input[type="tel"] {
+            background: transparent; border: none; border-bottom: 2px solid var(--border-color);
+            color: var(--text-primary); padding: 12px 5px; font-size: 16px; transition: all 0.3s;
+        }
+        input:focus { outline: none; border-bottom-color: var(--accent-color); }
+
+        /* Player Roster Section */
+        .player-entry {
+            background: rgba(0,0,0,0.1); border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 20px; margin-bottom: 20px;
+        }
+        .player-entry h3 { margin-bottom: 15px; }
+        .player-entry .form-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        /* Other styles (file input, tasks, buttons, modals, etc.) remain mostly the same */
+        .file-input-wrapper { position: relative; }
+        .file-input-label { display: block; padding: 12px; background: var(--surface-color); border: 2px dashed var(--border-color); border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .file-input-label:hover { border-color: var(--accent-color); background: rgba(0, 198, 255, 0.1); }
+        .file-input-label span { color: var(--text-secondary); }
+        input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .file-name { font-size: 12px; color: var(--accent-color); margin-top: 5px; }
+        .task-list { display: flex; flex-direction: column; gap: 20px; }
+        .task-item { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 20px; }
+        .task-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .task-icon { font-size: 24px; color: var(--accent-color); }
+        .task-title { font-size: 1.1em; font-weight: 500; }
+        .url-copy-container { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 8px 12px; }
+        .task-url { color: var(--text-secondary); font-family: monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .copy-btn { background: none; border: none; color: var(--accent-color); cursor: pointer; font-size: 18px; transition: all 0.2s; display: flex; align-items: center; padding: 5px; }
+        .copy-btn:hover { transform: scale(1.2); }
+        .copy-btn.copied { color: var(--success-color); }
+        .screenshot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .form-navigation { display: flex; justify-content: space-between; margin-top: 30px; }
+        .btn { padding: 12px 30px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; background: var(--surface-color); color: var(--text-primary); border: 1px solid var(--border-color); transition: all 0.3s ease; }
+        .btn:hover { background: var(--accent-color); border-color: var(--accent-color); color: #0f0c29; box-shadow: 0 0 15px var(--accent-glow); transform: translateY(-3px); }
+        .btn-primary { background: var(--accent-color); color: #0f0c29; border: 1px solid var(--accent-color); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; animation: fadeIn 0.3s; }
+        .modal-content { background: var(--surface-color); backdrop-filter: blur(var(--surface-blur)); padding: 40px; border-radius: 15px; text-align: center; max-width: 500px; width: 90%; border: 1px solid var(--accent-color); box-shadow: 0 0 20px var(--accent-glow); animation: slideUp 0.5s ease-out; }
+        .modal-content .details-list { text-align: left; margin: 20px 0; font-size: 14px; max-height: 200px; overflow-y: auto; }
+        .modal-content .details-list p { margin-bottom: 8px; }
+        .modal-content .details-list span { color: var(--text-secondary); }
+        #team-id-display { background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 8px; user-select: all; font-weight: bold; font-family: monospace; letter-spacing: 1px; }
+        .loader { width: 60px; height: 60px; border: 5px solid var(--border-color); border-top-color: var(--accent-color); border-radius: 50%; animation: spin 1s linear infinite; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } }
         
-        .bg-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); z-index: -1; }
-        .hidden { display: none !important; }
-
-        /* ======== NEW SPLASH/LOADING SCREEN (নতুন লোডিং স্ক্রিন) ======== */
-        #loading-spinner {
-            position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 100; flex-direction: column; gap: 1rem;
-        }
-        .splash-logo {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 2rem;
-            animation: pulse 1.5s infinite ease-in-out;
-        }
-        .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top: 4px solid var(--brand-primary); width: 50px; height: 50px; animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.8; }
-        }
-
-        /* ======== PREMIUM LOGIN SCREEN CSS (আপডেটেড লগইন পেজের ডিজাইন) ======== */
-        #login-screen {
-            min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1rem; position: relative; z-index: 1; animation: fadeIn 1s ease-in-out;
-        }
-        
-        #premium-logo-container {
-            margin-bottom: 2rem;
-            cursor: default; /* Make it not look clickable */
-        }
-
-        #premium-logo-container img {
-            width: 180px;
-            height: 180px; /* Force square for perfect circle */
-            border-radius: 50%; /* Make it round */
-            object-fit: cover;
-            border: 3px solid rgba(0, 245, 255, 0.5); /* Subtle neon border */
-            
-            /* Remove all visual feedback on hover/click */
-            transition: none;
-            transform: none;
-            filter: none;
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        #premium-logo-container img:hover {
-            transform: none; /* Explicitly disable hover effect */
-        }
-
-        .login-box {
-            padding: 2.5rem 2rem; background: rgba(20, 20, 30, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); width: 100%; max-width: 400px;
-        }
-        .login-box h2 { font-family: 'Teko', sans-serif; font-size: 2.5rem; color: var(--text-light); margin-bottom: 0.5rem; letter-spacing: 1px; }
-        .login-box p { color: var(--text-muted); margin-bottom: 2rem; }
-        .google-login-btn {
-            width: 100%; display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 0.8rem 1rem; border-radius: 8px; border: 1px solid var(--brand-primary); background-color: transparent; color: var(--text-light); font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.3s ease;
-        }
-        .google-login-btn:hover { background-color: var(--brand-primary); color: var(--brand-dark); box-shadow: 0 0 20px var(--brand-primary); }
-        .google-login-btn img { width: 24px; height: 24px; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* ======== MAIN APP & OTHER SECTIONS ======== */
-        .app-container { display: flex; min-height: 100vh; }
-        .main-content { flex-grow: 1; padding: 2rem; }
-        #user-app header {
-            background-color: rgba(31, 41, 55, 0.8); backdrop-filter: blur(10px); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--brand-primary);
-        }
-        #user-app .logo { font-family: 'Teko', sans-serif; font-size: 1.8rem; color: var(--brand-primary); }
-        #user-app nav a, #user-app button { color: var(--text-light); text-decoration: none; margin-left: 1.5rem; font-weight: 500; transition: color 0.3s; }
-        #user-app nav a:hover { color: var(--brand-primary); }
-        .logout-btn { background: var(--brand-danger); border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; }
-        .profile-card { background: var(--brand-surface); padding: 2rem; border-radius: 8px; max-width: 700px; margin: 2rem auto; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); }
-        .profile-card img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--brand-primary); object-fit: cover; }
-        .profile-field { margin-bottom: 1.5rem; }
-        .profile-field label { display: block; color: var(--text-muted); margin-bottom: 0.5rem; font-size: 0.9rem; }
-        .profile-field .value { background: #2d3a4c; padding: 0.75rem; border-radius: 6px; }
-        .input-field { width: 100%; background: #2d3a4c; border: 1px solid #4a5568; padding: 0.75rem; border-radius: 6px; color: var(--text-light); }
-        .action-btn { background-color: var(--brand-primary); color: var(--brand-dark); border: none; padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer; font-weight: bold; transition: transform 0.2s; }
-        .action-btn:hover { transform: scale(1.05); }
-        #admin-app { background-color: transparent; }
-        #admin-sidebar { width: 250px; background-color: var(--brand-dark); padding: 1.5rem; display: flex; flex-direction: column; border-right: 1px solid #30363d; }
-        .admin-header { text-align: center; padding-bottom: 1.5rem; border-bottom: 1px solid #30363d; margin-bottom: 1.5rem; }
-        .admin-header .logo { font-family: 'Teko', sans-serif; font-size: 2rem; color: var(--brand-warning); }
-        .admin-header .role-indicator { background: var(--brand-warning); color: var(--brand-dark); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; display: inline-block; margin-top: 0.5rem; }
-        #admin-sidebar nav a { color: var(--text-muted); text-decoration: none; display: block; padding: 0.8rem; border-radius: 6px; margin-bottom: 0.5rem; transition: all 0.3s; }
-        #admin-sidebar nav a:hover, #admin-sidebar nav a.active { background-color: var(--brand-surface); color: var(--text-light); }
-        .admin-logout { margin-top: auto; }
-        .admin-table-container { background-color: var(--brand-surface); border-radius: 8px; overflow: hidden; }
-        .admin-table { width: 100%; border-collapse: collapse; }
-        .admin-table th, .admin-table td { padding: 1rem; text-align: left; }
-        .admin-table thead { background-color: #2d3a4c; }
-        .admin-table tbody tr { border-bottom: 1px solid #30363d; }
-        .admin-table tbody tr:last-child { border-bottom: none; }
-        .admin-table tbody tr.locked-user { background-color: rgba(248, 113, 113, 0.1); opacity: 0.7; }
-        .admin-table .action-cell button { background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 0.5rem; }
-        .admin-table .action-cell button:hover { color: var(--text-light); }
-        #user-search { width: 100%; max-width: 400px; padding: 0.75rem; background: var(--brand-surface); border: 1px solid #30363d; border-radius: 6px; color: var(--text-light); margin-bottom: 1.5rem; }
         @media (max-width: 768px) {
-            .app-container { flex-direction: column; }
-            #admin-sidebar { width: 100%; height: auto; flex-direction: row; justify-content: space-between; align-items: center; border-right: none; border-bottom: 1px solid #30363d; }
-            #admin-sidebar .admin-header { border: none; margin: 0; padding: 0; }
-            #admin-sidebar nav { display: flex; }
-            #admin-sidebar nav a { margin: 0 0.5rem; }
-            .admin-logout { margin-top: 0; }
+            body { padding: 20px 10px; }
+            .screenshot-grid { grid-template-columns: 1fr; }
+            .player-entry .form-grid { grid-template-columns: 1fr; }
+            .status-checker-form { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-    <div class="bg-overlay"></div>
-
-    <!-- ======== LOADING / SPLASH SCREEN ======== -->
-    <div id="loading-spinner">
-        <img src="https://firebasestorage.googleapis.com/v0/b/viptask-5c1fc.appspot.com/o/dfdc00fc6bb93771364bbf5000dad222.jpg?alt=media&token=ff33f08b-1b2e-424e-b636-f664d8044bed" alt="Logo" class="splash-logo">
-        <div class="spinner"></div>
+    
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <img src="https://firebasestorage.googleapis.com/v0/b/viptask-5c1fc.appspot.com/o/dfdc00fc6bb93771364bbf5000dad222.jpg?alt=media&token=ff33f08b-1b2e-424e-b636-f664d8044bed" alt="Logo" id="splash-logo">
     </div>
 
-    <!-- ======== LOGIN SCREEN (আপডেটেড ডিজাইন) ======== -->
-    <section id="login-screen" class="hidden">
-        <div id="premium-logo-container">
-            <img src="https://firebasestorage.googleapis.com/v0/b/viptask-5c1fc.appspot.com/o/dfdc00fc6bb93771364bbf5000dad222.jpg?alt=media&token=ff33f08b-1b2e-424e-b636-f664d8044bed" alt="Level-Up Arena Logo">
-        </div>
-        <div class="login-box">
-            <h2>WELCOME, PLAYER</h2>
-            <p>Your ultimate esports journey begins now.</p>
-            <button id="google-login-btn" class="google-login-btn">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
-                <span>Sign in with Google</span>
-            </button>
-        </div>
-    </section>
-
-    <!-- ======== USER APPLICATION ======== -->
-    <section id="user-app" class="hidden">
+    <!-- Main Container -->
+    <div class="container">
         <header>
-            <div class="logo">LEVEL-UP</div>
-            <nav>
-                <a href="#" onclick="showUserPage('user-dashboard')">Dashboard</a>
-                <a href="#" onclick="showUserPage('user-profile')">Profile</a>
-                <button id="user-logout-btn" class="logout-btn">Logout</button>
-            </nav>
+            <h2>Tournament Registration</h2>
+            <p style="color: var(--text-secondary);">Premium Registration Portal</p>
+            <button class="status-toggle" id="toggle-status-checker">Check Status</button>
         </header>
-        <main class="main-content">
-            <div id="user-dashboard">
-                <h1>Welcome, <span id="user-welcome-name">Player</span>!</h1>
-                <p>Matches and other features will be shown here.</p>
-            </div>
-            <div id="user-profile" class="hidden">
-                <div class="profile-card">
-                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
-                        <img id="profile-img" src="https://via.placeholder.com/100" alt="Profile Picture">
-                        <div>
-                            <input type="file" id="image-upload" accept="image/*" class="hidden">
-                            <button class="action-btn" onclick="document.getElementById('image-upload').click()">Change Image</button>
-                            <button id="upload-confirm-btn" class="action-btn hidden" style="background-color: #22c55e;">Confirm Upload</button>
-                        </div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Email</label>
-                        <div id="profile-email" class="value"></div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Display Name</label>
-                        <div id="display-name-view">
-                            <span id="profile-display-name" class="value" style="width: 100%; display:inline-block;"></span>
-                            <button onclick="toggleNameEdit(true)" style="margin-left: 10px; background: none; border: none; color: var(--brand-primary); cursor: pointer;">Edit</button>
-                        </div>
-                        <div id="display-name-edit" class="hidden" style="display: flex; gap: 10px;">
-                            <input type="text" id="display-name-input" class="input-field">
-                            <button id="save-name-btn" class="action-btn">Save</button>
-                        </div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Referral Code</label>
-                        <div class="value" style="display: flex; justify-content: space-between; align-items: center;">
-                            <span id="profile-referral-code" style="font-family: monospace;"></span>
-                            <button id="copy-referral-btn" style="background: none; border: none; color: var(--brand-primary); cursor: pointer;">Copy</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </section>
+        
+        <img src="https://firebasestorage.googleapis.com/v0/b/viptask-5c1fc.appspot.com/o/IMG-20260110-WA0022.jpg?alt=media&token=7479e4e5-bc4e-4b83-af8f-5d186fe97cf7" alt="Tournament Banner" class="tournament-banner">
 
-    <!-- ======== ADMIN PANEL ======== -->
-    <section id="admin-app" class="app-container hidden">
-        <aside id="admin-sidebar">
-            <div class="admin-header">
-                <div class="logo">ARENA</div>
-                <span class="role-indicator">ADMIN</span>
-            </div>
-            <nav>
-                <a href="#" onclick="showAdminPage('admin-dashboard')">Dashboard</a>
-                <a href="#" onclick="showAdminPage('admin-users')">Users</a>
-            </nav>
-            <button id="admin-logout-btn" class="logout-btn admin-logout">Logout</button>
-        </aside>
-        <main class="main-content">
-            <div id="admin-dashboard">
-                <h1>Admin Dashboard</h1>
-                <p>Key metrics and app controls will be here.</p>
-            </div>
-            <div id="admin-users" class="hidden">
-                <h1>User Management</h1>
-                <input type="text" id="user-search" placeholder="Search by name, email, or referral code...">
-                <div class="admin-table-container">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>Email</th>
-                                <th>Referral Code</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="users-table-body"></tbody>
-                    </table>
+        <main>
+            <!-- Registration Form (HTML structure is the same) -->
+            <form id="registrationForm">
+                <!-- Stepper -->
+                <div class="form-stepper">
+                    <div class="step active" data-step="1"><div class="step-icon">1</div><div class="step-title">Team Info</div></div>
+                    <div class="step" data-step="2"><div class="step-icon">2</div><div class="step-title">Players</div></div>
+                    <div class="step" data-step="3"><div class="step-icon">3</div><div class="step-title">Tasks</div></div>
+                    <div class="stepper-line"></div>
                 </div>
-            </div>
+
+                <!-- Step 1: Team Information -->
+                <div class="form-section active" data-section="1">
+                    <h2>Team Information</h2>
+                    <div class="form-grid">
+                        <div class="form-group full-width"><label for="teamName">টিমের নাম</label><input type="text" id="teamName" required></div>
+                        <div class="form-group"><label for="teamTag">টিম ট্যাগ</label><input type="text" id="teamTag" required></div>
+                        <div class="form-group"><label>টিম লোগো</label><div class="file-input-wrapper"><label for="teamLogo" class="file-input-label"><span>Choose a file...</span></label><input type="file" id="teamLogo" accept="image/*" required><div class="file-name"></div></div></div>
+                        <div class="form-group"><label for="whatsappNumber">সক্রিয় WhatsApp নম্বর</label><input type="tel" id="whatsappNumber" placeholder="+8801..." required></div>
+                        <div class="form-group"><label for="referralNumber">রেফারেল নম্বর (ঐচ্ছিক)</label><input type="tel" id="referralNumber" placeholder="+8801..."></div>
+                    </div>
+                    <div class="form-navigation"><span></span><button type="button" class="btn next-btn">Next &rarr;</button></div>
+                </div>
+
+                <!-- Step 2: Player Roster -->
+                <div class="form-section" data-section="2">
+                    <h2>Player Roster</h2>
+                    <div class="player-entry">
+                        <h3>IGL (In-Game Leader)</h3>
+                        <div class="form-grid">
+                            <div class="form-group"><label for="iglName">In-Game Name</label><input type="text" id="iglName" required></div>
+                            <div class="form-group"><label for="iglUid">In-Game UID</label><input type="text" id="iglUid" required></div>
+                        </div>
+                    </div>
+                    <div class="player-entry">
+                        <h3>Player 2</h3>
+                        <div class="form-grid">
+                            <div class="form-group"><label for="p2Name">In-Game Name</label><input type="text" id="p2Name" required></div>
+                            <div class="form-group"><label for="p2Uid">In-Game UID</label><input type="text" id="p2Uid" required></div>
+                        </div>
+                    </div>
+                    <div class="player-entry">
+                        <h3>Player 3</h3>
+                        <div class="form-grid">
+                            <div class="form-group"><label for="p3Name">In-Game Name</label><input type="text" id="p3Name" required></div>
+                            <div class="form-group"><label for="p3Uid">In-Game UID</label><input type="text" id="p3Uid" required></div>
+                        </div>
+                    </div>
+                    <div class="player-entry">
+                        <h3>Player 4</h3>
+                        <div class="form-grid">
+                            <div class="form-group"><label for="p4Name">In-Game Name</label><input type="text" id="p4Name" required></div>
+                            <div class="form-group"><label for="p4Uid">In-Game UID</label><input type="text" id="p4Uid" required></div>
+                        </div>
+                    </div>
+                    <div class="player-entry">
+                        <h3>Player 5 (Optional)</h3>
+                        <div class="form-grid">
+                            <div class="form-group"><label for="p5Name">In-Game Name</label><input type="text" id="p5Name"></div>
+                            <div class="form-group"><label for="p5Uid">In-Game UID</label><input type="text" id="p5Uid"></div>
+                        </div>
+                    </div>
+                    <div class="form-navigation"><button type="button" class="btn prev-btn">&larr; Previous</button><button type="button" class="btn next-btn">Next &rarr;</button></div>
+                </div>
+
+                <!-- Step 3: Mandatory Tasks -->
+                <div class="form-section" data-section="3">
+                    <h2>Mandatory Tasks</h2>
+                    <p style="text-align: center; color: var(--text-secondary); margin-bottom: 20px;">প্রতিটি URL ভিজিট করুন, টাস্ক সম্পন্ন করুন এবং ৪ জন খেলোয়াড়ের স্ক্রিনশট আপলোড করুন।</p>
+                    <div class="task-list">
+                         <!-- Task items will be dynamically added by JS -->
+                    </div>
+                    <div class="form-navigation"><button type="button" class="btn prev-btn">&larr; Previous</button><button type="submit" class="btn btn-primary">Submit Registration</button></div>
+                </div>
+            </form>
         </main>
-    </section>
+    </div>
+    
+    <!-- Status Checker Overlay -->
+    <div id="status-checker-overlay">
+        <div class="status-checker-modal">
+            <button id="close-status-checker">&times;</button>
+            <h2>Check Registration Status</h2>
+            <p style="color: var(--text-secondary); font-size: 14px;">Enter your Team Code to see the current status.</p>
+            <div class="status-checker-form">
+                <input type="text" id="teamIdInput" placeholder="Enter your Team Code...">
+                <button type="button" class="btn btn-primary" id="checkStatusBtn">Check</button>
+            </div>
+            <div id="status-result"><p>Your team status will be shown here.</p></div>
+        </div>
+    </div>
+
+    <!-- Modals & Overlays -->
+    <div class="overlay" id="loader-overlay"><div class="loader"></div></div>
+    <div class="overlay" id="success-modal"><div class="modal-content" id="success-message"></div></div>
 
     <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 
+    <script>
+        // --- START: Firebase Configuration (UPDATED) ---
         const firebaseConfig = {
-          apiKey: "AIzaSyB2I3GJh68NXzopOgbpKtHUp3O1Au3wVcc",
-          authDomain: "level-up-esports.firebaseapp.com",
-          projectId: "level-up-esports",
-          storageBucket: "level-up-esports.firebasestorage.app",
-          messagingSenderId: "54066927114",
-          appId: "1:54066927114:android:3ad0d0ec07451fd9a371f3" 
+            apiKey: "AIzaSyBhATVeER6lVomkHqfvbtcM8j-xhLR8ZyY",
+            authDomain: "ff-cash-587aa.firebaseapp.com",
+            projectId: "ff-cash-587aa",
+            storageBucket: "ff-cash-587aa.appspot.com",
+            messagingSenderId: "290002545011",
+            appId: "1:290002545011:android:37e5b9ea224a3efaf83d06",
+            databaseURL: "https://ff-cash-587aa-default-rtdb.firebaseio.com"
         };
+        // --- END: Firebase Configuration ---
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const storage = getStorage(app);
-        const googleProvider = new GoogleAuthProvider();
-
-        let currentUser = null, currentUserProfile = null, isAdmin = false;
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
         
-        const loadingSpinner = document.getElementById('loading-spinner');
-        const loginScreen = document.getElementById('login-screen');
-        const userApp = document.getElementById('user-app');
-        const adminApp = document.getElementById('admin-app');
+        document.addEventListener('DOMContentLoaded', () => {
+            // Splash Screen Logic
+            const splashScreen = document.getElementById('splash-screen');
+            const mainContainer = document.querySelector('.container');
+            window.onload = () => {
+                setTimeout(() => {
+                    splashScreen.classList.add('hidden');
+                    document.body.style.overflow = 'auto';
+                    mainContainer.style.display = 'block';
+                }, 2500); // Splash screen visible for 2.5 seconds
+            };
 
-        let adminClickCount = 0;
-        document.getElementById('premium-logo-container').addEventListener('click', () => {
-            adminClickCount++;
-            if (adminClickCount >= 15) {
-                const pin = prompt("Enter Admin PIN:");
-                if (pin === '5449xshezin') {
-                    isAdmin = true;
-                    showScreen('admin');
-                } else if (pin) {
-                    alert("Invalid PIN.");
+            // Form Wizard Logic
+            let currentStep = 1;
+            const formSections = document.querySelectorAll('.form-section');
+            const steps = document.querySelectorAll('.step');
+            const updateStepper = () => {
+                steps.forEach(step => step.classList.toggle('active', parseInt(step.dataset.step) <= currentStep));
+                formSections.forEach(section => section.classList.toggle('active', parseInt(section.dataset.section) === currentStep));
+            };
+            const validateStep = (step) => {
+                const currentSection = document.querySelector(`.form-section[data-section="${step}"]`);
+                if (step === 2) {
+                    const p5Name = document.getElementById('p5Name').value.trim();
+                    if (!p5Name) { document.getElementById('p5Uid').removeAttribute('required'); } 
+                    else { document.getElementById('p5Uid').setAttribute('required', ''); }
                 }
-                adminClickCount = 0;
-            }
-        });
+                let isValid = true;
+                currentSection.querySelectorAll('input[required]').forEach(input => {
+                    const wrapper = input.closest('.file-input-wrapper');
+                    if(input.style.borderBottomColor) input.style.borderBottomColor = '';
+                    if(wrapper) wrapper.querySelector('.file-input-label').style.borderColor = '';
+                    if ((input.type !== 'file' && !input.value.trim()) || (input.type === 'file' && input.files.length === 0)) {
+                        isValid = false;
+                        if(input.type === 'file') wrapper.querySelector('.file-input-label').style.borderColor = 'var(--danger-color)';
+                        else input.style.borderBottomColor = 'var(--danger-color)';
+                    }
+                });
+                return isValid;
+            };
+            document.querySelectorAll('.next-btn').forEach(btn => btn.addEventListener('click', () => {
+                if (validateStep(currentStep)) { currentStep++; updateStepper(); } 
+                else { alert('Please fill all required fields.'); }
+            }));
+            document.querySelectorAll('.prev-btn').forEach(btn => btn.addEventListener('click', () => {
+                if (currentStep > 1) { currentStep--; updateStepper(); }
+            }));
 
-        document.getElementById('google-login-btn').addEventListener('click', async () => {
-            try {
-                const result = await signInWithPopup(auth, googleProvider);
-                const user = result.user;
-                const userRef = doc(db, 'users', user.uid);
-                const docSnap = await getDoc(userRef);
-                if (!docSnap.exists()) {
-                    await setDoc(userRef, {
-                        uid: user.uid, displayName: user.displayName, email: user.email, photoURL: user.photoURL,
-                        referralCode: `LUA-${Math.random().toString(36).substring(2, 10).toUpperCase()}`,
-                        createdAt: serverTimestamp(), isLocked: false,
-                    });
+            // Status Checker Logic
+            const statusOverlay = document.getElementById('status-checker-overlay');
+            document.getElementById('toggle-status-checker').addEventListener('click', () => statusOverlay.style.display = 'flex');
+            document.getElementById('close-status-checker').addEventListener('click', () => statusOverlay.style.display = 'none');
+            document.getElementById('checkStatusBtn').addEventListener('click', async () => {
+                const teamId = document.getElementById('teamIdInput').value.trim();
+                const resultDiv = document.getElementById('status-result');
+                if (!teamId) { resultDiv.innerHTML = `<p style="color: var(--danger-color);">Please enter a Team Code.</p>`; return; }
+                resultDiv.innerHTML = `<p>Checking...</p>`;
+                try {
+                    const doc = await db.collection('registrations').doc(teamId).get();
+                    if (doc.exists) {
+                        const data = doc.data();
+                        const statusClass = `status-${data.status}`;
+                        resultDiv.innerHTML = `<h4>Team: ${data.teamName}</h4><p>Status: <span class="status-badge ${statusClass}">${data.status}</span></p>${data.rejectionReason ? `<p style="color: var(--danger-color);">Reason: ${data.rejectionReason}</p>` : ''}`;
+                    } else {
+                        resultDiv.innerHTML = `<p style="color: var(--danger-color);">Team Code not found.</p>`;
+                    }
+                } catch (error) {
+                    resultDiv.innerHTML = `<p style="color: var(--danger-color);">An error occurred.</p>`;
                 }
-            } catch (error) { console.error("Google Login Error:", error); alert("Could not log in with Google."); }
-        });
-
-        const handleLogout = () => {
-            if (isAdmin) { isAdmin = false; showScreen('login'); } else { signOut(auth); }
-        };
-        document.getElementById('user-logout-btn').addEventListener('click', handleLogout);
-        document.getElementById('admin-logout-btn').addEventListener('click', handleLogout);
-
-        onAuthStateChanged(auth, async (user) => {
-            if(user){
-                currentUser = user;
-                const docSnap = await getDoc(doc(db, 'users', user.uid));
-                if (docSnap.exists()) {
-                    currentUserProfile = docSnap.data();
-                    if (currentUserProfile.isLocked) { alert("Your account has been locked."); signOut(auth); return; }
-                    renderUserProfile(); showScreen('user');
-                }
-            } else {
-                currentUser = null; currentUserProfile = null;
-                if (!isAdmin) { showScreen('login'); }
-            }
-            loadingSpinner.classList.add('hidden');
-        });
-
-        function showScreen(screen) {
-            loginScreen.classList.add('hidden');
-            userApp.classList.add('hidden');
-            adminApp.classList.add('hidden');
-            document.body.classList.remove('login-active');
-            
-            if (screen === 'login') {
-                loginScreen.classList.remove('hidden');
-                document.body.classList.add('login-active');
-            } else if (screen === 'user') {
-                userApp.classList.remove('hidden');
-            } else if (screen === 'admin') {
-                adminApp.classList.remove('hidden');
-                showAdminPage('admin-dashboard');
-            }
-        }
-
-        window.showUserPage = (pageId) => {
-            document.getElementById('user-dashboard').classList.add('hidden');
-            document.getElementById('user-profile').classList.add('hidden');
-            document.getElementById(pageId).classList.remove('hidden');
-        }
-        window.showAdminPage = (pageId) => {
-            document.getElementById('admin-dashboard').classList.add('hidden');
-            document.getElementById('admin-users').classList.add('hidden');
-            document.getElementById(pageId).classList.remove('hidden');
-            if (pageId === 'admin-users') renderAdminUsers();
-        }
-
-        function renderUserProfile() {
-            if (!currentUserProfile) return;
-            document.getElementById('user-welcome-name').textContent = currentUserProfile.displayName;
-            document.getElementById('profile-img').src = currentUserProfile.photoURL;
-            document.getElementById('profile-email').textContent = currentUserProfile.email;
-            document.getElementById('profile-display-name').textContent = currentUserProfile.displayName;
-            document.getElementById('display-name-input').value = currentUserProfile.displayName;
-            document.getElementById('profile-referral-code').textContent = currentUserProfile.referralCode;
-        }
-
-        window.toggleNameEdit = (isEditing) => {
-            document.getElementById('display-name-view').classList.toggle('hidden', isEditing);
-            document.getElementById('display-name-edit').classList.toggle('hidden', !isEditing);
-        }
-        document.getElementById('save-name-btn').addEventListener('click', async () => {
-            const newName = document.getElementById('display-name-input').value;
-            if (newName && newName !== currentUserProfile.displayName) {
-                await updateDoc(doc(db, 'users', currentUser.uid), { displayName: newName });
-                currentUserProfile.displayName = newName; renderUserProfile(); toggleNameEdit(false); alert('Display name updated!');
-            }
-        });
-        document.getElementById('copy-referral-btn').addEventListener('click', () => { navigator.clipboard.writeText(currentUserProfile.referralCode); alert('Referral code copied!'); });
-        
-        let fileToUpload = null;
-        const uploadConfirmBtn = document.getElementById('upload-confirm-btn');
-        document.getElementById('image-upload').addEventListener('change', (e) => {
-            fileToUpload = e.target.files[0];
-            if(fileToUpload) uploadConfirmBtn.classList.remove('hidden');
-        });
-        uploadConfirmBtn.addEventListener('click', async () => {
-            if (!fileToUpload) return;
-            uploadConfirmBtn.textContent = "Uploading...";
-            const storageRef = ref(storage, `profileImages/${currentUser.uid}`);
-            await uploadBytes(storageRef, fileToUpload);
-            const photoURL = await getDownloadURL(storageRef);
-            await updateDoc(doc(db, 'users', currentUser.uid), { photoURL });
-            currentUserProfile.photoURL = photoURL; renderUserProfile();
-            uploadConfirmBtn.classList.add('hidden'); uploadConfirmBtn.textContent = "Confirm Upload"; fileToUpload = null; alert('Profile image updated!');
-        });
-
-        let allUsers = [];
-        async function renderAdminUsers() {
-            const tableBody = document.getElementById('users-table-body');
-            tableBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Loading users...</td></tr>';
-            const querySnapshot = await getDocs(collection(db, "users"));
-            allUsers = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            displayUsers(allUsers);
-        }
-        function displayUsers(usersToDisplay) {
-            const tableBody = document.getElementById('users-table-body');
-            tableBody.innerHTML = usersToDisplay.length === 0 ? '<tr><td colspan="4" style="text-align: center;">No users found.</td></tr>' : '';
-            usersToDisplay.forEach(user => {
-                const row = document.createElement('tr');
-                if (user.isLocked) row.classList.add('locked-user');
-                row.innerHTML = `<td><div style="display:flex;align-items:center;gap:10px;"><img src="${user.photoURL}" alt="" style="width:40px;height:40px;border-radius:50%;"><span>${user.displayName}</span></div></td><td>${user.email}</td><td style="font-family:monospace;">${user.referralCode}</td><td class="action-cell"><button onclick="toggleUserLock('${user.id}', ${user.isLocked})">${user.isLocked ? `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="lightgreen" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>` : `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--brand-danger)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`}</button></td>`;
-                tableBody.appendChild(row);
             });
-        }
-        document.getElementById('user-search').addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredUsers = allUsers.filter(user => user.displayName?.toLowerCase().includes(searchTerm) || user.email?.toLowerCase().includes(searchTerm) || user.referralCode?.toLowerCase().includes(searchTerm));
-            displayUsers(filteredUsers);
+
+            // Form Submission Logic
+            const form = document.getElementById('registrationForm');
+            const loader = document.getElementById('loader-overlay');
+            const successModal = document.getElementById('success-modal');
+            const successMessage = document.getElementById('success-message');
+            window.closeModal = (id) => document.getElementById(id).style.display = 'none';
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!validateStep(1) || !validateStep(2) || !validateStep(3)) {
+                    alert('Please ensure all required fields are filled correctly.');
+                    return;
+                }
+                loader.style.display = 'flex';
+                try {
+                    const teamId = db.collection('registrations').doc().id;
+                    const uploadFile = (file, path) => storage.ref(path).put(file).then(s => s.ref.getDownloadURL());
+                    const logoUrl = await uploadFile(document.getElementById('teamLogo').files[0], `logos/${teamId}/logo`);
+                    const uploadSS = (task) => Promise.all([...document.querySelectorAll(`.ss-${task}`)].map((input, i) => uploadFile(input.files[0], `screenshots/${teamId}/${task}_${i+1}`)));
+                    const [whatsappUrls, youtubeUrls, facebookUrls] = await Promise.all([uploadSS('wa'), uploadSS('yt'), uploadSS('fb')]);
+                    
+                    const players = [];
+                    ['igl', 'p2', 'p3', 'p4', 'p5'].forEach(p => {
+                        const name = document.getElementById(`${p}Name`).value;
+                        if (name) players.push({
+                            role: p === 'igl' ? 'IGL' : `Player ${p.replace('p', '')}${p === 'p5' ? ' (Sub)' : ''}`,
+                            name: name,
+                            uid: document.getElementById(`${p}Uid`).value
+                        });
+                    });
+                    const teamData = {
+                        teamName: document.getElementById('teamName').value,
+                        teamTag: document.getElementById('teamTag').value,
+                        whatsappNumber: document.getElementById('whatsappNumber').value,
+                        referralNumber: document.getElementById('referralNumber').value || null,
+                        teamLogoUrl: logoUrl,
+                        players,
+                        taskScreenshots: { whatsapp: whatsappUrls, youtube: youtubeUrls, facebook: facebookUrls },
+                        status: 'pending',
+                        submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        teamId: teamId
+                    };
+                    await db.collection('registrations').doc(teamId).set(teamData);
+                    let playerDetailsHtml = players.map(p => `<p><span>${p.role}:</span> ${p.name} (UID: ${p.uid})</p>`).join('');
+                    successMessage.innerHTML = `<h2>রেজিস্ট্রেশন সফল!</h2><p>আপনার দলের কোডটি কপি করে সুরক্ষিত রাখুন।</p><h3 id="team-id-display">${teamId}</h3><div class="details-list"><p><span>Team Name:</span> ${teamData.teamName}</p>${playerDetailsHtml}</div><button class="btn btn-primary" onclick="closeModal('success-modal')" style="margin-top: 20px;">বন্ধ করুন</button>`;
+                    successModal.style.display = 'flex';
+                    form.reset();
+                    currentStep = 1; updateStepper();
+                    document.querySelectorAll('.file-input-label span').forEach(s => s.textContent = 'Choose a file...');
+                    document.querySelectorAll('.file-name').forEach(n => n.textContent = '');
+                } catch (error) {
+                    console.error("Submission Error: ", error);
+                    alert('An error occurred. Please try again.');
+                } finally {
+                    loader.style.display = 'none';
+                }
+            });
+
+            // Dynamic Task List & Event Binding
+            const taskListContainer = document.querySelector('.task-list');
+            const tasks = [
+                { id: 'wa', icon: '&#128242;', title: 'Join WhatsApp Community', url: 'https://chat.whatsapp.com/JfpRN1k0E842BxK0XAie3z' },
+                { id: 'yt', icon: '&#128250;', title: 'Subscribe YouTube Channel', url: 'https://youtube.com/@levelupbd_ofc' },
+                { id: 'fb', icon: '&#128221;', title: 'Follow Facebook Page', url: 'https://www.facebook.com/profile.php?id=61586051293435' }
+            ];
+            tasks.forEach(task => {
+                taskListContainer.innerHTML += `<div class="task-item"><div class="task-header"><span class="task-icon">${task.icon}</span><h3 class="task-title">${task.title}</h3></div><div class="url-copy-container"><span class="task-url">${task.url}</span><button type="button" class="copy-btn" data-url="${task.url}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></div><div class="screenshot-grid">${[1, 2, 3, 4].map(i => `<div class="file-input-wrapper"><label for="ss_${task.id}_${i}" class="file-input-label"><span>Screenshot ${i}</span></label><input type="file" id="ss_${task.id}_${i}" class="ss-${task.id}" accept="image/*" required><div class="file-name"></div></div>`).join('')}</div></div>`;
+            });
+            document.querySelectorAll('input[type="file"]').forEach(input => input.addEventListener('change', (e) => {
+                const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose a file...';
+                const labelSpan = e.target.closest('.file-input-wrapper').querySelector('label span');
+                labelSpan.textContent = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
+            }));
+            document.querySelectorAll('.copy-btn').forEach(button => button.addEventListener('click', () => {
+                navigator.clipboard.writeText(button.dataset.url).then(() => {
+                    const originalIcon = button.innerHTML;
+                    button.innerHTML = '✔'; button.classList.add('copied');
+                    setTimeout(() => { button.innerHTML = originalIcon; button.classList.remove('copied'); }, 2000);
+                });
+            }));
         });
-        window.toggleUserLock = async (userId, isLocked) => {
-            const action = isLocked ? "unlock" : "lock";
-            if (confirm(`Are you sure you want to ${action} this user?`)) {
-                await updateDoc(doc(db, 'users', userId), { isLocked: !isLocked });
-                alert(`User has been ${action}ed.`); renderAdminUsers();
-            }
-        };
     </script>
 </body>
-                </html>
+</html>
